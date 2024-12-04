@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Debug APK",
+            "type": "shell",
+            "command": "./gradlew",
+            "args": ["assembleDebug"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Debug APK",
+            "type": "shell",
+            "command": "adb",
+            "args": ["install", "-r", "app/build/outputs/apk/debug/app-debug.apk"],
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": ["Build Debug APK"]
+        }
+    ]
+}

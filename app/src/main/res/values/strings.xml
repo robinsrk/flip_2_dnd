@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Flip_2_DND</string>
+    <string name="service_description">Uses device sensors to detect phone orientation and automatically enable Do Not Disturb mode when face down</string>
+</resources>

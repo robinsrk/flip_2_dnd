@@ -1,0 +1,7 @@
+Initial release:
+* Toggle DND by flipping phone face down
+* Disable DND by flipping phone face up
+* Optional "Only when screen off" mode
+* Configurable vibration feedback
+* Sound notification when DND is disabled
+* Material You design

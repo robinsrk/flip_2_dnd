@@ -1,0 +1,17 @@
+Flip 2 DND is a simple yet powerful app that automatically toggles Do Not Disturb mode based on your phone's orientation.
+
+Features:
+• Toggle DND by flipping your phone face down
+• Disable DND by flipping your phone face up
+• Optional "Only when screen off" mode
+• Configurable vibration feedback
+• Sound notification when DND is disabled
+• Clean, modern Material You design
+• No ads, no tracking, completely open source
+
+The app is designed with privacy and simplicity in mind, requiring only the necessary permissions to function:
+- Access to Do Not Disturb settings
+- Vibration control
+- Sensor access (accelerometer)
+
+Perfect for meetings, study sessions, or any time you need quick access to Do Not Disturb mode!

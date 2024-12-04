@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.DoNotDisturb
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.outlined.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -78,7 +78,7 @@ fun MainScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.DoNotDisturb,
+                        imageVector = Icons.Default.VolumeOff,
                         contentDescription = "Phone orientation",
                         modifier = Modifier
                             .size(120.dp)
@@ -132,9 +132,9 @@ fun MainScreen(
                     ) {
                         Icon(
                             imageVector = if (isDndEnabled) 
-                                Icons.Default.DoNotDisturb 
+                                Icons.Default.VolumeOff 
                             else 
-                                Icons.Outlined.Notifications,
+                                Icons.Outlined.VolumeUp,
                             contentDescription = "DND Status",
                             tint = if (isDndEnabled)
                                 MaterialTheme.colorScheme.primary

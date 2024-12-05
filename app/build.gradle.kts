@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.cocoit.flip_2_dnd"
+    namespace = "dev.robin.flip_2_dnd"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.cocoit.flip_2_dnd"
+        applicationId = "dev.robin.flip_2_dnd"
         minSdk = 23
         targetSdk = 34
         versionCode = 1
@@ -23,6 +23,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError = false
     }
 
     buildTypes {

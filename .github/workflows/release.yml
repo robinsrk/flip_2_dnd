@@ -25,12 +25,11 @@ jobs:
         
       - name: Create key.properties and keystore
         run: |
-          mkdir -p app
           echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" > key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
-          echo "storeFile=app/release.keystore" >> key.properties
-          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > app/release.keystore
+          echo "storeFile=../release.keystore" >> key.properties
+          echo "${{ secrets.SIGNING_KEY }}" | base64 -d > release.keystore
         
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon

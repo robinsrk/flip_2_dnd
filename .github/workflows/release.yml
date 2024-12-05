@@ -1,11 +1,8 @@
 name: Release
-
 on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
-
 jobs:
   release:
     name: Create Release
@@ -20,16 +17,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-
-      - name: Setup Android SDK and Build Tools
-        run: |
-          sdkmanager --install "build-tools;29.0.3"
           
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease
         
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
@@ -40,13 +33,11 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "29.0.3"
         
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: ${{steps.sign_app.outputs.signedReleaseFile}}
           generate_release_notes: true
-          draft: true
+          draft: false
           prerelease: false

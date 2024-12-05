@@ -214,7 +214,7 @@ class FlipDetectorService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Flip 2 DND")
             .setContentText("Monitoring phone orientation")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .build()
     }

@@ -20,6 +20,7 @@ import com.cocoit.flip_2_dnd.presentation.main.MainScreen
 import com.cocoit.flip_2_dnd.presentation.main.MainViewModel
 import com.cocoit.flip_2_dnd.presentation.settings.SettingsScreen
 import com.cocoit.flip_2_dnd.presentation.settings.SettingsViewModel
+import com.cocoit.flip_2_dnd.services.FlipDetectorService
 import com.cocoit.flip_2_dnd.ui.theme.Flip_2_DNDTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         checkPermissions()
+        startFlipDetectorService()
 
         setContent {
             Flip_2_DNDTheme {
@@ -60,6 +62,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun startFlipDetectorService() {
+        Intent(this, FlipDetectorService::class.java).also { intent ->
+            startForegroundService(intent)
         }
     }
 

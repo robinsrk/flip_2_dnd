@@ -6,10 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material.icons.outlined.VolumeUp
+import androidx.compose.material.icons.filled.DoNotDisturb
+import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -77,19 +77,32 @@ fun MainScreen(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.VolumeOff,
-                        contentDescription = "Phone orientation",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .rotate(
-                                when (state.orientation) {
-                                    PhoneOrientation.FACE_DOWN -> 180f
-                                    else -> 0f
-                                }
-                            ),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    when (state.orientation) {
+                        PhoneOrientation.FACE_DOWN -> Icon(
+                            imageVector = Icons.Default.PhoneAndroid,
+                            contentDescription = "Phone orientation",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .rotate(180f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        else -> Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PhoneAndroid,
+                                contentDescription = "Phone orientation",
+                                modifier = Modifier
+                                    .size(120.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "Face up",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -132,9 +145,9 @@ fun MainScreen(
                     ) {
                         Icon(
                             imageVector = if (isDndEnabled) 
-                                Icons.Default.VolumeOff 
+                                Icons.Default.DoNotDisturb 
                             else 
-                                Icons.Outlined.VolumeUp,
+                                Icons.Outlined.NotificationsActive,
                             contentDescription = "DND Status",
                             tint = if (isDndEnabled)
                                 MaterialTheme.colorScheme.primary

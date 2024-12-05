@@ -28,10 +28,6 @@ class MainViewModel @Inject constructor(
     private val _state = MutableStateFlow(MainState())
     val state: StateFlow<MainState> = _state.asStateFlow()
 
-    private var lastOrientation = PhoneOrientation.UNKNOWN
-    private var faceDownJob: Job? = null
-    private var isScreenOff = false
-
     init {
         observeOrientation()
         observeSettings()
@@ -43,7 +39,6 @@ class MainViewModel @Inject constructor(
     private fun observeScreenState() {
         viewModelScope.launch {
             screenStateRepository.isScreenOff().collect { screenOff ->
-                isScreenOff = screenOff
                 Log.d("MainViewModel", "Screen state changed: ${if (screenOff) "OFF" else "ON"}")
             }
         }
@@ -52,75 +47,8 @@ class MainViewModel @Inject constructor(
     private fun observeOrientation() {
         viewModelScope.launch {
             getOrientationUseCase().collect { orientation ->
-                Log.d("MainViewModel", "New orientation: $orientation (Last: $lastOrientation)")
+                Log.d("MainViewModel", "New orientation: $orientation")
                 _state.update { it.copy(orientation = orientation) }
-                
-                // Handle orientation changes
-                if (orientation != lastOrientation) {
-                    when (orientation) {
-                        PhoneOrientation.FACE_DOWN -> {
-                            if (!state.value.isDndEnabled) {
-                                // Check if we should process this change
-                                if (!state.value.isScreenOffOnly || isScreenOff) {
-                                    // Cancel any existing job
-                                    faceDownJob?.cancel()
-                                    // Start a new delayed job
-                                    faceDownJob = viewModelScope.launch {
-                                        delay(2000) // 2 seconds delay
-                                        if (state.value.orientation == PhoneOrientation.FACE_DOWN) {
-                                            Log.d("MainViewModel", "Phone face down for 2 seconds, enabling DND")
-                                            toggleDndUseCase()
-                                            provideFeedback(true)
-                                        }
-                                    }
-                                } else {
-                                    Log.d("MainViewModel", "Ignoring face down - screen is on and 'Only when screen off' is enabled")
-                                }
-                            }
-                        }
-                        PhoneOrientation.FACE_UP -> {
-                            // Cancel any pending face down job
-                            faceDownJob?.cancel()
-                            faceDownJob = null
-                            
-                            if (state.value.isDndEnabled) {
-                                // Check if we should process this change
-                                if (!state.value.isScreenOffOnly || isScreenOff) {
-                                    Log.d("MainViewModel", "Phone face up, disabling DND")
-                                    toggleDndUseCase()
-                                    provideFeedback(false)
-                                } else {
-                                    Log.d("MainViewModel", "Ignoring face up - screen is on and 'Only when screen off' is enabled")
-                                }
-                            }
-                        }
-                        PhoneOrientation.UNKNOWN -> {
-                            // Cancel any pending face down job
-                            faceDownJob?.cancel()
-                            faceDownJob = null
-                            Log.d("MainViewModel", "Phone orientation unknown")
-                        }
-                    }
-                    lastOrientation = orientation
-                }
-            }
-        }
-    }
-
-    private fun provideFeedback(dndEnabled: Boolean) {
-        if (state.value.isVibrationEnabled) {
-            feedbackRepository.vibrate()
-        }
-        if (state.value.isSoundEnabled && !dndEnabled) { // Only play sound when DND is being disabled
-            feedbackRepository.playSound()
-        }
-    }
-
-    private fun observeDndState() {
-        viewModelScope.launch {
-            dndRepository.isDndEnabled().collect { enabled ->
-                Log.d("MainViewModel", "DND state changed: $enabled")
-                _state.update { it.copy(isDndEnabled = enabled) }
             }
         }
     }
@@ -143,9 +71,17 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun observeDndState() {
+        viewModelScope.launch {
+            dndRepository.isDndEnabled().collect { enabled ->
+                Log.d("MainViewModel", "DND state changed: $enabled")
+                _state.update { it.copy(isDndEnabled = enabled) }
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
-        faceDownJob?.cancel()
         screenStateRepository.stopMonitoring()
     }
 }

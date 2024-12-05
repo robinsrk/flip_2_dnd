@@ -27,19 +27,21 @@ class FlipDetectorService : Service() {
     private lateinit var settingsManager: SettingsManager
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
-    private var isScreenOff = false
+    private val _isScreenOff = MutableStateFlow(false)
+    private val isScreenOff = _isScreenOff.asStateFlow()
     private var onlyWhenScreenOff = false
+    private var orientationJob: Job? = null
 
     private val screenStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 Intent.ACTION_SCREEN_OFF -> {
                     Log.d(TAG, "Screen turned OFF")
-                    isScreenOff = true
+                    _isScreenOff.value = true
                 }
                 Intent.ACTION_SCREEN_ON -> {
                     Log.d(TAG, "Screen turned ON")
-                    isScreenOff = false
+                    _isScreenOff.value = false
                 }
                 Intent.ACTION_SHUTDOWN -> {
                     Log.d(TAG, "System shutdown - Stopping sensor monitoring")
@@ -64,7 +66,8 @@ class FlipDetectorService : Service() {
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             
             // Initialize screen state
-            isScreenOff = !powerManager.isInteractive
+            _isScreenOff.value = !powerManager.isInteractive
+            Log.d(TAG, "Initial screen state: ${if (_isScreenOff.value) "OFF" else "ON"}")
             
             // Make service high priority
             val notification = createNotification()
@@ -100,8 +103,13 @@ class FlipDetectorService : Service() {
             
             // Observe orientation changes
             serviceScope.launch {
-                sensorService.orientation.collect { orientation ->
-                    handleOrientationChange(orientation)
+                combine(
+                    sensorService.orientation,
+                    isScreenOff
+                ) { orientation, screenOff ->
+                    Pair(orientation, screenOff)
+                }.collect { (orientation, screenOff) ->
+                    handleOrientationChange(orientation, screenOff)
                 }
             }
         } catch (e: Exception) {
@@ -110,22 +118,19 @@ class FlipDetectorService : Service() {
         }
     }
 
-    private fun handleOrientationChange(orientation: String) {
+    private fun handleOrientationChange(orientation: String, screenOff: Boolean) {
         try {
-            Log.d(TAG, "Screen state: ${if (isScreenOff) "OFF" else "ON"}, Only when screen off: $onlyWhenScreenOff")
-            
-            // If "Only when screen off" is enabled, check screen state
-            if (onlyWhenScreenOff) {
-                if (!isScreenOff) {
-                    Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Ignoring orientation change")
-                    return
-                }
-                Log.d(TAG, "Screen is OFF and 'Only when screen off' is enabled - Processing orientation change")
-            } else {
-                Log.d(TAG, "'Only when screen off' is disabled - Processing orientation change")
-            }
-            
+            Log.d(TAG, "Screen state: ${if (screenOff) "OFF" else "ON"}, Only when screen off: $onlyWhenScreenOff")
             Log.d(TAG, "Handling orientation change: $orientation")
+            
+            // Cancel any existing orientation job
+            orientationJob?.cancel()
+            
+            // If "Only when screen off" is enabled and screen is on, don't process any changes
+            if (onlyWhenScreenOff && !screenOff) {
+                Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Ignoring orientation change")
+                return
+            }
             
             // Update DND status before making any changes
             dndService.updateDndStatus()
@@ -134,16 +139,34 @@ class FlipDetectorService : Service() {
             when (orientation) {
                 "Face down" -> {
                     if (!currentDndState) {
-                        Log.d(TAG, "Phone is face down and DND is OFF - Enabling DND")
-                        dndService.toggleDnd()
+                        Log.d(TAG, "Phone is face down and DND is OFF - Starting 2-second delay")
+                        orientationJob = serviceScope.launch {
+                            delay(2000) // 2-second delay
+                            // Double check screen state and orientation after delay
+                            if (onlyWhenScreenOff && !isScreenOff.value) {
+                                Log.d(TAG, "Screen turned ON during delay - Cancelling DND toggle")
+                                return@launch
+                            }
+                            if (sensorService.orientation.value == "Face down") {
+                                Log.d(TAG, "2-second delay completed, phone still face down - Enabling DND")
+                                dndService.toggleDnd()
+                            } else {
+                                Log.d(TAG, "Phone orientation changed during delay - Cancelling DND toggle")
+                            }
+                        }
                     } else {
                         Log.d(TAG, "Phone is face down but DND is already ON - No action needed")
                     }
                 }
                 else -> {
                     if (currentDndState) {
-                        Log.d(TAG, "Phone is not face down ($orientation) and DND is ON - Disabling DND")
-                        dndService.toggleDnd()
+                        // Only disable DND if screen is off (when "only when screen off" is enabled)
+                        if (!onlyWhenScreenOff || screenOff) {
+                            Log.d(TAG, "Phone is not face down ($orientation) and DND is ON - Disabling DND immediately")
+                            dndService.toggleDnd()
+                        } else {
+                            Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Keeping DND on")
+                        }
                     } else {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND is already OFF - No action needed")
                     }

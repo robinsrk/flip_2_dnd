@@ -27,8 +27,12 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          build-tools-version: '30.0.3'
+
+      - name: Install build tools
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "build-tools;30.0.3"
+          echo "Build tools installed at: ${ANDROID_HOME}/build-tools/30.0.3"
+          ls -la ${ANDROID_HOME}/build-tools/30.0.3
 
       - name: Decode and save keystore file
         env:
@@ -82,9 +86,15 @@ jobs:
             echo "Error: Unsigned APK not found"
             exit 1
           fi
+          
+          echo "Android SDK location: $ANDROID_HOME"
+          echo "Available build tools:"
+          ls -la ${ANDROID_HOME}/build-tools/
+          
           ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v 4 \
             "app/build/outputs/apk/release/app-release-unsigned.apk" \
             "app/build/outputs/apk/release/app-release.apk"
+            
           if [ ! -f "app/build/outputs/apk/release/app-release.apk" ]; then
             echo "Error: Failed to create aligned APK"
             exit 1

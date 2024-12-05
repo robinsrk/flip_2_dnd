@@ -5,7 +5,7 @@ Categories:
 License: MIT
 
 AuthorName: Abul Kalam Robin
-AuthorEmail: robinsrk@gmail.com
+AuthorEmail: abul.kalam.robin.dev@gmail.com
 WebSite: https://github.com/robinsrk/Flip_2_DND
 
 SourceCode: https://github.com/robinsrk/Flip_2_DND
@@ -18,15 +18,29 @@ AutoName: Flip 2 DND
 RepoType: git
 Repo: https://github.com/robinsrk/Flip_2_DND
 
+Description: |
+  Flip 2 DND is a simple yet powerful app that automatically toggles Do Not Disturb mode based on your phone's orientation.
+
+  Features:
+  • Toggle DND by flipping your phone face down
+  • Disable DND by flipping your phone face up
+  • Optional "Only when screen off" mode
+  • Configurable vibration feedback
+  • Sound notification when DND is disabled
+  • Clean, modern Material You design
+  • No ads, no tracking, completely open source
+
+  The app is designed with privacy and simplicity in mind, requiring only the necessary permissions to function.
+
 Builds:
-  - versionName: '1.0.0'
-    versionCode: 1
-    commit: v1.0.0
+  - versionName: '1.0.1'
+    versionCode: 2
+    commit: v1.0.1
     subdir: app
     gradle:
       - yes
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: '1.0.0'
-CurrentVersionCode: 1
+CurrentVersion: '1.0.1'
+CurrentVersionCode: 2

@@ -1,0 +1,4 @@
+* Updated app icon with a new modern design
+* Fixed compatibility issues with Android 11+
+* Added vibration feedback when DND is toggled
+* UI improvements and bug fixes

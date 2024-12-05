@@ -29,7 +29,16 @@ jobs:
       - name: Decode and save keystore file
         env:
           KEYSTORE_FILE: ${{ secrets.SIGNING_KEY }}
-        run: echo $KEYSTORE_FILE | base64 --decode > release.keystore
+        run: |
+          if [ -z "$KEYSTORE_FILE" ]; then
+            echo "Error: SIGNING_KEY secret is not set"
+            exit 1
+          fi
+          echo "$KEYSTORE_FILE" | base64 --decode > release.keystore
+          if [ ! -f release.keystore ]; then
+            echo "Error: Failed to create keystore file"
+            exit 1
+          fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -37,14 +46,30 @@ jobs:
       - name: Build release APK
         run: ./gradlew assembleRelease
 
-      - name: Sign APK
+      - name: Sign and verify APK
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore release.keystore -storepass $KEYSTORE_PASSWORD -keypass $KEY_PASSWORD app/build/outputs/apk/release/app-release-unsigned.apk $KEY_ALIAS
-          # Verify the APK
+          if [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "Error: One or more signing secrets are not set"
+            echo "Required secrets: KEY_STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD"
+            exit 1
+          fi
+          
+          echo "Signing APK..."
+          jarsigner \
+            -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore release.keystore \
+            -storepass "${KEYSTORE_PASSWORD}" \
+            -keypass "${KEY_PASSWORD}" \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            "${KEY_ALIAS}"
+          
+          echo "Verifying signed APK..."
           jarsigner -verify -verbose -certs app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Align APK

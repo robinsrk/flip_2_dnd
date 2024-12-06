@@ -1,5 +1,3 @@
-- Added beautiful flip animation in the main screen
-- Animation plays forward and reverse continuously
-- Animation takes full width of the screen for better visibility
-- Improved main screen layout with centered animation
-- Enhanced visual feedback for phone flip action
+- Changed home screen image
+- Fixed screen state monitoring issue
+- Added update check option

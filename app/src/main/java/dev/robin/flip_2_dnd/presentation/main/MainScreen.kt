@@ -1,5 +1,6 @@
 package dev.robin.flip_2_dnd.presentation.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -7,9 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.*
-import kotlinx.coroutines.delay
+import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,34 +42,13 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Lottie Animation
-            val composition by rememberLottieComposition(
-                LottieCompositionSpec.Asset("animations/flip_animation.json")
-            )
-            
-            var isForward by remember { mutableStateOf(true) }
-            
-            LaunchedEffect(composition) {
-                while (true) {
-                    delay(2000) // Wait for animation to complete
-                    isForward = !isForward
-                }
-            }
-            
-            val progress by animateLottieCompositionAsState(
-                composition = composition,
-                isPlaying = true,
-                iterations = 1,
-                speed = if (isForward) 1f else -1f,
-                restartOnPlay = false
-            )
-            
-            LottieAnimation(
-                composition = composition,
-                progress = { progress },
+            Image(
+                painter = painterResource(id = R.drawable.app_icon),
+                contentDescription = "Do Not Enter Icon",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .fillMaxWidth(0.7f)
+                    .aspectRatio(1f),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
 
             Spacer(modifier = Modifier.height(24.dp))

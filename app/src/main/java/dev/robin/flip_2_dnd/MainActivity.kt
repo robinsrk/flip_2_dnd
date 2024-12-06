@@ -1,12 +1,18 @@
 package dev.robin.flip_2_dnd
 
+import android.app.NotificationManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,11 +26,17 @@ import dev.robin.flip_2_dnd.ui.theme.Flip_2_DNDTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+    
+    private val dndPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        checkAndStartService()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        startFlipDetectorService()
+        checkAndStartService()
 
         setContent {
             Flip_2_DNDTheme {
@@ -51,6 +63,43 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun checkAndStartService() {
+        if (!isNotificationPolicyAccessGranted()) {
+            requestNotificationPolicyAccess()
+            return
+        }
+
+        if (!isBatteryOptimizationDisabled()) {
+            requestDisableBatteryOptimization()
+            return
+        }
+
+        startFlipDetectorService()
+    }
+
+    private fun isNotificationPolicyAccessGranted(): Boolean {
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.isNotificationPolicyAccessGranted
+    }
+
+    private fun requestNotificationPolicyAccess() {
+        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+        dndPermissionLauncher.launch(intent)
+    }
+
+    private fun isBatteryOptimizationDisabled(): Boolean {
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        return powerManager.isIgnoringBatteryOptimizations(packageName)
+    }
+
+    private fun requestDisableBatteryOptimization() {
+        val intent = Intent().apply {
+            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            data = Uri.parse("package:$packageName")
+        }
+        startActivity(intent)
     }
 
     private fun startFlipDetectorService() {

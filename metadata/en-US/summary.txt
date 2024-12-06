@@ -1,1 +1,0 @@
-Simple app to control Do Not Disturb mode by flipping your phone

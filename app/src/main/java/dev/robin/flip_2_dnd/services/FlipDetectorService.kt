@@ -128,12 +128,6 @@ class FlipDetectorService : Service() {
             // Cancel any existing orientation job
             orientationJob?.cancel()
             
-            // If "Only when screen off" is enabled and screen is on, don't process any changes
-            if (onlyWhenScreenOff && !screenOff) {
-                Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Ignoring orientation change")
-                return
-            }
-            
             // Update DND status before making any changes
             dndService.updateDndStatus()
             val currentDndState = dndService.isDndEnabled.value
@@ -141,6 +135,12 @@ class FlipDetectorService : Service() {
             when (orientation) {
                 "Face down" -> {
                     if (!currentDndState) {
+                        // Only check screen off and stability when turning ON DND
+                        if (onlyWhenScreenOff && !screenOff) {
+                            Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Ignoring face down")
+                            return
+                        }
+                        
                         Log.d(TAG, "Phone is face down and DND is OFF - Starting 2-second delay")
                         orientationJob = serviceScope.launch {
                             delay(2000) // 2-second delay
@@ -162,7 +162,8 @@ class FlipDetectorService : Service() {
                 }
                 else -> {
                     if (currentDndState) {
-                        Log.d(TAG, "Phone is not face down ($orientation) and DND is ON - Disabling DND immediately")
+                        // When turning OFF DND, do it immediately without checking screen state or stability
+                        Log.d(TAG, "Phone is not face down ($orientation) - Disabling DND immediately")
                         dndService.toggleDnd()
                     } else {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND is already OFF - No action needed")

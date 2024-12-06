@@ -119,25 +119,21 @@ class SensorService(context: Context) {
         val z = lastAccelReading[2]
 
         // Check if the phone is relatively stable (not in motion)
-        val isStable = abs(lastGyroReading[0]) < 0.3f && 
-                       abs(lastGyroReading[1]) < 0.3f && 
-                       abs(lastGyroReading[2]) < 0.3f
+        val isStable = abs(lastGyroReading[0]) < 0.02f && 
+                       abs(lastGyroReading[1]) < 0.02f && 
+                       abs(lastGyroReading[2]) < 0.02f
 
-        if (isStable) {
-            val orientation = when {
-                abs(z) > 8.0f && z < 0 -> "Face down"
-                abs(z) > 8.0f && z > 0 -> "Face up"
-                abs(x) > 8.0f && x < 0 -> "Left side"
-                abs(x) > 8.0f && x > 0 -> "Right side"
-                abs(y) > 8.0f && y < 0 -> "Portrait"
-                abs(y) > 8.0f && y > 0 -> "Portrait reverse"
-                else -> _orientation.value
+        // For face down, check stability. For other orientations, update immediately
+        val orientation = when {
+            abs(z) > 8.0f && z < 0 -> {
+                // Only check stability for face down
+                if (isStable) "Face down" else _orientation.value
             }
+            else -> "Face up"
+        }
             
-            if (orientation != _orientation.value) {
-                Log.d(TAG, "Orientation changed from ${_orientation.value} to $orientation")
-                _orientation.value = orientation
-            }
+        if (orientation != _orientation.value) {
+            _orientation.value = orientation
         }
 
         isProcessing = false

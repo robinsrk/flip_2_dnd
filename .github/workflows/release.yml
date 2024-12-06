@@ -54,6 +54,26 @@ jobs:
       - name: Build release APK
         run: ./gradlew assembleRelease
 
+      - name: Align APK
+        run: |
+          if [ ! -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            echo "Error: Unsigned APK not found"
+            exit 1
+          fi
+          
+          echo "Android SDK location: $ANDROID_HOME"
+          echo "Available build tools:"
+          ls -la ${ANDROID_HOME}/build-tools/
+          
+          ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 \
+            "app/build/outputs/apk/release/app-release-unsigned.apk" \
+            "app/build/outputs/apk/release/app-release-aligned.apk"
+            
+          if [ ! -f "app/build/outputs/apk/release/app-release-aligned.apk" ]; then
+            echo "Error: Failed to create aligned APK"
+            exit 1
+          fi
+
       - name: Sign and verify APK
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -67,38 +87,19 @@ jobs:
           fi
           
           echo "Signing APK..."
-          jarsigner \
-            -verbose \
-            -sigalg SHA256withRSA \
-            -digestalg SHA-256 \
-            -keystore release.keystore \
-            -storepass "${KEYSTORE_PASSWORD}" \
-            -keypass "${KEY_PASSWORD}" \
-            "app/build/outputs/apk/release/app-release-unsigned.apk" \
-            "${KEY_ALIAS}"
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
+            --ks release.keystore \
+            --ks-pass pass:"${KEYSTORE_PASSWORD}" \
+            --ks-key-alias "${KEY_ALIAS}" \
+            --key-pass pass:"${KEY_PASSWORD}" \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            --v4-signing-enabled false \
+            --out "app/build/outputs/apk/release/app-release.apk" \
+            "app/build/outputs/apk/release/app-release-aligned.apk"
           
           echo "Verifying signed APK..."
-          jarsigner -verify -verbose -certs "app/build/outputs/apk/release/app-release-unsigned.apk"
-
-      - name: Align APK
-        run: |
-          if [ ! -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-            echo "Error: Unsigned APK not found"
-            exit 1
-          fi
-          
-          echo "Android SDK location: $ANDROID_HOME"
-          echo "Available build tools:"
-          ls -la ${ANDROID_HOME}/build-tools/
-          
-          ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v 4 \
-            "app/build/outputs/apk/release/app-release-unsigned.apk" \
-            "app/build/outputs/apk/release/app-release.apk"
-            
-          if [ ! -f "app/build/outputs/apk/release/app-release.apk" ]; then
-            echo "Error: Failed to create aligned APK"
-            exit 1
-          fi
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "app/build/outputs/apk/release/app-release.apk"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

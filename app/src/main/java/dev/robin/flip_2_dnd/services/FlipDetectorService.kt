@@ -11,7 +11,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import dev.robin.flip_2_dnd.MainActivity
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.settings.SettingsManager
+import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -24,7 +25,7 @@ class FlipDetectorService : Service() {
         private set
     private lateinit var dndService: DndService
     private lateinit var powerManager: PowerManager
-    private lateinit var settingsManager: SettingsManager
+    private lateinit var settingsRepository: SettingsRepository
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
     private val _isScreenOff = MutableStateFlow(false)
@@ -62,7 +63,7 @@ class FlipDetectorService : Service() {
         try {
             sensorService = SensorService(this)
             dndService = DndService(this)
-            settingsManager = SettingsManager(this)
+            settingsRepository = SettingsRepositoryImpl(this)
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             
             // Initialize screen state
@@ -95,7 +96,7 @@ class FlipDetectorService : Service() {
             
             // Observe settings changes
             serviceScope.launch {
-                settingsManager.onlyWhenScreenOff.collect { enabled ->
+                settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
                     onlyWhenScreenOff = enabled
                     Log.d(TAG, "Settings updated - Only when screen off: $enabled")
                 }
@@ -139,6 +140,12 @@ class FlipDetectorService : Service() {
             when (orientation) {
                 "Face down" -> {
                     if (!currentDndState) {
+                        // Only proceed if screen is off when the setting is enabled
+                        if (onlyWhenScreenOff && !screenOff) {
+                            Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Ignoring face down")
+                            return
+                        }
+                        
                         Log.d(TAG, "Phone is face down and DND is OFF - Starting 2-second delay")
                         orientationJob = serviceScope.launch {
                             delay(2000) // 2-second delay
@@ -161,11 +168,11 @@ class FlipDetectorService : Service() {
                 else -> {
                     if (currentDndState) {
                         // Only disable DND if screen is off (when "only when screen off" is enabled)
-                        if (!onlyWhenScreenOff || screenOff) {
+                        if (onlyWhenScreenOff && !screenOff) {
+                            Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Keeping DND on")
+                        } else {
                             Log.d(TAG, "Phone is not face down ($orientation) and DND is ON - Disabling DND immediately")
                             dndService.toggleDnd()
-                        } else {
-                            Log.d(TAG, "Screen is ON and 'Only when screen off' is enabled - Keeping DND on")
                         }
                     } else {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND is already OFF - No action needed")
@@ -179,13 +186,16 @@ class FlipDetectorService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: Cleaning up FlipDetectorService")
         try {
-            unregisterReceiver(screenStateReceiver)
+            // Cancel all coroutines
             serviceScope.cancel()
+            // Unregister the receiver
+            unregisterReceiver(screenStateReceiver)
+            // Stop sensor monitoring
             sensorService.stopMonitoring()
+            Log.d(TAG, "Service destroyed successfully")
         } catch (e: Exception) {
-            Log.e(TAG, "Error in onDestroy: ${e.localizedMessage}", e)
+            Log.e(TAG, "Error in onDestroy: ${e.message}", e)
         }
     }
 

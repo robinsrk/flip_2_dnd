@@ -5,11 +5,8 @@ import dev.robin.flip_2_dnd.data.repository.FeedbackRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.OrientationRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.ScreenStateRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
-import dev.robin.flip_2_dnd.domain.repository.DndRepository
-import dev.robin.flip_2_dnd.domain.repository.FeedbackRepository
-import dev.robin.flip_2_dnd.domain.repository.OrientationRepository
-import dev.robin.flip_2_dnd.domain.repository.ScreenStateRepository
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.data.repository.UpdateRepositoryImpl
+import dev.robin.flip_2_dnd.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -19,7 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
     @Binds
     @Singleton
     abstract fun bindDndRepository(
@@ -28,9 +24,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindOrientationRepository(
-        orientationRepositoryImpl: OrientationRepositoryImpl
-    ): OrientationRepository
+    abstract fun bindScreenStateRepository(
+        screenStateRepositoryImpl: ScreenStateRepositoryImpl
+    ): ScreenStateRepository
 
     @Binds
     @Singleton
@@ -40,13 +36,19 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindOrientationRepository(
+        orientationRepositoryImpl: OrientationRepositoryImpl
+    ): OrientationRepository
+
+    @Binds
+    @Singleton
     abstract fun bindFeedbackRepository(
         feedbackRepositoryImpl: FeedbackRepositoryImpl
     ): FeedbackRepository
 
     @Binds
     @Singleton
-    abstract fun bindScreenStateRepository(
-        screenStateRepositoryImpl: ScreenStateRepositoryImpl
-    ): ScreenStateRepository
+    abstract fun bindUpdateRepository(
+        updateRepositoryImpl: UpdateRepositoryImpl
+    ): UpdateRepository
 }

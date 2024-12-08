@@ -1,0 +1,4 @@
+Version 1.0.5 Improvements:
+- Added independent Sound and Vibration toggle settings
+- Improved service restart mechanism for settings changes
+- Added custom sound feedback for DND on/off states

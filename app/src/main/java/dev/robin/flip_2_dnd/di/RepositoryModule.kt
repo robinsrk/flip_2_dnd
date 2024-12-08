@@ -5,7 +5,6 @@ import dev.robin.flip_2_dnd.data.repository.FeedbackRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.OrientationRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.ScreenStateRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
-import dev.robin.flip_2_dnd.data.repository.UpdateRepositoryImpl
 import dev.robin.flip_2_dnd.domain.repository.*
 import dagger.Binds
 import dagger.Module
@@ -45,10 +44,4 @@ abstract class RepositoryModule {
     abstract fun bindFeedbackRepository(
         feedbackRepositoryImpl: FeedbackRepositoryImpl
     ): FeedbackRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindUpdateRepository(
-        updateRepositoryImpl: UpdateRepositoryImpl
-    ): UpdateRepository
 }

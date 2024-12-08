@@ -1,0 +1,3 @@
+- Optimized app size by removing unnecessary dependencies
+- Replaced material icons with vector drawables
+- Improved code organization and efficiency

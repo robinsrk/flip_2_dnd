@@ -2,8 +2,6 @@ package dev.robin.flip_2_dnd.presentation.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +24,7 @@ fun MainScreen(
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(
-                            imageVector = Icons.Default.Settings,
+                            painter = painterResource(id = R.drawable.ic_settings),
                             contentDescription = "Settings"
                         )
                     }
@@ -51,32 +49,13 @@ fun MainScreen(
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = if (state.isScreenOffOnly) {
-                    "Screen will turn off when phone is flipped"
-                } else {
-                    "DND will be enabled when phone is flipped"
-                },
-                style = MaterialTheme.typography.titleMedium
+                text = if (state.isDndEnabled) "DND is ON" else "DND is OFF",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
             )
-
-            if (state.isVibrationEnabled) {
-                Text(
-                    text = "Vibration enabled",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            if (state.isSoundEnabled) {
-                Text(
-                    text = "Sound enabled",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
         }
     }
 }

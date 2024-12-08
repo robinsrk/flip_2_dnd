@@ -1,0 +1,4 @@
+- Fixed first-run service initialization issue
+- Improved permission handling for service start
+- Enhanced user feedback for missing permissions
+- Fixed alignment issues in the settings page

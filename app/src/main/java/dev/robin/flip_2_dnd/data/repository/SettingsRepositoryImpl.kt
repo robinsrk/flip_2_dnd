@@ -18,6 +18,7 @@ private const val PREFS_NAME = "flip_2_dnd_settings"
 private const val KEY_SCREEN_OFF_ONLY = "screen_off_only"
 private const val KEY_VIBRATION = "vibration"
 private const val KEY_SOUND = "sound"
+private const val KEY_PRIORITY_DND = "priority_dnd"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -27,15 +28,10 @@ class SettingsRepositoryImpl @Inject constructor(
     private val screenOffOnlyEnabled = MutableStateFlow(prefs.getBoolean(KEY_SCREEN_OFF_ONLY, false))
     private val vibrationEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION, true))
     private val soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND, true))
+    private val priorityDndEnabled = MutableStateFlow(prefs.getBoolean(KEY_PRIORITY_DND, false))
 
-    override fun getScreenOffOnlyEnabled(): Flow<Boolean> = screenOffOnlyEnabled
-
-    override suspend fun setScreenOffOnlyEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_SCREEN_OFF_ONLY, enabled).apply()
-        screenOffOnlyEnabled.value = enabled
-        
+    private fun restartFlipDetectorService() {
         try {
-            // Restart the FlipDetectorService
             val serviceIntent = Intent(appContext, FlipDetectorService::class.java)
             appContext.stopService(serviceIntent)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -49,11 +45,20 @@ class SettingsRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getScreenOffOnlyEnabled(): Flow<Boolean> = screenOffOnlyEnabled
+
+    override suspend fun setScreenOffOnlyEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_SCREEN_OFF_ONLY, enabled).apply()
+        screenOffOnlyEnabled.value = enabled
+        restartFlipDetectorService()
+    }
+
     override fun getVibrationEnabled(): Flow<Boolean> = vibrationEnabled
 
     override suspend fun setVibrationEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_VIBRATION, enabled).apply()
         vibrationEnabled.value = enabled
+        restartFlipDetectorService()
     }
 
     override fun getSoundEnabled(): Flow<Boolean> = soundEnabled
@@ -61,5 +66,14 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setSoundEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_SOUND, enabled).apply()
         soundEnabled.value = enabled
+        restartFlipDetectorService()
+    }
+
+    override fun getPriorityDndEnabled(): Flow<Boolean> = priorityDndEnabled
+
+    override suspend fun setPriorityDndEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_PRIORITY_DND, enabled).apply()
+        priorityDndEnabled.value = enabled
+        restartFlipDetectorService()
     }
 }

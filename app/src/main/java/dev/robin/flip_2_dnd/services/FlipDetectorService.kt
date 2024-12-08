@@ -131,6 +131,8 @@ class FlipDetectorService : Service() {
             // Update DND status before making any changes
             dndService.updateDndStatus()
             val currentDndState = dndService.isDndEnabled.value
+            val isAppEnabled = dndService.isAppEnabledDnd.value
+            Log.d(TAG, "Current DND state: enabled=$currentDndState, appEnabled=$isAppEnabled")
             
             when (orientation) {
                 "Face down" -> {
@@ -161,10 +163,12 @@ class FlipDetectorService : Service() {
                     }
                 }
                 else -> {
-                    if (currentDndState) {
-                        // When turning OFF DND, do it immediately without checking screen state or stability
-                        Log.d(TAG, "Phone is not face down ($orientation) - Disabling DND immediately")
+                    Log.d(TAG, "Phone is not face down: currentDndState=$currentDndState, isAppEnabled=$isAppEnabled")
+                    if (currentDndState && isAppEnabled) {
+                        Log.d(TAG, "Phone is not face down ($orientation) and DND was enabled by app - Disabling DND")
                         dndService.toggleDnd()
+                    } else if (currentDndState) {
+                        Log.d(TAG, "Phone is not face down ($orientation) but DND was enabled by user - No action needed")
                     } else {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND is already OFF - No action needed")
                     }
@@ -222,7 +226,7 @@ class FlipDetectorService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Flip 2 DND")
             .setContentText("Monitoring phone orientation")
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .build()
     }

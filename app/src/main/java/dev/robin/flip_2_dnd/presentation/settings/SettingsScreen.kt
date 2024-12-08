@@ -1,14 +1,11 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -17,21 +14,26 @@ import dev.robin.flip_2_dnd.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    navController: NavController,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
+    navController: NavController? = null
 ) {
-    val state = viewModel.state
+    val soundEnabled by viewModel.soundEnabled.collectAsState()
+    val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
+    val screenOffOnly by viewModel.screenOffOnly.collectAsState()
+    val priorityDndEnabled by viewModel.priorityDndEnabled.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_back),
-                            contentDescription = "Back"
-                        )
+                    if (navController != null) {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_arrow_back),
+                                contentDescription = "Back"
+                            )
+                        }
                     }
                 }
             )
@@ -41,105 +43,85 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(16.dp)
         ) {
-            // Behavior Settings Section
+            Text(
+                text = "Behavior",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
             Column {
-                Text(
-                    text = "Behavior",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                SettingsSwitchItem(
+                    title = "Screen Off Only",
+                    description = "Enable DND only when screen is off",
+                    checked = screenOffOnly,
+                    onCheckedChange = { viewModel.setScreenOffOnly(it) }
                 )
                 
-                // Screen Off Only Setting
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Screen Off Only",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Only turn off screen when flipped",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = state.isScreenOffOnly,
-                        onCheckedChange = { viewModel.onScreenOffOnlyChange(it) }
-                    )
-                }
+                SettingsSwitchItem(
+                    title = "Priority DND",
+                    description = "Enable Priority mode DND instead of Total Silence",
+                    checked = priorityDndEnabled,
+                    onCheckedChange = { viewModel.setPriorityDndEnabled(it) }
+                )
             }
 
-            Divider()
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
 
-            // Feedback Settings Section
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
             Column {
-                Text(
-                    text = "Feedback",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                SettingsSwitchItem(
+                    title = "Sound",
+                    description = "Play sound when DND changes",
+                    checked = soundEnabled,
+                    onCheckedChange = { viewModel.setSoundEnabled(it) }
                 )
-                
-                // Vibration Setting
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Vibration",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Vibrate when DND is toggled",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = state.isVibrationEnabled,
-                        onCheckedChange = { viewModel.onVibrationChange(it) }
-                    )
-                }
 
-                // Sound Setting
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Sound",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Play sound when DND is toggled",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = state.isSoundEnabled,
-                        onCheckedChange = { viewModel.onSoundChange(it) }
-                    )
-                }
+                SettingsSwitchItem(
+                    title = "Vibration",
+                    description = "Vibrate when DND changes",
+                    checked = vibrationEnabled,
+                    onCheckedChange = { viewModel.setVibrationEnabled(it) }
+                )
             }
         }
+    }
+}
+
+@Composable
+fun SettingsSwitchItem(
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }

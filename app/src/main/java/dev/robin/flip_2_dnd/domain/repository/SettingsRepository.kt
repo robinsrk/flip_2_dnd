@@ -9,4 +9,6 @@ interface SettingsRepository {
     suspend fun setVibrationEnabled(enabled: Boolean)
     fun getSoundEnabled(): Flow<Boolean>
     suspend fun setSoundEnabled(enabled: Boolean)
+    fun getPriorityDndEnabled(): Flow<Boolean>
+    suspend fun setPriorityDndEnabled(enabled: Boolean)
 }

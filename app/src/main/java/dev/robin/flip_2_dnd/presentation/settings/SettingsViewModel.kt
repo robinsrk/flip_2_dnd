@@ -1,12 +1,11 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
 import android.app.Application
-import androidx.compose.runtime.*
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
-import dev.robin.flip_2_dnd.presentation.main.MainState
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,38 +15,62 @@ class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : AndroidViewModel(application) {
 
-    var state by mutableStateOf(MainState())
-        private set
+    private val _screenOffOnly = MutableStateFlow(false)
+    val screenOffOnly = _screenOffOnly.asStateFlow()
+
+    private val _soundEnabled = MutableStateFlow(true)
+    val soundEnabled = _soundEnabled.asStateFlow()
+
+    private val _vibrationEnabled = MutableStateFlow(true)
+    val vibrationEnabled = _vibrationEnabled.asStateFlow()
+
+    private val _priorityDndEnabled = MutableStateFlow(false)
+    val priorityDndEnabled = _priorityDndEnabled.asStateFlow()
 
     init {
         viewModelScope.launch {
             settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
-                state = state.copy(isScreenOffOnly = enabled)
+                _screenOffOnly.value = enabled
             }
-            settingsRepository.getVibrationEnabled().collect { enabled ->
-                state = state.copy(isVibrationEnabled = enabled)
-            }
+        }
+        viewModelScope.launch {
             settingsRepository.getSoundEnabled().collect { enabled ->
-                state = state.copy(isSoundEnabled = enabled)
+                _soundEnabled.value = enabled
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getVibrationEnabled().collect { enabled ->
+                _vibrationEnabled.value = enabled
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getPriorityDndEnabled().collect { enabled ->
+                _priorityDndEnabled.value = enabled
             }
         }
     }
 
-    fun onScreenOffOnlyChange(enabled: Boolean) {
+    fun setScreenOffOnly(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setScreenOffOnlyEnabled(enabled)
         }
     }
 
-    fun onVibrationChange(enabled: Boolean) {
+    fun setPriorityDndEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setVibrationEnabled(enabled)
+            settingsRepository.setPriorityDndEnabled(enabled)
         }
     }
 
-    fun onSoundChange(enabled: Boolean) {
+    fun setSoundEnabled(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setSoundEnabled(enabled)
+        }
+    }
+
+    fun setVibrationEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setVibrationEnabled(enabled)
         }
     }
 }

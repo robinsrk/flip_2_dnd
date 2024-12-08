@@ -101,27 +101,25 @@ fun SettingsSwitchItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
+    ListItem(
+        headlineContent = { 
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium
-            )
+            ) 
+        },
+        supportingContent = { 
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
+            ) 
+        },
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange
             )
         }
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
-    }
+    )
 }

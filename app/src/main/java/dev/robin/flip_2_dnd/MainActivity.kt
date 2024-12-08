@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -66,17 +67,29 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkAndStartService() {
-        if (!isNotificationPolicyAccessGranted()) {
-            requestNotificationPolicyAccess()
-            return
-        }
+        val notificationPolicyGranted = isNotificationPolicyAccessGranted()
+        val batteryOptimizationDisabled = isBatteryOptimizationDisabled()
 
-        if (!isBatteryOptimizationDisabled()) {
-            requestDisableBatteryOptimization()
-            return
-        }
-
+        // Always start the service
         startFlipDetectorService()
+
+        // If permissions are not granted, show a warning
+        if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
+            // Optional: Add a toast or dialog to inform user about missing permissions
+            Toast.makeText(
+                this, 
+                "Please grant all permissions for full functionality", 
+                Toast.LENGTH_LONG
+            ).show()
+
+            if (!notificationPolicyGranted) {
+                requestNotificationPolicyAccess()
+            }
+
+            if (!batteryOptimizationDisabled) {
+                requestDisableBatteryOptimization()
+            }
+        }
     }
 
     private fun isNotificationPolicyAccessGranted(): Boolean {

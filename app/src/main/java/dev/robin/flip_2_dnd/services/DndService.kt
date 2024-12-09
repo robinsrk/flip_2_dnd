@@ -10,6 +10,7 @@ import android.util.Log
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -42,16 +43,27 @@ class DndService(private val context: Context) {
     private fun vibrate(pattern: LongArray) {
         runBlocking {
             val isVibrationEnabled = settingsRepository.getVibrationEnabled().first()
-            Log.d(TAG, "Vibration check: enabled=$isVibrationEnabled")
-            if (isVibrationEnabled) {
+            Log.d(TAG, "Vibration check: enabled=$isVibrationEnabled, pattern=${pattern.contentToString()}")
+            
+            // Log the entire vibration process for debugging
+            if (!isVibrationEnabled) {
+                Log.w(TAG, "Vibration is disabled. Skipping vibration.")
+                return@runBlocking
+            }
+
+            try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     val timings = pattern
                     val amplitudes = IntArray(pattern.size) { VibrationEffect.DEFAULT_AMPLITUDE }
+                    Log.d(TAG, "Creating waveform vibration for Android O+")
                     vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
                 } else {
+                    Log.d(TAG, "Using deprecated vibration method for older Android versions")
                     @Suppress("DEPRECATION")
                     vibrator.vibrate(pattern, -1)
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error during vibration: ${e.message}", e)
             }
         }
     }
@@ -102,6 +114,7 @@ class DndService(private val context: Context) {
             // Any other value means DND is ON with different levels
             val isDndCurrentlyOn = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
             
+            // Determine the new filter first
             val newFilter = if (!isDndCurrentlyOn) {
                 // If DND is currently OFF, turn it ON with appropriate mode
                 runBlocking {
@@ -118,6 +131,26 @@ class DndService(private val context: Context) {
                 NotificationManager.INTERRUPTION_FILTER_ALL
             }
             
+            // Play feedback BEFORE setting the filter
+            val willBeDndEnabled = newFilter != NotificationManager.INTERRUPTION_FILTER_ALL
+            playSound(willBeDndEnabled)
+            if (willBeDndEnabled) {
+                // Two vibrations for DND ON
+                vibrate(longArrayOf(0, 200, 200, 200))
+            } else {
+                // One vibration for DND OFF
+                vibrate(longArrayOf(0, 200))
+            }
+            
+            // Add 2-second delay only when turning on Total Silence DND
+            if (willBeDndEnabled && newFilter == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                runBlocking {
+                    Log.d(TAG, "Waiting 2 seconds before setting Total Silence DND")
+                    delay(2000)
+                }
+            }
+            
+            // Now set the interruption filter
             Log.d(TAG, "Setting DND filter from $currentFilter to $newFilter")
             notificationManager.setInterruptionFilter(newFilter)
             
@@ -132,16 +165,6 @@ class DndService(private val context: Context) {
                 Log.d(TAG, "Setting app-enabled DND to false")
             }
             Log.d(TAG, "DND ${if (_isDndEnabled.value) "enabled" else "disabled"} by ${if (_isAppEnabledDnd.value) "app" else "user"}")
-            
-            // Play feedback
-            playSound(_isDndEnabled.value)
-            if (_isDndEnabled.value) {
-                // Two vibrations for DND ON
-                vibrate(longArrayOf(0, 200, 200, 200))
-            } else {
-                // One vibration for DND OFF
-                vibrate(longArrayOf(0, 200))
-            }
             
         } catch (e: SecurityException) {
             Log.e(TAG, "SecurityException toggling DND: ${e.message}", e)

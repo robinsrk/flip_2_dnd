@@ -73,10 +73,19 @@ class MainViewModel @Inject constructor(
 
     private fun observeDndState() {
         viewModelScope.launch {
-            dndRepository.isDndEnabled().collect { enabled ->
-                Log.d("MainViewModel", "DND state changed: $enabled")
-                _state.update { it.copy(isDndEnabled = enabled) }
-            }
+            // Combine DND enabled state and mode
+            combine(
+                dndRepository.isDndEnabled(),
+                dndRepository.getDndMode()
+            ) { enabled, mode ->
+                Log.d("MainViewModel", "DND state changed: $enabled, Mode: $mode")
+                _state.update { 
+                    it.copy(
+                        isDndEnabled = enabled,
+                        dndMode = mode
+                    )
+                }
+            }.collect()
         }
     }
 

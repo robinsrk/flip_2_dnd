@@ -1,0 +1,3 @@
+- Improved DND mode detection and toggle behavior
+- Enhanced Total Silence mode activation
+- Minor performance and stability improvements

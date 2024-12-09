@@ -41,8 +41,10 @@ fun MainScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.app_icon),
-                contentDescription = "Do Not Enter Icon",
+                painter = painterResource(
+                    id = if (state.isDndEnabled) R.drawable.ic_dnd_on else R.drawable.ic_dnd_off
+                ),
+                contentDescription = "Do Not Disturb Icon",
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .aspectRatio(1f),
@@ -52,7 +54,7 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = if (state.isDndEnabled) "DND is ON" else "DND is OFF",
+                text = if (state.isDndEnabled) "DND: ${state.dndMode}" else "DND is OFF",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
             )

@@ -1,22 +1,43 @@
 # Flip 2 DND
 
-A modern Android application that automatically toggles Do Not Disturb mode based on phone orientation. Simply flip your phone face down to enable DND mode and face up to disable it.
+<p align="center">
+  <img src="./metadata/en-US/images/icon.png" alt="App Icon" width="150"/>
+</p>
 
-## Features
+## Overview
 
-- 🔄 Automatic DND toggle based on phone orientation
-- ⏱️ 2-second delay before enabling DND to prevent accidental triggers
-- 📱 Clean, modern UI built with Jetpack Compose
-- 🎨 Material You design with dynamic theming
-- ⚡ Efficient sensor monitoring
-- 🔔 Configurable feedback options:
-  - Vibration feedback
-  - Sound notifications (when DND is disabled)
-- ⚙️ Settings screen for customization
+Flip 2 DND is a modern Android application that intelligently manages your Do Not Disturb (DND) mode based on your phone's orientation. Just flip your phone face down to activate DND and face up to turn it off—it's that simple!
 
-## Architecture
+## 📥 Download
 
-The app is built using Clean Architecture principles and modern Android development practices:
+<p align="center">
+  <a href="https://apt.izzysoft.de/fdroid/index/apk/dev.robin.flip_2_dnd">
+    <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="150"/>
+  </a>
+  <a href="https://github.com/robinsrk/Flip_2_DND/releases/">
+    <img src="./assets/images/getItGithub.png" alt="GitHub" width="150"/>
+  </a>
+   </br>
+   <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
+   <img src="./assets/images/getItf-droid.png" alt="Obtainium" width="150"/>
+   </a>
+   <a href="https://www.openapk.net/flip-2-dnd/dev.robin.flip_2_dnd/">
+    <img src="./assets/images/getItOpenapk.png" alt="OpenAPK" width="150"/>
+   </a>
+</p>
+
+## 🚀 Features
+
+- **Automatic DND Toggle**: Effortlessly switch DND on/off based on your phone's position.
+- **Delay Mechanism**: A 2-second delay prevents accidental toggles.
+- **Sleek UI**: Built with Jetpack Compose for a clean, modern look.
+- **Material You Design**: Dynamic theming for a personalized experience.
+- **Customizable Feedback**: Choose between vibration and sound notifications.
+- **User-Friendly Settings**: Easily customize your DND preferences.
+
+## 🏗️ Architecture
+
+Built with modern Android practices:
 
 - **UI Layer**: Jetpack Compose with Material 3
 - **Architecture Pattern**: MVVM with Clean Architecture
@@ -24,22 +45,11 @@ The app is built using Clean Architecture principles and modern Android developm
 - **Concurrency**: Kotlin Coroutines & Flow
 - **State Management**: StateFlow
 
-## Requirements
+## 📋 Requirements
 
 - Android 6.0 (API level 23) or higher
 - Accelerometer sensor
 - Permission to modify Do Not Disturb settings
-
-## Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/robinsrk/Flip_2_DND.git
-```
-
-2. Open the project in Android Studio
-
-3. Build and run the app
 
 ## Permissions
 
@@ -48,17 +58,3 @@ The app requires the following permissions:
 - `ACCESS_NOTIFICATION_POLICY`: To modify DND settings
 - `VIBRATE`: For vibration feedback
 - `SENSOR`: To detect phone orientation
-
-## Contributing
-
-Feel free to submit issues, fork the repository, and create pull requests for any improvements.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built with [Jetpack Compose](https://developer.android.com/jetpack/compose)
-- Material 3 design system
-- Android sensor framework

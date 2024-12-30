@@ -53,10 +53,9 @@ class DndService(private val context: Context) {
 
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val timings = pattern
                     val amplitudes = IntArray(pattern.size) { VibrationEffect.DEFAULT_AMPLITUDE }
                     Log.d(TAG, "Creating waveform vibration for Android O+")
-                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
+                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1))
                 } else {
                     Log.d(TAG, "Using deprecated vibration method for older Android versions")
                     @Suppress("DEPRECATION")
@@ -86,13 +85,13 @@ class DndService(private val context: Context) {
         }
     }
 
-    fun checkDndPermission(): Boolean {
+    private fun checkDndPermission(): Boolean {
         val hasPermission = notificationManager.isNotificationPolicyAccessGranted
         Log.d(TAG, "DND Permission check: $hasPermission")
         return hasPermission
     }
 
-    fun openDndSettings() {
+    private fun openDndSettings() {
         Log.d(TAG, "Opening DND settings")
         val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

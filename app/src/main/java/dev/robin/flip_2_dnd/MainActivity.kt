@@ -12,8 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,98 +26,98 @@ import dev.robin.flip_2_dnd.ui.theme.Flip_2_DNDTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val mainViewModel: MainViewModel by viewModels()
-    
-    private val dndPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        checkAndStartService()
-    }
+	private val mainViewModel: MainViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        checkAndStartService()
+	private val dndPermissionLauncher = registerForActivityResult(
+		ActivityResultContracts.StartActivityForResult()
+	) {
+		checkAndStartService()
+	}
 
-        setContent {
-            Flip_2_DNDTheme {
-                val navController = rememberNavController()
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		enableEdgeToEdge()
+		checkAndStartService()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = "main"
-                ) {
-                    composable("main") {
-                        val state by mainViewModel.state.collectAsState()
-                        MainScreen(
-                            state = state,
-                            onSettingsClick = {
-                                navController.navigate("settings")
-                            }
-                        )
-                    }
-                    composable("settings") {
-                        SettingsScreen(
-                            navController = navController
-                        )
-                    }
-                }
-            }
-        }
-    }
+		setContent {
+			Flip_2_DNDTheme {
+				val navController = rememberNavController()
 
-    private fun checkAndStartService() {
-        val notificationPolicyGranted = isNotificationPolicyAccessGranted()
-        val batteryOptimizationDisabled = isBatteryOptimizationDisabled()
+				NavHost(
+					navController = navController,
+					startDestination = "main"
+				) {
+					composable("main") {
+						val state by mainViewModel.state.collectAsState()
+						MainScreen(
+							state = state,
+							onSettingsClick = {
+								navController.navigate("settings")
+							}
+						)
+					}
+					composable("settings") {
+						SettingsScreen(
+							navController = navController
+						)
+					}
+				}
+			}
+		}
+	}
 
-        // Always start the service
-        startFlipDetectorService()
+	private fun checkAndStartService() {
+		val notificationPolicyGranted = isNotificationPolicyAccessGranted()
+		val batteryOptimizationDisabled = isBatteryOptimizationDisabled()
 
-        // If permissions are not granted, show a warning
-        if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
-            // Optional: Add a toast or dialog to inform user about missing permissions
-            Toast.makeText(
-                this, 
-                "Please grant all permissions for full functionality", 
-                Toast.LENGTH_LONG
-            ).show()
+		// Always start the service
+		startFlipDetectorService()
 
-            if (!notificationPolicyGranted) {
-                requestNotificationPolicyAccess()
-            }
+		// If permissions are not granted, show a warning
+		if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
+			// Optional: Add a toast or dialog to inform user about missing permissions
+			Toast.makeText(
+				this,
+				"Please grant all permissions for full functionality",
+				Toast.LENGTH_LONG
+			).show()
 
-            if (!batteryOptimizationDisabled) {
-                requestDisableBatteryOptimization()
-            }
-        }
-    }
+			if (!notificationPolicyGranted) {
+				requestNotificationPolicyAccess()
+			}
 
-    private fun isNotificationPolicyAccessGranted(): Boolean {
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        return notificationManager.isNotificationPolicyAccessGranted
-    }
+			if (!batteryOptimizationDisabled) {
+				requestDisableBatteryOptimization()
+			}
+		}
+	}
 
-    private fun requestNotificationPolicyAccess() {
-        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-        dndPermissionLauncher.launch(intent)
-    }
+	private fun isNotificationPolicyAccessGranted(): Boolean {
+		val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+		return notificationManager.isNotificationPolicyAccessGranted
+	}
 
-    private fun isBatteryOptimizationDisabled(): Boolean {
-        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
-        return powerManager.isIgnoringBatteryOptimizations(packageName)
-    }
+	private fun requestNotificationPolicyAccess() {
+		val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+		dndPermissionLauncher.launch(intent)
+	}
 
-    private fun requestDisableBatteryOptimization() {
-        val intent = Intent().apply {
-            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            data = Uri.parse("package:$packageName")
-        }
-        startActivity(intent)
-    }
+	private fun isBatteryOptimizationDisabled(): Boolean {
+		val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+		return powerManager.isIgnoringBatteryOptimizations(packageName)
+	}
 
-    private fun startFlipDetectorService() {
-        Intent(this, FlipDetectorService::class.java).also { intent ->
-            startForegroundService(intent)
-        }
-    }
+	private fun requestDisableBatteryOptimization() {
+		val intent = Intent().apply {
+			action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+			data = Uri.parse("package:$packageName")
+		}
+		startActivity(intent)
+	}
+
+	private fun startFlipDetectorService() {
+		Intent(this, FlipDetectorService::class.java).also { intent ->
+			startForegroundService(intent)
+		}
+	}
 }

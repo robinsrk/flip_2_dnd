@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
 import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
@@ -58,6 +59,14 @@ class MainActivity : ComponentActivity() {
 					}
 					composable("settings") {
 						SettingsScreen(
+							navController = navController,
+							onDonateClick = {
+								navController.navigate("donation")
+							}
+						)
+					}
+					composable("donation") {
+						DonationScreen(
 							navController = navController
 						)
 					}

@@ -1,5 +1,9 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +43,7 @@ fun SettingsScreen(
 	navController: NavController? = null,
 	onDonateClick: () -> Unit
 ) {
+	val context = LocalContext.current
 	val soundEnabled by viewModel.soundEnabled.collectAsState()
 	val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
 	val screenOffOnly by viewModel.screenOffOnly.collectAsState()
@@ -112,6 +118,30 @@ fun SettingsScreen(
 				)
 			}
 			Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+				Button(onClick = {
+					val telegramUsername = "flip_2_dnd"
+					val telegramUri = "tg://resolve?domain=$telegramUsername"
+					val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
+					try {
+						context.startActivity(intent)
+					} catch (e: ActivityNotFoundException) {
+						// Handle the case where no activity can handle the intent
+						// For example, show a toast or log the error
+						Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
+						println("No activity found to handle the intent: $e")
+					}
+				}) {
+					Row(verticalAlignment = Alignment.CenterVertically) {
+						Image(
+							painter = painterResource(id = R.drawable.telegram),
+							contentDescription = "Logo",
+							modifier = Modifier.width(30.dp)
+						)
+						Spacer(Modifier.width(10.dp))
+						Text("Join telegram")
+					}
+				}
+				Spacer(Modifier.width(10.dp))
 				Button(onClick = onDonateClick) {
 					Row(verticalAlignment = Alignment.CenterVertically) {
 						Image(
@@ -119,7 +149,7 @@ fun SettingsScreen(
 							contentDescription = "Logo",
 							modifier = Modifier.width(30.dp)
 						)
-						Spacer(Modifier.width(20.dp))
+						Spacer(Modifier.width(10.dp))
 						Text("Donate")
 					}
 				}

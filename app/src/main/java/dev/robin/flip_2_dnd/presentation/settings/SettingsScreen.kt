@@ -150,7 +150,7 @@ fun SettingsScreen(
 							modifier = Modifier.width(30.dp)
 						)
 						Spacer(Modifier.width(10.dp))
-						Text("Donate")
+						Text("Support")
 					}
 				}
 			}

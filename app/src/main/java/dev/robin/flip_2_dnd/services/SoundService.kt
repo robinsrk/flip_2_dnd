@@ -5,27 +5,27 @@ import android.media.MediaPlayer
 import dev.robin.flip_2_dnd.R
 
 class SoundService(private val context: Context) {
-    private var mediaPlayer: MediaPlayer? = null
+	private var mediaPlayer: MediaPlayer? = null
 
-    fun playDndSound() {
-        try {
-            // Release any existing MediaPlayer
-            mediaPlayer?.release()
-            
-            // Create and play the new sound
-            mediaPlayer = MediaPlayer.create(context, R.raw.hiss)
-            mediaPlayer?.setOnCompletionListener { mp ->
-                mp.release()
-                mediaPlayer = null
-            }
-            mediaPlayer?.start()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+	fun playDndSound() {
+		try {
+			// Release any existing MediaPlayer
+			mediaPlayer?.release()
 
-    fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
+			// Create and play the new sound
+			mediaPlayer = MediaPlayer.create(context, R.raw.slush)
+			mediaPlayer?.setOnCompletionListener { mp ->
+				mp.release()
+				mediaPlayer = null
+			}
+			mediaPlayer?.start()
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+	}
+
+	fun release() {
+		mediaPlayer?.release()
+		mediaPlayer = null
+	}
 }

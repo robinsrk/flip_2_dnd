@@ -1,12 +1,8 @@
 package dev.robin.flip_2_dnd.presentation.donation
 
 import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import copyAddressToClipboard
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +33,7 @@ fun DonationScreen(
 	val context = LocalContext.current
 	val usdtAddress = "0xA11C1eD5213705517E050DB075D1D238e21f5D15"
 	val btcAddress = "1DxZPSf4xraev8S3mJFtA4mH7QEeZHzDdQ"
+
 	Scaffold(
 		topBar = {
 			TopAppBar(
@@ -88,13 +86,7 @@ fun DonationScreen(
 			)
 			ListItem(
 				modifier = Modifier.clickable {
-					val clipboardManager =
-						context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-					val clip = ClipData.newPlainText("Crypto Address", usdtAddress)
-					clipboardManager.setPrimaryClip(clip)
-
-					// Show a toast message
-					Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+					copyAddressToClipboard(context, usdtAddress)
 				},
 				supportingContent = {
 					Text("BNB Smart Chain(BEP20)")
@@ -108,13 +100,7 @@ fun DonationScreen(
 			)
 			ListItem(
 				modifier = Modifier.clickable {
-					val clipboardManager =
-						context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-					val clip = ClipData.newPlainText("Crypto Address", usdtAddress)
-					clipboardManager.setPrimaryClip(clip)
-
-					// Show a toast message
-					Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+					copyAddressToClipboard(context, usdtAddress)
 				},
 				supportingContent = {
 					Text("BNB Smart Chain(BEP20)")
@@ -128,13 +114,7 @@ fun DonationScreen(
 			)
 			ListItem(
 				modifier = Modifier.clickable {
-					val clipboardManager =
-						context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-					val clip = ClipData.newPlainText("Crypto Address", usdtAddress)
-					clipboardManager.setPrimaryClip(clip)
-
-					// Show a toast message
-					Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+					copyAddressToClipboard(context, btcAddress)
 				},
 				supportingContent = {
 					Text("Bitcoin")

@@ -15,17 +15,17 @@ import dev.robin.flip_2_dnd.R
 @Composable
 fun MainScreen(
     state: MainState,
-    onSettingsClick: () -> Unit
+    onDonateClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Flip 2 DND") },
                 actions = {
-                    IconButton(onClick = onSettingsClick) {
+                    IconButton(onClick = onDonateClick) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_settings),
-                            contentDescription = "Settings"
+                            painter = painterResource(id = R.drawable.ic_coin),
+                            contentDescription = "Support"
                         )
                     }
                 }

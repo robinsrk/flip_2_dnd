@@ -53,16 +53,6 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
-                navigationIcon = {
-                    if (navController != null) {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_arrow_back),
-                                contentDescription = "Back",
-                            )
-                        }
-                    }
-                },
             )
         },
     ) { paddingValues ->

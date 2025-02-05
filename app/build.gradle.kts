@@ -13,8 +13,8 @@ android {
         applicationId = "dev.robin.flip_2_dnd"
         minSdk = 23
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.1.2"
+        versionCode = 20
+        versionName = "2.0.0"
         vectorDrawables {
             useSupportLibrary = true
         }

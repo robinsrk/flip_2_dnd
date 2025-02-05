@@ -1,0 +1,2 @@
+- Custom sounds for user choice
+- Custom volume can be adjusted

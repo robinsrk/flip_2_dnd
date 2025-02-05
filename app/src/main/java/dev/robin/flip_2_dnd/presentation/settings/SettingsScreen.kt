@@ -13,24 +13,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue as getValueBy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -48,11 +47,22 @@ fun SettingsScreen(
     val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
     val screenOffOnly by viewModel.screenOffOnly.collectAsState()
     val priorityDndEnabled by viewModel.priorityDndEnabled.collectAsState()
+    val dndOnSound by viewModel.dndOnSound.collectAsState()
+    val dndOffSound by viewModel.dndOffSound.collectAsState()
+    val useCustomVolume by viewModel.useCustomVolume.collectAsState()
+    val customVolume by viewModel.customVolume.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { 
+                    Text(
+                        "Settings",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) 
+                }
             )
         },
     ) { paddingValues ->
@@ -100,6 +110,96 @@ fun SettingsScreen(
                     checked = soundEnabled,
                     onCheckedChange = { viewModel.setSoundEnabled(it) },
                 )
+
+                if (soundEnabled) {
+                    var dndOnExpanded by remember { mutableStateOf(false) }
+                    var dndOffExpanded by remember { mutableStateOf(false) }
+
+                    ListItem(
+                        headlineContent = { Text("DND On Sound") },
+                        supportingContent = { Text(dndOnSound.name) },
+                        trailingContent = {
+                            IconButton(onClick = { dndOnExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, "Select sound")
+                            }
+                            DropdownMenu(
+                                expanded = dndOnExpanded,
+                                onDismissRequest = { dndOnExpanded = false }
+                            ) {
+                                viewModel.availableSounds.forEach { sound ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = sound.name) },
+                                        onClick = {
+                                            viewModel.setDndOnSound(sound)
+                                            dndOnExpanded = false
+                                        },
+                                        modifier = Modifier.clickable { 
+                                            viewModel.setDndOnSound(sound)
+                                            dndOnExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    )
+
+                    ListItem(
+                        headlineContent = { Text("DND Off Sound") },
+                        supportingContent = { Text(dndOffSound.name) },
+                        trailingContent = {
+                            IconButton(onClick = { dndOffExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, "Select sound")
+                            }
+                            DropdownMenu(
+                                expanded = dndOffExpanded,
+                                onDismissRequest = { dndOffExpanded = false }
+                            ) {
+                                viewModel.availableSounds.forEach { sound ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = sound.name) },
+                                        onClick = {
+                                            viewModel.setDndOffSound(sound)
+                                            dndOffExpanded = false
+                                        },
+                                        modifier = Modifier.clickable { 
+                                            viewModel.setDndOffSound(sound)
+                                            dndOffExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    )
+
+                    SettingsSwitchItem(
+                        title = "Custom Volume",
+                        description = "Use custom volume instead of system media volume",
+                        checked = useCustomVolume,
+                        onCheckedChange = { viewModel.setUseCustomVolume(it) },
+                    )
+
+                    if (useCustomVolume) {
+                        ListItem(
+                            headlineContent = { Text("Sound Volume") },
+                            trailingContent = {
+                                var sliderPosition by remember { mutableStateOf(customVolume) }
+                                LaunchedEffect(customVolume) {
+                                    sliderPosition = customVolume
+                                }
+                                Slider(
+                                    value = sliderPosition,
+                                    onValueChange = { newVolume ->
+                                        sliderPosition = newVolume
+                                    },
+                                    onValueChangeFinished = {
+                                        viewModel.setCustomVolume(sliderPosition)
+                                    },
+                                    modifier = Modifier.width(200.dp)
+                                )
+                            }
+                        )
+                    }
+                }
 
                 SettingsSwitchItem(
                     title = "Vibration",

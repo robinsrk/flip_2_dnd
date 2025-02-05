@@ -33,7 +33,7 @@ class DndService(private val context: Context) {
 		context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 	}
 	private val settingsRepository: SettingsRepository = SettingsRepositoryImpl(context)
-	private var mediaPlayer: MediaPlayer? = null
+	private val soundService = SoundService(context)
 
 	private val _isDndEnabled = MutableStateFlow(false)
 	val isDndEnabled: StateFlow<Boolean> = _isDndEnabled
@@ -76,21 +76,7 @@ class DndService(private val context: Context) {
 	}
 
 	private fun playSound(isEnabled: Boolean) {
-		runBlocking {
-			val isSoundEnabled = settingsRepository.getSoundEnabled().first()
-			Log.d(TAG, "Sound check: enabled=$isSoundEnabled, DND state=$isEnabled")
-			if (isSoundEnabled) {
-				try {
-					mediaPlayer?.release()
-					val resourceId = if (isEnabled) R.raw.slush else R.raw.vivo_whistle
-					mediaPlayer = MediaPlayer.create(context, resourceId)
-					mediaPlayer?.setOnCompletionListener { it.release() }
-					mediaPlayer?.start()
-				} catch (e: Exception) {
-					Log.e(TAG, "Error playing sound: ${e.message}", e)
-				}
-			}
-		}
+		soundService.playDndSound(isEnabled)
 	}
 
 	private fun checkDndPermission(): Boolean {

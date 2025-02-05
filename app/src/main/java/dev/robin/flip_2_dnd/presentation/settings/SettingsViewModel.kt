@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.robin.flip_2_dnd.presentation.settings.Sound
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,6 +28,20 @@ class SettingsViewModel @Inject constructor(
     private val _priorityDndEnabled = MutableStateFlow(false)
     val priorityDndEnabled = _priorityDndEnabled.asStateFlow()
 
+    private val _dndOnSound = MutableStateFlow(Sound.HISS)
+    val dndOnSound = _dndOnSound.asStateFlow()
+
+    private val _dndOffSound = MutableStateFlow(Sound.HISS)
+    val dndOffSound = _dndOffSound.asStateFlow()
+
+    private val _useCustomVolume = MutableStateFlow(false)
+    val useCustomVolume = _useCustomVolume.asStateFlow()
+
+    private val _customVolume = MutableStateFlow(0.5f)
+    val customVolume = _customVolume.asStateFlow()
+
+    val availableSounds = Sound.values().toList()
+
     init {
         viewModelScope.launch {
             settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
@@ -46,6 +61,26 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             settingsRepository.getPriorityDndEnabled().collect { enabled ->
                 _priorityDndEnabled.value = enabled
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getDndOnSound().collect { sound ->
+                _dndOnSound.value = sound
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getDndOffSound().collect { sound ->
+                _dndOffSound.value = sound
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getUseCustomVolume().collect { enabled ->
+                _useCustomVolume.value = enabled
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getCustomVolume().collect { volume ->
+                _customVolume.value = volume
             }
         }
     }
@@ -71,6 +106,30 @@ class SettingsViewModel @Inject constructor(
     fun setVibrationEnabled(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setVibrationEnabled(enabled)
+        }
+    }
+
+    fun setDndOnSound(sound: Sound) {
+        viewModelScope.launch {
+            settingsRepository.setDndOnSound(sound)
+        }
+    }
+
+    fun setDndOffSound(sound: Sound) {
+        viewModelScope.launch {
+            settingsRepository.setDndOffSound(sound)
+        }
+    }
+
+    fun setUseCustomVolume(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setUseCustomVolume(enabled)
+        }
+    }
+
+    fun setCustomVolume(volume: Float) {
+        viewModelScope.launch {
+            settingsRepository.setCustomVolume(volume)
         }
     }
 }

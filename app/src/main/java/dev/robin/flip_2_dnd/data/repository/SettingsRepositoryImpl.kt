@@ -34,8 +34,8 @@ class SettingsRepositoryImpl @Inject constructor(
     private val vibrationEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION, true))
     private val soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND, true))
     private val priorityDndEnabled = MutableStateFlow(prefs.getBoolean(KEY_PRIORITY_DND, false))
-    private val dndOnSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_ON_SOUND, Sound.HISS.name) ?: Sound.HISS.name))
-    private val dndOffSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_OFF_SOUND, Sound.HISS.name) ?: Sound.HISS.name))
+    private val dndOnSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_ON_SOUND, Sound.SLUSH.name) ?: Sound.SLUSH.name))
+    private val dndOffSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_OFF_SOUND, Sound.WHISTLE.name) ?: Sound.WHISTLE.name))
     private val useCustomVolume = MutableStateFlow(prefs.getBoolean(KEY_USE_CUSTOM_VOLUME, false))
     private val customVolume = MutableStateFlow(prefs.getFloat(KEY_CUSTOM_VOLUME, 0.5f))
 

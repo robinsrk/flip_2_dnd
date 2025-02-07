@@ -28,10 +28,10 @@ class SettingsViewModel @Inject constructor(
     private val _priorityDndEnabled = MutableStateFlow(false)
     val priorityDndEnabled = _priorityDndEnabled.asStateFlow()
 
-    private val _dndOnSound = MutableStateFlow(Sound.HISS)
+    private val _dndOnSound = MutableStateFlow(Sound.SLUSH)
     val dndOnSound = _dndOnSound.asStateFlow()
 
-    private val _dndOffSound = MutableStateFlow(Sound.HISS)
+    private val _dndOffSound = MutableStateFlow(Sound.WHISTLE)
     val dndOffSound = _dndOffSound.asStateFlow()
 
     private val _useCustomVolume = MutableStateFlow(false)

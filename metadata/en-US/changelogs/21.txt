@@ -1,0 +1,2 @@
+- Added onboarding page
+- Fixed wakelocks for some devices

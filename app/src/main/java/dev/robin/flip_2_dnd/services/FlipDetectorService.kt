@@ -26,6 +26,7 @@ class FlipDetectorService : Service() {
         private set
     private lateinit var dndService: DndService
     private lateinit var powerManager: PowerManager
+    private lateinit var wakeLock: PowerManager.WakeLock
     private lateinit var settingsRepository: SettingsRepository
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
@@ -40,20 +41,56 @@ class FlipDetectorService : Service() {
                 Intent.ACTION_SCREEN_OFF -> {
                     Log.d(TAG, "Screen turned OFF")
                     _isScreenOff.value = true
+                    // Ensure wake lock is held when screen is off
+                    acquireWakeLock()
                 }
                 Intent.ACTION_SCREEN_ON -> {
                     Log.d(TAG, "Screen turned ON")
                     _isScreenOff.value = false
+                    // Release wake lock when screen is on to save battery
+                    releaseWakeLock()
                 }
                 Intent.ACTION_SHUTDOWN -> {
                     Log.d(TAG, "System shutdown - Stopping sensor monitoring")
                     sensorService.stopMonitoring()
+                    releaseWakeLock()
                 }
                 Intent.ACTION_REBOOT -> {
                     Log.d(TAG, "System reboot - Stopping sensor monitoring")
                     sensorService.stopMonitoring()
+                    releaseWakeLock()
                 }
             }
+        }
+    }
+
+    private fun acquireWakeLock() {
+        try {
+            if (!::wakeLock.isInitialized) {
+                wakeLock = powerManager.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    "Flip2DND::ServiceWakeLock"
+                ).apply {
+                    setReferenceCounted(false)
+                }
+            }
+            if (!wakeLock.isHeld) {
+                wakeLock.acquire(10*60*1000L) // 10 minutes timeout
+                Log.d(TAG, "Wake lock acquired")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error acquiring wake lock: ${e.message}")
+        }
+    }
+
+    private fun releaseWakeLock() {
+        try {
+            if (::wakeLock.isInitialized && wakeLock.isHeld) {
+                wakeLock.release()
+                Log.d(TAG, "Wake lock released")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error releasing wake lock: ${e.message}")
         }
     }
 
@@ -88,12 +125,10 @@ class FlipDetectorService : Service() {
             Log.d(TAG, "Starting initial sensor monitoring")
             sensorService.startMonitoring()
             
-            // Acquire wake lock to keep service running
-            val wakeLock = powerManager.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
-                "Flip2DND::ServiceWakeLock"
-            )
-            wakeLock.acquire()
+            // Initial wake lock acquisition
+            if (_isScreenOff.value) {
+                acquireWakeLock()
+            }
             
             // Observe settings changes
             serviceScope.launch {

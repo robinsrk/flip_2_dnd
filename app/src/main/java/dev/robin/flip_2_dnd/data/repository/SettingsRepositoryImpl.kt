@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.presentation.settings.Sound
+import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import dev.robin.flip_2_dnd.services.FlipDetectorService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,10 @@ private const val KEY_DND_ON_SOUND = "dnd_on_sound"
 private const val KEY_DND_OFF_SOUND = "dnd_off_sound"
 private const val KEY_USE_CUSTOM_VOLUME = "use_custom_volume"
 private const val KEY_CUSTOM_VOLUME = "custom_volume"
+private const val KEY_USE_CUSTOM_VIBRATION = "use_custom_vibration"
+private const val KEY_CUSTOM_VIBRATION_STRENGTH = "custom_vibration_strength"
+private const val KEY_DND_ON_VIBRATION = "dnd_on_vibration"
+private const val KEY_DND_OFF_VIBRATION = "dnd_off_vibration"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -38,6 +43,10 @@ class SettingsRepositoryImpl @Inject constructor(
     private val dndOffSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_OFF_SOUND, Sound.WHISTLE.name) ?: Sound.WHISTLE.name))
     private val useCustomVolume = MutableStateFlow(prefs.getBoolean(KEY_USE_CUSTOM_VOLUME, false))
     private val customVolume = MutableStateFlow(prefs.getFloat(KEY_CUSTOM_VOLUME, 0.5f))
+    private val useCustomVibration = MutableStateFlow(prefs.getBoolean(KEY_USE_CUSTOM_VIBRATION, false))
+    private val customVibrationStrength = MutableStateFlow(prefs.getFloat(KEY_CUSTOM_VIBRATION_STRENGTH, 0.5f))
+    private val dndOnVibration = MutableStateFlow(VibrationPattern.valueOf(prefs.getString(KEY_DND_ON_VIBRATION, VibrationPattern.DOUBLE_PULSE.name) ?: VibrationPattern.DOUBLE_PULSE.name))
+    private val dndOffVibration = MutableStateFlow(VibrationPattern.valueOf(prefs.getString(KEY_DND_OFF_VIBRATION, VibrationPattern.SINGLE_PULSE.name) ?: VibrationPattern.SINGLE_PULSE.name))
 
     private fun restartFlipDetectorService() {
         try {
@@ -115,6 +124,38 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setCustomVolume(volume: Float) {
         prefs.edit().putFloat(KEY_CUSTOM_VOLUME, volume).apply()
         customVolume.value = volume
+        restartFlipDetectorService()
+    }
+
+    override fun getUseCustomVibration(): Flow<Boolean> = useCustomVibration
+
+    override suspend fun setUseCustomVibration(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_USE_CUSTOM_VIBRATION, enabled).apply()
+        useCustomVibration.value = enabled
+        restartFlipDetectorService()
+    }
+
+    override fun getCustomVibrationStrength(): Flow<Float> = customVibrationStrength
+
+    override suspend fun setCustomVibrationStrength(strength: Float) {
+        prefs.edit().putFloat(KEY_CUSTOM_VIBRATION_STRENGTH, strength).apply()
+        customVibrationStrength.value = strength
+        restartFlipDetectorService()
+    }
+
+    override fun getDndOnVibration(): Flow<VibrationPattern> = dndOnVibration
+
+    override suspend fun setDndOnVibration(pattern: VibrationPattern) {
+        prefs.edit().putString(KEY_DND_ON_VIBRATION, pattern.name).apply()
+        dndOnVibration.value = pattern
+        restartFlipDetectorService()
+    }
+
+    override fun getDndOffVibration(): Flow<VibrationPattern> = dndOffVibration
+
+    override suspend fun setDndOffVibration(pattern: VibrationPattern) {
+        prefs.edit().putString(KEY_DND_OFF_VIBRATION, pattern.name).apply()
+        dndOffVibration.value = pattern
         restartFlipDetectorService()
     }
 }

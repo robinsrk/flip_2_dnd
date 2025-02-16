@@ -1,6 +1,7 @@
 package dev.robin.flip_2_dnd.domain.repository
 
 import dev.robin.flip_2_dnd.presentation.settings.Sound
+import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
@@ -20,4 +21,12 @@ interface SettingsRepository {
     suspend fun setUseCustomVolume(enabled: Boolean)
     fun getCustomVolume(): Flow<Float>
     suspend fun setCustomVolume(volume: Float)
+    fun getUseCustomVibration(): Flow<Boolean>
+    suspend fun setUseCustomVibration(enabled: Boolean)
+    fun getCustomVibrationStrength(): Flow<Float>
+    suspend fun setCustomVibrationStrength(strength: Float)
+    fun getDndOnVibration(): Flow<VibrationPattern>
+    suspend fun setDndOnVibration(pattern: VibrationPattern)
+    fun getDndOffVibration(): Flow<VibrationPattern>
+    suspend fun setDndOffVibration(pattern: VibrationPattern)
 }

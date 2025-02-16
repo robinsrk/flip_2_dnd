@@ -41,6 +41,18 @@ class SettingsViewModel @Inject constructor(
     val customVolume = _customVolume.asStateFlow()
 
     val availableSounds = Sound.values().toList()
+    val availableVibrationPatterns = VibrationPattern.values().toList()
+    private val _useCustomVibration = MutableStateFlow(false)
+    val useCustomVibration = _useCustomVibration.asStateFlow()
+
+    private val _customVibrationStrength = MutableStateFlow(0.5f)
+    val customVibrationStrength = _customVibrationStrength.asStateFlow()
+
+    private val _dndOnVibration = MutableStateFlow(VibrationPattern.DOUBLE_PULSE)
+    val dndOnVibration = _dndOnVibration.asStateFlow()
+
+    private val _dndOffVibration = MutableStateFlow(VibrationPattern.SINGLE_PULSE)
+    val dndOffVibration = _dndOffVibration.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -81,6 +93,26 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             settingsRepository.getCustomVolume().collect { volume ->
                 _customVolume.value = volume
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getUseCustomVibration().collect { enabled ->
+                _useCustomVibration.value = enabled
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getCustomVibrationStrength().collect { strength ->
+                _customVibrationStrength.value = strength
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getDndOnVibration().collect { pattern ->
+                _dndOnVibration.value = pattern
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getDndOffVibration().collect { pattern ->
+                _dndOffVibration.value = pattern
             }
         }
     }
@@ -130,6 +162,30 @@ class SettingsViewModel @Inject constructor(
     fun setCustomVolume(volume: Float) {
         viewModelScope.launch {
             settingsRepository.setCustomVolume(volume)
+        }
+    }
+
+    fun setUseCustomVibration(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setUseCustomVibration(enabled)
+        }
+    }
+
+    fun setCustomVibrationStrength(strength: Float) {
+        viewModelScope.launch {
+            settingsRepository.setCustomVibrationStrength(strength)
+        }
+    }
+
+    fun setDndOnVibration(pattern: VibrationPattern) {
+        viewModelScope.launch {
+            settingsRepository.setDndOnVibration(pattern)
+        }
+    }
+
+    fun setDndOffVibration(pattern: VibrationPattern) {
+        viewModelScope.launch {
+            settingsRepository.setDndOffVibration(pattern)
         }
     }
 }

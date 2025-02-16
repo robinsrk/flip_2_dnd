@@ -1,0 +1,3 @@
+- Added custom vibration control
+- Fixed settings scrolling
+- Organized settings options

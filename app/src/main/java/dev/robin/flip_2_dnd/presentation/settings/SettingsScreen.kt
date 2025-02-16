@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.height
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +54,8 @@ fun SettingsScreen(
     val dndOffSound by viewModel.dndOffSound.collectAsState()
     val useCustomVolume by viewModel.useCustomVolume.collectAsState()
     val customVolume by viewModel.customVolume.collectAsState()
+    val useCustomVibration by viewModel.useCustomVibration.collectAsState()
+    val customVibrationStrength by viewModel.customVibrationStrength.collectAsState()
 
     Scaffold(
         topBar = {
@@ -69,14 +74,13 @@ fun SettingsScreen(
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp),
+                    .verticalScroll(rememberScrollState()),
         ) {
             Text(
                 text = "Behavior",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             )
 
             Column {
@@ -98,9 +102,9 @@ fun SettingsScreen(
             Divider(modifier = Modifier.padding(vertical = 16.dp))
 
             Text(
-                text = "Notifications",
+                text = "Sound",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             )
 
             Column {
@@ -200,13 +204,114 @@ fun SettingsScreen(
                         )
                     }
                 }
+            }
 
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+            // Vibration Section
+            Text(
+                text = "Vibration",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
+
+            Column {
                 SettingsSwitchItem(
                     title = "Vibration",
                     description = "Vibrate when DND changes",
                     checked = vibrationEnabled,
                     onCheckedChange = { viewModel.setVibrationEnabled(it) },
                 )
+
+                if (vibrationEnabled) {
+                    var dndOnVibrationExpanded by remember { mutableStateOf(false) }
+                    var dndOffVibrationExpanded by remember { mutableStateOf(false) }
+
+                    ListItem(
+                        headlineContent = { Text("DND On Vibration") },
+                        supportingContent = { Text(viewModel.dndOnVibration.collectAsState().value.displayName) },
+                        trailingContent = {
+                            IconButton(onClick = { dndOnVibrationExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+                            }
+                            DropdownMenu(
+                                expanded = dndOnVibrationExpanded,
+                                onDismissRequest = { dndOnVibrationExpanded = false }
+                            ) {
+                                viewModel.availableVibrationPatterns.forEach { pattern ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = pattern.displayName) },
+                                        onClick = {
+                                            viewModel.setDndOnVibration(pattern)
+                                            dndOnVibrationExpanded = false
+                                        },
+                                        modifier = Modifier.clickable { 
+                                            viewModel.setDndOnVibration(pattern)
+                                            dndOnVibrationExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    )
+
+                    ListItem(
+                        headlineContent = { Text("DND Off Vibration") },
+                        supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
+                        trailingContent = {
+                            IconButton(onClick = { dndOffVibrationExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+                            }
+                            DropdownMenu(
+                                expanded = dndOffVibrationExpanded,
+                                onDismissRequest = { dndOffVibrationExpanded = false }
+                            ) {
+                                viewModel.availableVibrationPatterns.forEach { pattern ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = pattern.displayName) },
+                                        onClick = {
+                                            viewModel.setDndOffVibration(pattern)
+                                            dndOffVibrationExpanded = false
+                                        },
+                                        modifier = Modifier.clickable { 
+                                            viewModel.setDndOffVibration(pattern)
+                                            dndOffVibrationExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    )
+
+                    SettingsSwitchItem(
+                        title = "Custom Vibration",
+                        description = "Use custom vibration strength instead of system default",
+                        checked = useCustomVibration,
+                        onCheckedChange = { viewModel.setUseCustomVibration(it) },
+                    )
+
+                    if (useCustomVibration) {
+                        ListItem(
+                            headlineContent = { Text("Vibration Strength") },
+                            trailingContent = {
+                                var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
+                                LaunchedEffect(customVibrationStrength) {
+                                    sliderPosition = customVibrationStrength
+                                }
+                                Slider(
+                                    value = sliderPosition,
+                                    onValueChange = { newStrength ->
+                                        sliderPosition = newStrength
+                                    },
+                                    onValueChangeFinished = {
+                                        viewModel.setCustomVibrationStrength(sliderPosition)
+                                    },
+                                    modifier = Modifier.width(200.dp)
+                                )
+                            }
+                        )
+                    }
+                }
             }
             Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                 Button(onClick = {
@@ -216,8 +321,6 @@ fun SettingsScreen(
                     try {
                         context.startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
-                        // Handle the case where no activity can handle the intent
-                        // For example, show a toast or log the error
                         Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
                         println("No activity found to handle the intent: $e")
                     }
@@ -245,6 +348,7 @@ fun SettingsScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }

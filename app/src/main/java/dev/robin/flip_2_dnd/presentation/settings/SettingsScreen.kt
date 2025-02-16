@@ -79,7 +79,9 @@ fun SettingsScreen(
         ) {
             Text(
                 text = "Behavior",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             )
 
@@ -103,7 +105,9 @@ fun SettingsScreen(
 
             Text(
                 text = "Sound",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             )
 
@@ -211,7 +215,9 @@ fun SettingsScreen(
             // Vibration Section
             Text(
                 text = "Vibration",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             )
 

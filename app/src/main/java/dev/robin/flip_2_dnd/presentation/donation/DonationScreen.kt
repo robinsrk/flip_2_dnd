@@ -63,6 +63,7 @@ fun DonationScreen(navController: NavController? = null) {
                     .fillMaxWidth()
                     .animateContentSize()
                     .clickable {
+                        copyAddressToClipboard(context, "754979664")
                         val binancePayUrl = "https://app.binance.com/en/wallet"
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(binancePayUrl))
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -93,6 +94,36 @@ fun DonationScreen(navController: NavController? = null) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_coin),
                             contentDescription = "Binance Icon",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                )
+            }
+
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
+                    .clickable { copyAddressToClipboard(context, "1406425251") }
+            ) {
+                ListItem(
+                    headlineContent = { 
+                        Text(
+                            "Pay with RedotPay",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                        )
+                    },
+                    supportingContent = { Text("RedotPay ID") },
+                    trailingContent = { 
+                        Text(
+                            "1406425251",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_coin),
+                            contentDescription = "RedotPay Icon",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

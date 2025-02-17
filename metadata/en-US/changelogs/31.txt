@@ -1,0 +1,3 @@
+- Modernized settings UI with bottom sheets and checkmarks
+- Added RedotPay payment option with ID copy functionality
+- Enhanced Binance payment option with ID copy feature

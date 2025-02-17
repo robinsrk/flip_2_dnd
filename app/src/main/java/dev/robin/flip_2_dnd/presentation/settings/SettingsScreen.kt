@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -27,6 +28,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -133,24 +136,33 @@ fun SettingsScreen(
 				if (soundEnabled) {
 					var dndOnExpanded by remember { mutableStateOf(false) }
 					var dndOffExpanded by remember { mutableStateOf(false) }
+					val soundSheetState = rememberModalBottomSheetState()
 
 					ListItem(
-						headlineContent = { Text("DND On Sound") },
-						supportingContent = { Text(dndOnSound.name) },
-						trailingContent = {
-							IconButton(onClick = { dndOnExpanded = true }) {
-								Icon(Icons.Default.ArrowDropDown, "Select sound")
-							}
-							DropdownMenu(
-								expanded = dndOnExpanded,
-								onDismissRequest = { dndOnExpanded = false }
-							) {
+                        headlineContent = { Text("DND On Sound") },
+                        supportingContent = { Text(dndOnSound.name) },
+                        trailingContent = {
+                            Icon(Icons.Default.ArrowDropDown, "Select sound")
+                        },
+                        modifier = Modifier.clickable { dndOnExpanded = true }
+                    )
+
+					if (dndOnExpanded) {
+						ModalBottomSheet(
+							onDismissRequest = { dndOnExpanded = false },
+							sheetState = soundSheetState
+						) {
+							Column {
 								viewModel.availableSounds.forEach { sound ->
-									DropdownMenuItem(
-										text = { Text(text = sound.name) },
-										onClick = {
-											viewModel.setDndOnSound(sound)
-											dndOnExpanded = false
+									ListItem(
+										headlineContent = { Text(sound.name) },
+										trailingContent = {
+											if (sound == dndOnSound) {
+												Icon(
+													imageVector = Icons.Default.Check,
+													contentDescription = "Selected"
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnSound(sound)
@@ -159,26 +171,35 @@ fun SettingsScreen(
 									)
 								}
 							}
+							Spacer(modifier = Modifier.height(20.dp))
 						}
-					)
+					}
 
 					ListItem(
-						headlineContent = { Text("DND Off Sound") },
-						supportingContent = { Text(dndOffSound.name) },
-						trailingContent = {
-							IconButton(onClick = { dndOffExpanded = true }) {
-								Icon(Icons.Default.ArrowDropDown, "Select sound")
-							}
-							DropdownMenu(
-								expanded = dndOffExpanded,
-								onDismissRequest = { dndOffExpanded = false }
-							) {
+                        headlineContent = { Text("DND Off Sound") },
+                        supportingContent = { Text(dndOffSound.name) },
+                        trailingContent = {
+                            Icon(Icons.Default.ArrowDropDown, "Select sound")
+                        },
+                        modifier = Modifier.clickable { dndOffExpanded = true }
+                    )
+
+					if (dndOffExpanded) {
+						ModalBottomSheet(
+							onDismissRequest = { dndOffExpanded = false },
+							sheetState = soundSheetState
+						) {
+							Column {
 								viewModel.availableSounds.forEach { sound ->
-									DropdownMenuItem(
-										text = { Text(text = sound.name) },
-										onClick = {
-											viewModel.setDndOffSound(sound)
-											dndOffExpanded = false
+									ListItem(
+										headlineContent = { Text(sound.name) },
+										trailingContent = {
+											if (sound == dndOffSound) {
+												Icon(
+													imageVector = Icons.Default.Check,
+													contentDescription = "Selected"
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffSound(sound)
@@ -187,8 +208,9 @@ fun SettingsScreen(
 									)
 								}
 							}
+							Spacer(modifier = Modifier.height(20.dp))
 						}
-					)
+					}
 
 					SettingsSwitchItem(
 						title = "Custom Volume",
@@ -243,24 +265,33 @@ fun SettingsScreen(
 				if (vibrationEnabled) {
 					var dndOnVibrationExpanded by remember { mutableStateOf(false) }
 					var dndOffVibrationExpanded by remember { mutableStateOf(false) }
+					val vibrationSheetState = rememberModalBottomSheetState()
 
 					ListItem(
-						headlineContent = { Text("DND On Vibration") },
-						supportingContent = { Text(viewModel.dndOnVibration.collectAsState().value.displayName) },
-						trailingContent = {
-							IconButton(onClick = { dndOnVibrationExpanded = true }) {
-								Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-							}
-							DropdownMenu(
-								expanded = dndOnVibrationExpanded,
-								onDismissRequest = { dndOnVibrationExpanded = false }
-							) {
+                        headlineContent = { Text("DND On Vibration") },
+                        supportingContent = { Text(viewModel.dndOnVibration.collectAsState().value.displayName) },
+                        trailingContent = {
+                            Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+                        },
+                        modifier = Modifier.clickable { dndOnVibrationExpanded = true }
+                    )
+
+					if (dndOnVibrationExpanded) {
+						ModalBottomSheet(
+							onDismissRequest = { dndOnVibrationExpanded = false },
+							sheetState = vibrationSheetState
+						) {
+							Column {
 								viewModel.availableVibrationPatterns.forEach { pattern ->
-									DropdownMenuItem(
-										text = { Text(text = pattern.displayName) },
-										onClick = {
-											viewModel.setDndOnVibration(pattern)
-											dndOnVibrationExpanded = false
+									ListItem(
+										headlineContent = { Text(pattern.displayName) },
+										trailingContent = {
+											if (pattern == viewModel.dndOnVibration.collectAsState().value) {
+												Icon(
+													imageVector = Icons.Default.Check,
+													contentDescription = "Selected"
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnVibration(pattern)
@@ -269,26 +300,35 @@ fun SettingsScreen(
 									)
 								}
 							}
+							Spacer(modifier = Modifier.height(20.dp))
 						}
-					)
+					}
 
 					ListItem(
-						headlineContent = { Text("DND Off Vibration") },
-						supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
-						trailingContent = {
-							IconButton(onClick = { dndOffVibrationExpanded = true }) {
-								Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-							}
-							DropdownMenu(
-								expanded = dndOffVibrationExpanded,
-								onDismissRequest = { dndOffVibrationExpanded = false }
-							) {
+                        headlineContent = { Text("DND Off Vibration") },
+                        supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
+                        trailingContent = {
+                            Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+                        },
+                        modifier = Modifier.clickable { dndOffVibrationExpanded = true }
+                    )
+
+					if (dndOffVibrationExpanded) {
+						ModalBottomSheet(
+							onDismissRequest = { dndOffVibrationExpanded = false },
+							sheetState = vibrationSheetState
+						) {
+							Column {
 								viewModel.availableVibrationPatterns.forEach { pattern ->
-									DropdownMenuItem(
-										text = { Text(text = pattern.displayName) },
-										onClick = {
-											viewModel.setDndOffVibration(pattern)
-											dndOffVibrationExpanded = false
+									ListItem(
+										headlineContent = { Text(pattern.displayName) },
+										trailingContent = {
+											if (pattern == viewModel.dndOffVibration.collectAsState().value) {
+												Icon(
+													imageVector = Icons.Default.Check,
+													contentDescription = "Selected"
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffVibration(pattern)
@@ -297,8 +337,9 @@ fun SettingsScreen(
 									)
 								}
 							}
+							Spacer(modifier = Modifier.height(20.dp))
 						}
-					)
+					}
 
 					SettingsSwitchItem(
 						title = "Custom Vibration",

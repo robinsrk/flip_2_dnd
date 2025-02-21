@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Flip 2 DND</string>
     <string name="service_description">Uses device sensors to detect phone orientation and automatically enable Do Not Disturb mode when face down</string>
+    <string name="widget_toggle_description">Toggle Flip 2 DND service</string>
 </resources>

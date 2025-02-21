@@ -1,0 +1,4 @@
+Version 3.0.2:
+* Added widget feature for quick DND toggle
+* Updated widget icons for better visibility
+* Improved UI elements and icons

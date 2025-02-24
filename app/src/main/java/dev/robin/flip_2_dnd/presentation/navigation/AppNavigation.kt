@@ -53,10 +53,11 @@ fun AppNavigation() {
                 }
             }
         }
-    ) { _ ->
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route,
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         ) {
             composable(Screen.Home.route) {
                 MainScreen(

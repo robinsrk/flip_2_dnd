@@ -89,7 +89,8 @@ fun SettingsScreen(
 			modifier =
 				Modifier
             .padding(paddingValues)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 80.dp),
 		) {
 			Text(
 				text = "Behavior",
@@ -371,42 +372,64 @@ fun SettingsScreen(
 					}
 				}
 			}
-			Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
-				Button(onClick = {
-					val telegramUsername = "flip_2_dnd"
-					val telegramUri = "tg://resolve?domain=$telegramUsername"
-					val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
-					try {
-						context.startActivity(intent)
-					} catch (e: ActivityNotFoundException) {
-						Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
-						println("No activity found to handle the intent: $e")
-					}
-				}) {
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						Image(
-							painter = painterResource(id = R.drawable.telegram),
-							contentDescription = "Logo",
-							modifier = Modifier.width(30.dp),
-						)
-						Spacer(Modifier.width(10.dp))
-						Text("Join telegram")
-					}
-				}
-				Spacer(Modifier.width(10.dp))
-				Button(onClick = onDonateClick) {
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						Image(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "Logo",
-							modifier = Modifier.width(30.dp),
-						)
-						Spacer(Modifier.width(10.dp))
-						Text("Support")
-					}
-				}
-			}
-			Spacer(modifier = Modifier.height(80.dp))
+            Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+            Text(
+                text = "Extras",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
+
+            Column {
+                ListItem(
+                    headlineContent = { 
+                        Text(
+                            "Join Telegram",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    supportingContent = { Text("Join our Telegram community") },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.telegram),
+                            contentDescription = "Telegram Icon",
+														tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.width(24.dp)
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        val telegramUsername = "flip_2_dnd"
+                        val telegramUri = "tg://resolve?domain=$telegramUsername"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
+                        try {
+                            context.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
+                            println("No activity found to handle the intent: $e")
+                        }
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { 
+                        Text(
+                            "Support Developer",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    supportingContent = { Text("Help keep this app free and improving") },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_coin),
+                            contentDescription = "Support Icon",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    modifier = Modifier.clickable(onClick = onDonateClick)
+                )
+            }
 		}
 	}
 }

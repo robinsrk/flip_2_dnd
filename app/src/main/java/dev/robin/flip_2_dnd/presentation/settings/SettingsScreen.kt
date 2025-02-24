@@ -89,8 +89,7 @@ fun SettingsScreen(
 			modifier =
 				Modifier
             .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 80.dp),
+            .verticalScroll(rememberScrollState()),
 		) {
 			Text(
 				text = "Behavior",

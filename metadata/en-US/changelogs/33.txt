@@ -1,0 +1,3 @@
+* Added FAB toggle service feature
+- Settings screen items improved
+* Bug fixes and performance improvements

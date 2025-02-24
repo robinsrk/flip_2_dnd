@@ -8,5 +8,6 @@ data class MainState(
     val dndMode: String = "All Notifications",
     val isScreenOffOnly: Boolean = false,
     val isVibrationEnabled: Boolean = true,
-    val isSoundEnabled: Boolean = false
+    val isSoundEnabled: Boolean = false,
+    val isServiceRunning: Boolean = true
 )

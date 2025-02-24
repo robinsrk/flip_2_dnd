@@ -11,10 +11,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainState
+import dev.robin.flip_2_dnd.presentation.main.MainViewModel
 import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
 
 sealed class Screen(val route: String, val icon: Int, val label: String) {
@@ -60,9 +62,12 @@ fun AppNavigation() {
             modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         ) {
             composable(Screen.Home.route) {
+                val mainViewModel: MainViewModel = hiltViewModel()
+                val state by mainViewModel.state.collectAsState()
                 MainScreen(
-                    state = MainState(isDndEnabled = false, dndMode = ""),
-                    onDonateClick = { navController.navigate(Screen.Donation.route) }
+                    state = state,
+                    onDonateClick = { navController.navigate(Screen.Donation.route) },
+                    onToggleService = { mainViewModel.toggleService() }
                 )
             }
             composable(Screen.Settings.route) {

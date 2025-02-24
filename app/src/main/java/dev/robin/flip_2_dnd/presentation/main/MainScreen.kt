@@ -16,7 +16,8 @@ import dev.robin.flip_2_dnd.R
 @Composable
 fun MainScreen(
     state: MainState,
-    onDonateClick: () -> Unit
+    onDonateClick: () -> Unit,
+    onToggleService: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -38,6 +39,20 @@ fun MainScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onToggleService,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (state.isServiceRunning) R.drawable.ic_pause else R.drawable.ic_play
+                    ),
+                    contentDescription = if (state.isServiceRunning) "Stop Service" else "Start Service",
+                )
+            }
         }
     ) { paddingValues ->
         Column(
@@ -65,6 +80,14 @@ fun MainScreen(
                 text = if (state.isDndEnabled) "DND: ${state.dndMode}" else "DND is OFF",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = if (state.isServiceRunning) "Service is running" else "Service is stopped",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }

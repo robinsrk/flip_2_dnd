@@ -70,10 +70,18 @@ class DndService(private val context: Context) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					val baseAmplitude = (255 * customStrength).toInt().coerceIn(1, 255)
 					val amplitudes = IntArray(pattern.size) { index ->
-						if (index == 0 || index % 2 == 0) 0 else baseAmplitude
+						// Ensure zero amplitude for timing intervals and full amplitude for vibration periods
+						if (index % 2 == 0) 0 else baseAmplitude
 					}
-					Log.d(TAG, "Creating waveform vibration for Android O+ with amplitude: $baseAmplitude")
-					vibrator.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1))
+					
+					// Adjust timing to ensure precise vibration pattern
+					val adjustedPattern = pattern.map { duration ->
+						// Ensure minimum duration for better perception
+						duration.coerceAtLeast(50L)
+					}.toLongArray()
+					
+					Log.d(TAG, "Creating waveform vibration with amplitude: $baseAmplitude and pattern: ${adjustedPattern.contentToString()}")
+					vibrator.vibrate(VibrationEffect.createWaveform(adjustedPattern, amplitudes, -1))
 				} else {
 					Log.d(TAG, "Using deprecated vibration method")
 					@Suppress("DEPRECATION")

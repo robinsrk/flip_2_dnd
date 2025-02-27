@@ -166,6 +166,7 @@ fun SettingsScreen(
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnSound(sound)
+											viewModel.playSelectedSound(sound)
 											dndOnExpanded = false
 										}
 									)
@@ -203,6 +204,7 @@ fun SettingsScreen(
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffSound(sound)
+											viewModel.playSelectedSound(sound)
 											dndOffExpanded = false
 										}
 									)
@@ -295,6 +297,7 @@ fun SettingsScreen(
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnVibration(pattern)
+											viewModel.playSelectedVibration(pattern)
 											dndOnVibrationExpanded = false
 										}
 									)
@@ -332,6 +335,7 @@ fun SettingsScreen(
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffVibration(pattern)
+											viewModel.playSelectedVibration(pattern)
 											dndOffVibrationExpanded = false
 										}
 									)

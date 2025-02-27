@@ -188,4 +188,51 @@ class SettingsViewModel @Inject constructor(
             settingsRepository.setDndOffVibration(pattern)
         }
     }
+
+    fun playSelectedSound(sound: Sound) {
+        val mediaPlayer = android.media.MediaPlayer.create(getApplication(), sound.soundResId)
+        mediaPlayer.setVolume(
+            if (useCustomVolume.value) customVolume.value else 1f,
+            if (useCustomVolume.value) customVolume.value else 1f
+        )
+        mediaPlayer.setOnCompletionListener { mp -> mp.release() }
+        mediaPlayer.start()
+    }
+
+    fun playSelectedVibration(pattern: VibrationPattern) {
+        val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val vibratorManager = getApplication<Application>().getSystemService(android.content.Context.VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getApplication<Application>().getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+        }
+
+        try {
+            val useCustomVibration = useCustomVibration.value
+            val customStrength = if (useCustomVibration) {
+                customVibrationStrength.value
+            } else {
+                1.0f
+            }
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                val baseAmplitude = (255 * customStrength).toInt().coerceIn(1, 255)
+                val amplitudes = IntArray(pattern.pattern.size) { index ->
+                    if (index % 2 == 0) 0 else baseAmplitude
+                }
+                
+                val adjustedPattern = pattern.pattern.map { duration ->
+                    duration.coerceAtLeast(50L)
+                }.toLongArray()
+                
+                vibrator.vibrate(android.os.VibrationEffect.createWaveform(adjustedPattern, amplitudes, -1))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(pattern.pattern, -1)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("SettingsViewModel", "Error during vibration: ${e.message}", e)
+        }
+    }
 }

@@ -189,8 +189,18 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun playSelectedSound(sound: Sound) {
+    fun playSelectedSound(sound: Sound?) {
+        if (sound == null || sound.soundResId == 0) {
+            android.util.Log.d("SettingsViewModel", "No sound selected or invalid sound resource")
+            return
+        }
+        
         val mediaPlayer = android.media.MediaPlayer.create(getApplication(), sound.soundResId)
+        if (mediaPlayer == null) {
+            android.util.Log.e("SettingsViewModel", "Failed to create MediaPlayer for sound: ${sound.name}")
+            return
+        }
+        
         mediaPlayer.setVolume(
             if (useCustomVolume.value) customVolume.value else 1f,
             if (useCustomVolume.value) customVolume.value else 1f

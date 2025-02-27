@@ -157,12 +157,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(sound.name) },
 										trailingContent = {
-											if (sound == dndOnSound) {
-												Icon(
-													imageVector = Icons.Default.Check,
-													contentDescription = "Selected"
-												)
-											}
+                                                if (sound == dndOnSound) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
+                                                        contentDescription = "Selected",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+                                                        contentDescription = "Not Selected",
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnSound(sound)
@@ -195,12 +202,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(sound.name) },
 										trailingContent = {
-											if (sound == dndOffSound) {
-												Icon(
-													imageVector = Icons.Default.Check,
-													contentDescription = "Selected"
-												)
-											}
+                                                if (sound == dndOffSound) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
+                                                        contentDescription = "Selected",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+                                                        contentDescription = "Not Selected",
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffSound(sound)
@@ -288,12 +302,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(pattern.displayName) },
 										trailingContent = {
-											if (pattern == viewModel.dndOnVibration.collectAsState().value) {
-												Icon(
-													imageVector = Icons.Default.Check,
-													contentDescription = "Selected"
-												)
-											}
+                                                if (pattern == viewModel.dndOnVibration.collectAsState().value) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
+                                                        contentDescription = "Selected",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+                                                        contentDescription = "Not Selected",
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnVibration(pattern)
@@ -326,12 +347,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(pattern.displayName) },
 										trailingContent = {
-											if (pattern == viewModel.dndOffVibration.collectAsState().value) {
-												Icon(
-													imageVector = Icons.Default.Check,
-													contentDescription = "Selected"
-												)
-											}
+                                                if (pattern == viewModel.dndOffVibration.collectAsState().value) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
+                                                        contentDescription = "Selected",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+                                                        contentDescription = "Not Selected",
+                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffVibration(pattern)

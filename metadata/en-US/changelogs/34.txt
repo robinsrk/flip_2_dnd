@@ -1,0 +1,4 @@
+Version 3.0.4:
+* Fixed sound notification option crash
+* Added vibration and sound feedback on settings change
+* Improved app stability

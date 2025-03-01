@@ -284,7 +284,7 @@ fun SettingsScreen(
 					val vibrationSheetState = rememberModalBottomSheetState()
 
 					ListItem(
-                        headlineContent = { Text("DND On Vibration") },
+                        headlineContent = { Text("DND On Vibration pattern") },
                         supportingContent = { Text(viewModel.dndOnVibration.collectAsState().value.displayName) },
                         trailingContent = {
                             Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
@@ -329,7 +329,7 @@ fun SettingsScreen(
 					}
 
 					ListItem(
-                        headlineContent = { Text("DND Off Vibration") },
+                        headlineContent = { Text("DND Off Vibration pattern") },
                         supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
                         trailingContent = {
                             Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
@@ -374,7 +374,7 @@ fun SettingsScreen(
 					}
 
 					SettingsSwitchItem(
-						title = "Custom Vibration",
+						title = "Custom Vibration strength",
 						description = "Use custom vibration strength instead of system default",
 						checked = useCustomVibration,
 						onCheckedChange = { viewModel.setUseCustomVibration(it) },

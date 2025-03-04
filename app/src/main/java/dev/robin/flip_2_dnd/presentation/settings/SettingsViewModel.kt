@@ -54,6 +54,9 @@ class SettingsViewModel @Inject constructor(
     private val _dndOffVibration = MutableStateFlow(VibrationPattern.SINGLE_PULSE)
     val dndOffVibration = _dndOffVibration.asStateFlow()
 
+    private val _flipSensitivity = MutableStateFlow(0.5f)
+    val flipSensitivity = _flipSensitivity.asStateFlow()
+
     init {
         viewModelScope.launch {
             settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
@@ -113,6 +116,11 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             settingsRepository.getDndOffVibration().collect { pattern ->
                 _dndOffVibration.value = pattern
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getFlipSensitivity().collect { sensitivity ->
+                _flipSensitivity.value = sensitivity
             }
         }
     }
@@ -186,6 +194,12 @@ class SettingsViewModel @Inject constructor(
     fun setDndOffVibration(pattern: VibrationPattern) {
         viewModelScope.launch {
             settingsRepository.setDndOffVibration(pattern)
+        }
+    }
+
+    fun setFlipSensitivity(sensitivity: Float) {
+        viewModelScope.launch {
+            settingsRepository.setFlipSensitivity(sensitivity)
         }
     }
 

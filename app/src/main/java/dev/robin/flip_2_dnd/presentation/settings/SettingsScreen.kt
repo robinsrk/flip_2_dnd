@@ -113,6 +113,30 @@ fun SettingsScreen(
 					checked = priorityDndEnabled,
 					onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
 				)
+
+				ListItem(
+					headlineContent = { Text("Flip Sensitivity") },
+					supportingContent = { Text("Adjust the sensitivity of flip detection") },
+					trailingContent = {
+						val flipSensitivity by viewModel.flipSensitivity.collectAsState()
+						var sliderPosition by remember { mutableStateOf(flipSensitivity) }
+						
+						LaunchedEffect(flipSensitivity) {
+							sliderPosition = flipSensitivity
+						}
+						
+						Slider(
+							value = sliderPosition,
+							onValueChange = { newSensitivity ->
+								sliderPosition = newSensitivity
+							},
+							onValueChangeFinished = {
+								viewModel.setFlipSensitivity(sliderPosition)
+							},
+							modifier = Modifier.width(200.dp)
+						)
+					}
+				)
 			}
 
 			Divider(modifier = Modifier.padding(vertical = 16.dp))
@@ -285,7 +309,10 @@ fun SettingsScreen(
 
 					ListItem(
                         headlineContent = { Text("DND On Vibration pattern") },
-                        supportingContent = { Text(viewModel.dndOnVibration.collectAsState().value.displayName) },
+                        supportingContent = {
+                            val dndOnVibration by viewModel.dndOnVibration.collectAsState()
+                            Text(dndOnVibration.displayName)
+                        },
                         trailingContent = {
                             Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
                         },

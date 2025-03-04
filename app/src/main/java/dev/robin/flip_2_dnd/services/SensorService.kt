@@ -6,8 +6,13 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
+import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 private const val TAG = "SensorService"
@@ -16,6 +21,7 @@ class SensorService(context: Context) {
 	private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 	private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 	private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+	private val settingsRepository: SettingsRepository = SettingsRepositoryImpl(context)
 
 	private val _orientation = MutableStateFlow("Face up")
 	val orientation: StateFlow<String> = _orientation
@@ -30,6 +36,7 @@ class SensorService(context: Context) {
 	private var lastGyroReading = FloatArray(3)
 	private var isProcessing = false
 	private var isRegistered = false
+	private var sensitivity = 0.5f
 
 	init {
 		if (accelerometer == null) {
@@ -37,6 +44,14 @@ class SensorService(context: Context) {
 		}
 		if (gyroscope == null) {
 			Log.e(TAG, "No gyroscope sensor found!")
+		}
+
+		// Observe sensitivity changes
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getFlipSensitivity().collect { newSensitivity ->
+				sensitivity = newSensitivity
+				Log.d(TAG, "Sensitivity updated to: $sensitivity")
+			}
 		}
 	}
 
@@ -122,16 +137,21 @@ class SensorService(context: Context) {
 		val y = lastAccelReading[1]
 		val z = lastAccelReading[2]
 
+		// Adjust thresholds based on sensitivity
+		// Lower sensitivity means stricter thresholds
+		val gyroThreshold = 0.1f - (sensitivity * 0.08f) // Range: 0.02f to 0.1f
+		val accelThreshold = 9.0f + ((1.0f - sensitivity) * 1.0f) // Range: 9.0f to 10.0f
+
 		// Check if the phone is relatively stable (not in motion)
-		val isStable = abs(lastGyroReading[0]) < 0.02f &&
-				abs(lastGyroReading[1]) < 0.02f &&
-				abs(lastGyroReading[2]) < 0.02f
+		val isStable = abs(lastGyroReading[0]) < gyroThreshold &&
+				abs(lastGyroReading[1]) < gyroThreshold &&
+				abs(lastGyroReading[2]) < gyroThreshold
 
 		// For face down, check stability. For other orientations, update immediately
 		val orientation = when {
-			abs(z) >= 9.5f && z < 0 -> {
+			abs(z) >= accelThreshold && z < 0 -> {
 				// Only check stability for face down
-				Log.d(TAG, "z value: " + abs(z) + " " + z)
+				Log.d(TAG, "z value: ${abs(z)} $z (threshold: $accelThreshold, stable: $isStable)")
 				if (isStable) "Face down" else _orientation.value
 			}
 

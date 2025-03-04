@@ -29,4 +29,6 @@ interface SettingsRepository {
     suspend fun setDndOnVibration(pattern: VibrationPattern)
     fun getDndOffVibration(): Flow<VibrationPattern>
     suspend fun setDndOffVibration(pattern: VibrationPattern)
+    fun getFlipSensitivity(): Flow<Float>
+    suspend fun setFlipSensitivity(sensitivity: Float)
 }

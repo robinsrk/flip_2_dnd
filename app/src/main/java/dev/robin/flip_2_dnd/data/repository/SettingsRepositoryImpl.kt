@@ -29,6 +29,7 @@ private const val KEY_USE_CUSTOM_VIBRATION = "use_custom_vibration"
 private const val KEY_CUSTOM_VIBRATION_STRENGTH = "custom_vibration_strength"
 private const val KEY_DND_ON_VIBRATION = "dnd_on_vibration"
 private const val KEY_DND_OFF_VIBRATION = "dnd_off_vibration"
+private const val KEY_FLIP_SENSITIVITY = "flip_sensitivity"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -47,6 +48,7 @@ class SettingsRepositoryImpl @Inject constructor(
     private val customVibrationStrength = MutableStateFlow(prefs.getFloat(KEY_CUSTOM_VIBRATION_STRENGTH, 0.5f))
     private val dndOnVibration = MutableStateFlow(VibrationPattern.valueOf(prefs.getString(KEY_DND_ON_VIBRATION, VibrationPattern.DOUBLE_PULSE.name) ?: VibrationPattern.DOUBLE_PULSE.name))
     private val dndOffVibration = MutableStateFlow(VibrationPattern.valueOf(prefs.getString(KEY_DND_OFF_VIBRATION, VibrationPattern.SINGLE_PULSE.name) ?: VibrationPattern.SINGLE_PULSE.name))
+    private val flipSensitivity = MutableStateFlow(prefs.getFloat(KEY_FLIP_SENSITIVITY, 0.5f))
 
     private fun restartFlipDetectorService() {
         try {
@@ -156,6 +158,14 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setDndOffVibration(pattern: VibrationPattern) {
         prefs.edit().putString(KEY_DND_OFF_VIBRATION, pattern.name).apply()
         dndOffVibration.value = pattern
+        restartFlipDetectorService()
+    }
+
+    override fun getFlipSensitivity(): Flow<Float> = flipSensitivity
+
+    override suspend fun setFlipSensitivity(sensitivity: Float) {
+        prefs.edit().putFloat(KEY_FLIP_SENSITIVITY, sensitivity).apply()
+        flipSensitivity.value = sensitivity
         restartFlipDetectorService()
     }
 }

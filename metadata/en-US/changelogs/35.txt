@@ -1,0 +1,4 @@
+Version 3.0.5:
+* Added customizable flip sensitivity
+* Improved flip detection accuracy
+* Enhanced stability for DND mode changes

@@ -418,12 +418,16 @@ fun SettingsScreen(
 								Slider(
 									value = sliderPosition,
 									onValueChange = { newStrength ->
-										sliderPosition = newStrength
+										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
+										val steps = listOf(0f, 0.33f, 0.66f, 1f)
+										val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
+										sliderPosition = nearestStep
 									},
 									onValueChangeFinished = {
 										viewModel.setCustomVibrationStrength(sliderPosition)
 									},
-									modifier = Modifier.width(200.dp)
+									modifier = Modifier.width(200.dp),
+									steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
 								)
 							}
 						)

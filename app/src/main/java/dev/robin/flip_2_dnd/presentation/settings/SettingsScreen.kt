@@ -425,6 +425,7 @@ fun SettingsScreen(
 									},
 									onValueChangeFinished = {
 										viewModel.setCustomVibrationStrength(sliderPosition)
+										viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
 									},
 									modifier = Modifier.width(200.dp),
 									steps = 2 // This creates 4 discrete points (start, 2 steps, and end)

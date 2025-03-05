@@ -36,10 +36,10 @@ class SettingsRepositoryImpl @Inject constructor(
     @ApplicationContext private val appContext: Context
 ) : SettingsRepository {
     private val prefs: SharedPreferences = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val screenOffOnlyEnabled = MutableStateFlow(prefs.getBoolean(KEY_SCREEN_OFF_ONLY, false))
+    private val screenOffOnlyEnabled = MutableStateFlow(prefs.getBoolean(KEY_SCREEN_OFF_ONLY, true))
     private val vibrationEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION, true))
     private val soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND, true))
-    private val priorityDndEnabled = MutableStateFlow(prefs.getBoolean(KEY_PRIORITY_DND, false))
+    private val priorityDndEnabled = MutableStateFlow(prefs.getBoolean(KEY_PRIORITY_DND, true))
     private val dndOnSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_ON_SOUND, Sound.SLUSH.name) ?: Sound.SLUSH.name))
     private val dndOffSound = MutableStateFlow(Sound.valueOf(prefs.getString(KEY_DND_OFF_SOUND, Sound.WHISTLE.name) ?: Sound.WHISTLE.name))
     private val useCustomVolume = MutableStateFlow(prefs.getBoolean(KEY_USE_CUSTOM_VOLUME, false))

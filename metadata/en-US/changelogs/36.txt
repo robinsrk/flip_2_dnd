@@ -1,0 +1,4 @@
+Version 3.0.6:
+* Added "None" option for vibration pattern
+* Improved vibration pattern customization
+* Added vibration strength change feedback

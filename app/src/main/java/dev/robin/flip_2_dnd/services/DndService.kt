@@ -159,6 +159,7 @@ class DndService(private val context: Context) {
                     VibrationPattern.SINGLE_PULSE -> pattern.pattern
                     VibrationPattern.DOUBLE_PULSE -> pattern.pattern
                     VibrationPattern.LONG_PULSE -> pattern.pattern
+                    VibrationPattern.NONE -> longArrayOf()
                 }
                 
                 if (timings.isNotEmpty()) {

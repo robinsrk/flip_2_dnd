@@ -128,7 +128,10 @@ fun SettingsScreen(
 						Slider(
 							value = sliderPosition,
 							onValueChange = { newSensitivity ->
-								sliderPosition = newSensitivity
+								// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
+								val steps = listOf(0f, 0.33f, 0.66f, 1f)
+								val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newSensitivity) } ?: newSensitivity
+								sliderPosition = nearestStep
 							},
 							onValueChangeFinished = {
 								viewModel.setFlipSensitivity(sliderPosition)
@@ -270,7 +273,10 @@ fun SettingsScreen(
 								Slider(
 									value = sliderPosition,
 									onValueChange = { newVolume ->
-										sliderPosition = newVolume
+										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
+										val steps = listOf(0f, 0.33f, 0.66f, 1f)
+										val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
+										sliderPosition = nearestStep
 									},
 									onValueChangeFinished = {
 										viewModel.setCustomVolume(sliderPosition)

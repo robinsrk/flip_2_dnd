@@ -50,7 +50,7 @@ android {
 	}
 
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.1"
+		kotlinCompilerExtensionVersion = "1.5.15"
 	}
 
 	packaging {
@@ -67,9 +67,9 @@ dependencies {
 	implementation(platform("androidx.compose:compose-bom:2024.01.00"))
 	implementation("androidx.compose.ui:ui")
 	implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material3:material3-window-size-class")
-    implementation("androidx.core:core-splashscreen:1.0.1")
+	implementation("androidx.compose.material3:material3")
+	implementation("androidx.compose.material3:material3-window-size-class")
+	implementation("androidx.core:core-splashscreen:1.0.1")
 
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.48")

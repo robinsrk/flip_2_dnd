@@ -12,10 +12,10 @@
 
 	<uses-feature
 		android:name="android.hardware.sensor.accelerometer"
-		android:required="true" />
+		android:required="false" />
 	<uses-feature
 		android:name="android.hardware.sensor.gyroscope"
-		android:required="true" />
+		android:required="false" />
 
 	<application
 		android:name=".FlipDndApp"
@@ -45,6 +45,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
 		<receiver
 			android:name=".services.AutoStartService"
 			android:exported="false">

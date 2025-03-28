@@ -35,26 +35,6 @@ Flip 2 DND is a modern Android application that intelligently manages your Do No
 - **Customizable Feedback**: Choose between vibration and sound notifications.
 - **User-Friendly Settings**: Easily customize your DND preferences.
 
-## 🏗️ Architecture
+## Star History
 
-Built with modern Android practices:
-
-- **UI Layer**: Jetpack Compose with Material 3
-- **Architecture Pattern**: MVVM with Clean Architecture
-- **Dependency Injection**: Hilt
-- **Concurrency**: Kotlin Coroutines & Flow
-- **State Management**: StateFlow
-
-## 📋 Requirements
-
-- Android 6.0 (API level 23) or higher
-- Accelerometer sensor
-- Permission to modify Do Not Disturb settings
-
-## Permissions
-
-The app requires the following permissions:
-
-- `ACCESS_NOTIFICATION_POLICY`: To modify DND settings
-- `VIBRATE`: For vibration feedback
-- `SENSOR`: To detect phone orientation
+[![Star History Chart](https://api.star-history.com/svg?repos=flip_2_dnd/flip_2_dnd,robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#flip_2_dnd/flip_2_dnd&robinsrk/flip_2_dnd&Date)

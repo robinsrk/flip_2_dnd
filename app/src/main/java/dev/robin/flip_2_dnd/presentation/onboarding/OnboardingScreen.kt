@@ -83,7 +83,7 @@ fun OnboardingScreen(
                     Button(
                         onClick = {
                             when (pagerState.currentPage) {
-                                4 -> onComplete()
+                                5 -> onComplete()
                                 else -> {
                                     scope.launch {
                                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -104,7 +104,7 @@ fun OnboardingScreen(
                     ) {
                         Text(
                             text = when (pagerState.currentPage) {
-                                4 -> "Get Started"
+                                5 -> "Get Started"
                                 else -> "Next"
                             },
                             style = MaterialTheme.typography.bodyLarge
@@ -115,8 +115,18 @@ fun OnboardingScreen(
             )
         }
     ) { paddingValues ->
-        HorizontalPager(
-            count = 5,
+        val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            scope.launch {
+                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            }
+        }
+    }
+
+    HorizontalPager(
+            count = 6,
             state = pagerState,
             userScrollEnabled = false,
             modifier = Modifier
@@ -128,7 +138,8 @@ fun OnboardingScreen(
                 1 -> FeaturePage(onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
                 2 -> DndPermissionPage(dndPermissionLauncher, onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
                 3 -> BatteryOptimizationPage(onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                4 -> CompletePage(onNext = onComplete)
+                4 -> NotificationPermissionPage(notificationPermissionLauncher, onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
+                5 -> CompletePage(onNext = onComplete)
             }
         }
     }
@@ -293,6 +304,40 @@ fun BatteryOptimizationPage(onNext: () -> Unit) {
             enabled = !isOptimizationDisabled
         ) {
             Text(if (isOptimizationDisabled) "Permission Granted" else "Disable Battery Optimization")
+        }
+    }
+}
+
+@Composable
+fun NotificationPermissionPage(
+    notificationPermissionLauncher: ActivityResultLauncher<String>,
+    onNext: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Notifications",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "We need permission to send you notifications about the app's status.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(
+            onClick = {
+                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        ) {
+            Text("Grant Permission")
         }
     }
 }

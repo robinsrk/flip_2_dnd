@@ -136,7 +136,8 @@ fun SettingsScreen(
 							onValueChangeFinished = {
 								viewModel.setFlipSensitivity(sliderPosition)
 							},
-							modifier = Modifier.width(200.dp)
+							modifier = Modifier.width(200.dp),
+							steps = 2
 						)
 					}
 				)
@@ -273,15 +274,17 @@ fun SettingsScreen(
 								Slider(
 									value = sliderPosition,
 									onValueChange = { newVolume ->
-										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
-										val steps = listOf(0f, 0.33f, 0.66f, 1f)
+										val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
 										val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
 										sliderPosition = nearestStep
 									},
 									onValueChangeFinished = {
 										viewModel.setCustomVolume(sliderPosition)
+										// Play DND on sound as feedback when slider changes
+										viewModel.playSelectedSound(viewModel.dndOnSound.value)
 									},
-									modifier = Modifier.width(200.dp)
+									modifier = Modifier.width(200.dp),
+									steps = 9
 								)
 							}
 						)

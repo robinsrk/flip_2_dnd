@@ -18,8 +18,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 private const val TAG = "FlipDetectorService"
-private const val NOTIFICATION_ID = 1
-private const val CHANNEL_ID = "FlipDetectorChannel"
+private const val SERVICE_NOTIFICATION_ID = 1
+private const val FLIP_NOTIFICATION_ID = 2
+private const val DND_NOTIFICATION_ID = 3
+private const val SERVICE_CHANNEL_ID = "FlipDetectorChannel"
+private const val FLIP_CHANNEL_ID = "FlipStateChannel"
 
 class FlipDetectorService : Service() {
     lateinit var sensorService: SensorService
@@ -109,8 +112,11 @@ class FlipDetectorService : Service() {
             Log.d(TAG, "Initial screen state: ${if (_isScreenOff.value) "OFF" else "ON"}")
             
             // Make service high priority
-            val notification = createNotification()
-            startForeground(NOTIFICATION_ID, notification)
+            val notification = createServiceNotification()
+            startForeground(SERVICE_NOTIFICATION_ID, notification)
+            
+            // Create notification channels
+            createNotificationChannels()
             
             // Register screen state receiver
             val filter = IntentFilter().apply {
@@ -179,6 +185,7 @@ class FlipDetectorService : Service() {
                         }
                         
                         Log.d(TAG, "Phone is face down and DND is OFF - Starting 2-second delay")
+                        showFlipDetectedNotification()
                         orientationJob = serviceScope.launch {
                             delay(2000) // 2-second delay
                             // Double check screen state and orientation after delay
@@ -189,6 +196,7 @@ class FlipDetectorService : Service() {
                             if (sensorService.orientation.value == "Face down") {
                                 Log.d(TAG, "2-second delay completed, phone still face down - Enabling DND")
                                 dndService.toggleDnd()
+                                showDndStateNotification(true)
                             } else {
                                 Log.d(TAG, "Phone orientation changed during delay - Cancelling DND toggle")
                             }
@@ -202,6 +210,7 @@ class FlipDetectorService : Service() {
                     if (currentDndState && isAppEnabled) {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND was enabled by app - Disabling DND")
                         dndService.toggleDnd()
+                        showDndStateNotification(false)
                     } else if (currentDndState) {
                         Log.d(TAG, "Phone is not face down ($orientation) but DND was enabled by user - No action needed")
                     } else {
@@ -238,10 +247,62 @@ class FlipDetectorService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun createNotification(): Notification {
+    private fun createNotificationChannels() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Service channel
+        val serviceChannel = NotificationChannel(
+            SERVICE_CHANNEL_ID,
+            "Flip 2 DND Service",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Monitors phone orientation to toggle DND mode"
+        }
+
+        // Flip state channel
+        val flipChannel = NotificationChannel(
+            FLIP_CHANNEL_ID,
+            "Flip State Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Notifications about phone flip state and DND changes"
+        }
+
+        notificationManager.createNotificationChannels(listOf(serviceChannel, flipChannel))
+    }
+
+    private fun showFlipDetectedNotification() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = NotificationCompat.Builder(this, FLIP_CHANNEL_ID)
+            .setContentTitle("Flip Detected")
+            .setContentText("DND will activate in 2 seconds")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(longArrayOf(0, 250))
+            .build()
+
+        notificationManager.notify(FLIP_NOTIFICATION_ID, notification)
+    }
+
+    private fun showDndStateNotification(enabled: Boolean) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification = NotificationCompat.Builder(this, FLIP_CHANNEL_ID)
+            .setContentTitle("DND State Changed")
+            .setContentText(if (enabled) "DND mode activated" else "DND mode deactivated")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(longArrayOf(0, 250))
+            .build()
+
+        notificationManager.notify(DND_NOTIFICATION_ID, notification)
+    }
+
+    private fun createServiceNotification(): Notification {
         val channelName = "Flip 2 DND Service"
         val channel = NotificationChannel(
-            CHANNEL_ID,
+            SERVICE_CHANNEL_ID,
             channelName,
             NotificationManager.IMPORTANCE_LOW
         ).apply {
@@ -258,7 +319,7 @@ class FlipDetectorService : Service() {
             )
         }
 
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, SERVICE_CHANNEL_ID)
             .setContentTitle("Flip 2 DND")
             .setContentText("Monitoring phone orientation")
             .setSmallIcon(R.mipmap.ic_launcher)

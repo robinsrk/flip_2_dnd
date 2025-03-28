@@ -1,8 +1,11 @@
 package dev.robin.flip_2_dnd
 
+import android.Manifest
 import android.app.NotificationManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
@@ -13,6 +16,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +53,21 @@ class MainActivity : ComponentActivity() {
                   ActivityResultContracts.StartActivityForResult(),
           ) { checkAndStartService() }
 
+  private val notificationPermissionLauncher =
+          registerForActivityResult(
+                  ActivityResultContracts.RequestPermission(),
+          ) { isGranted ->
+              if (isGranted) {
+                  checkAndStartService()
+              } else {
+                  Toast.makeText(
+                          this,
+                          "Notification permission is required for app functionality",
+                          Toast.LENGTH_LONG
+                  ).show()
+              }
+          }
+
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -80,23 +100,33 @@ class MainActivity : ComponentActivity() {
   private fun checkAndStartService() {
     val notificationPolicyGranted = isNotificationPolicyAccessGranted()
     val batteryOptimizationDisabled = isBatteryOptimizationDisabled()
+    val notificationPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    } else {
+        true
+    }
 
-    // Always start the service
-    startFlipDetectorService()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationPermissionGranted) {
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        return
+    }
 
-    // If permissions are not granted, show a warning
+    // Always start the service if notification permission is granted
+    if (notificationPermissionGranted) {
+        startFlipDetectorService()
+    }
+
+    // If other permissions are not granted, show a warning
     if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
-      // Optional: Add a toast or dialog to inform user about missing permissions
-      Toast.makeText(
-                      this,
-                      "Please grant all permissions for full functionality",
-                      Toast.LENGTH_LONG,
-              )
-              .show()
+        Toast.makeText(
+            this,
+            "Please grant all permissions for full functionality",
+            Toast.LENGTH_LONG
+        ).show()
 
-      if (!notificationPolicyGranted) {
-        requestNotificationPolicyAccess()
-      }
+        if (!notificationPolicyGranted) {
+            requestNotificationPolicyAccess()
+        }
 
       if (!batteryOptimizationDisabled) {
         requestDisableBatteryOptimization()

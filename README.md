@@ -35,6 +35,18 @@ Flip 2 DND is a modern Android application that intelligently manages your Do No
 - **Customizable Feedback**: Choose between vibration and sound notifications.
 - **User-Friendly Settings**: Easily customize your DND preferences.
 
+## 📱 Screenshots
+
+<p align="center">
+  <img src="./metadata/en-US/images/phoneScreenshots/01-Home-Light.png" alt="Home Screen (Light)" width="200"/>
+  <img src="./metadata/en-US/images/phoneScreenshots/02-Home-Settings-Light.png" alt="Home Settings (Light)" width="200"/>
+  <img src="./metadata/en-US/images/phoneScreenshots/03-Settings-Light.png" alt="Settings (Light)" width="200"/>
+</p>
+<p align="center">
+  <img src="./metadata/en-US/images/phoneScreenshots/04-Home-Dark.png" alt="Home Screen (Dark)" width="200"/>
+  <img src="./metadata/en-US/images/phoneScreenshots/05-Settings-Dark.png" alt="Settings (Dark)" width="200"/>
+</p>
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#robinsrk/flip_2_dnd&Date)

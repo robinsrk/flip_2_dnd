@@ -37,4 +37,4 @@ Flip 2 DND is a modern Android application that intelligently manages your Do No
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=flip_2_dnd/flip_2_dnd,robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#flip_2_dnd/flip_2_dnd&robinsrk/flip_2_dnd&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#robinsrk/flip_2_dnd&Date)

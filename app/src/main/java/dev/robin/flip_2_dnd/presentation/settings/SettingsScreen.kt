@@ -88,8 +88,8 @@ fun SettingsScreen(
 		Column(
 			modifier =
 				Modifier
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState()),
+					.padding(paddingValues)
+					.verticalScroll(rememberScrollState()),
 		) {
 			Text(
 				text = "Behavior",
@@ -120,17 +120,17 @@ fun SettingsScreen(
 					trailingContent = {
 						val flipSensitivity by viewModel.flipSensitivity.collectAsState()
 						var sliderPosition by remember { mutableStateOf(flipSensitivity) }
-						
+
 						LaunchedEffect(flipSensitivity) {
 							sliderPosition = flipSensitivity
 						}
-						
+
 						Slider(
 							value = sliderPosition,
 							onValueChange = { newSensitivity ->
-								// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
 								val steps = listOf(0f, 0.33f, 0.66f, 1f)
-								val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newSensitivity) } ?: newSensitivity
+								val nearestStep =
+									steps.minByOrNull { kotlin.math.abs(it - newSensitivity) } ?: newSensitivity
 								sliderPosition = nearestStep
 							},
 							onValueChangeFinished = {
@@ -167,13 +167,13 @@ fun SettingsScreen(
 					val soundSheetState = rememberModalBottomSheetState()
 
 					ListItem(
-                        headlineContent = { Text("DND On Sound") },
-                        supportingContent = { Text(dndOnSound.name) },
-                        trailingContent = {
-                            Icon(Icons.Default.ArrowDropDown, "Select sound")
-                        },
-                        modifier = Modifier.clickable { dndOnExpanded = true }
-                    )
+						headlineContent = { Text("DND On Sound") },
+						supportingContent = { Text(dndOnSound.name) },
+						trailingContent = {
+							Icon(Icons.Default.ArrowDropDown, "Select sound")
+						},
+						modifier = Modifier.clickable { dndOnExpanded = true }
+					)
 
 					if (dndOnExpanded) {
 						ModalBottomSheet(
@@ -185,19 +185,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(sound.name) },
 										trailingContent = {
-                                                if (sound == dndOnSound) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
-                                                        contentDescription = "Selected",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                } else {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-                                                        contentDescription = "Not Selected",
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
+											if (sound == dndOnSound) {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_checked),
+													contentDescription = "Selected",
+													tint = MaterialTheme.colorScheme.primary
+												)
+											} else {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+													contentDescription = "Not Selected",
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnSound(sound)
@@ -212,13 +212,13 @@ fun SettingsScreen(
 					}
 
 					ListItem(
-                        headlineContent = { Text("DND Off Sound") },
-                        supportingContent = { Text(dndOffSound.name) },
-                        trailingContent = {
-                            Icon(Icons.Default.ArrowDropDown, "Select sound")
-                        },
-                        modifier = Modifier.clickable { dndOffExpanded = true }
-                    )
+						headlineContent = { Text("DND Off Sound") },
+						supportingContent = { Text(dndOffSound.name) },
+						trailingContent = {
+							Icon(Icons.Default.ArrowDropDown, "Select sound")
+						},
+						modifier = Modifier.clickable { dndOffExpanded = true }
+					)
 
 					if (dndOffExpanded) {
 						ModalBottomSheet(
@@ -230,19 +230,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(sound.name) },
 										trailingContent = {
-                                                if (sound == dndOffSound) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
-                                                        contentDescription = "Selected",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                } else {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-                                                        contentDescription = "Not Selected",
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
+											if (sound == dndOffSound) {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_checked),
+													contentDescription = "Selected",
+													tint = MaterialTheme.colorScheme.primary
+												)
+											} else {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+													contentDescription = "Not Selected",
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffSound(sound)
@@ -275,7 +275,8 @@ fun SettingsScreen(
 									value = sliderPosition,
 									onValueChange = { newVolume ->
 										val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
-										val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
+										val nearestStep =
+											steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
 										sliderPosition = nearestStep
 									},
 									onValueChangeFinished = {
@@ -317,16 +318,16 @@ fun SettingsScreen(
 					val vibrationSheetState = rememberModalBottomSheetState()
 
 					ListItem(
-                        headlineContent = { Text("DND On Vibration pattern") },
-                        supportingContent = {
-                            val dndOnVibration by viewModel.dndOnVibration.collectAsState()
-                            Text(dndOnVibration.displayName)
-                        },
-                        trailingContent = {
-                            Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-                        },
-                        modifier = Modifier.clickable { dndOnVibrationExpanded = true }
-                    )
+						headlineContent = { Text("DND On Vibration pattern") },
+						supportingContent = {
+							val dndOnVibration by viewModel.dndOnVibration.collectAsState()
+							Text(dndOnVibration.displayName)
+						},
+						trailingContent = {
+							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+						},
+						modifier = Modifier.clickable { dndOnVibrationExpanded = true }
+					)
 
 					if (dndOnVibrationExpanded) {
 						ModalBottomSheet(
@@ -338,19 +339,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(pattern.displayName) },
 										trailingContent = {
-                                                if (pattern == viewModel.dndOnVibration.collectAsState().value) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
-                                                        contentDescription = "Selected",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                } else {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-                                                        contentDescription = "Not Selected",
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
+											if (pattern == viewModel.dndOnVibration.collectAsState().value) {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_checked),
+													contentDescription = "Selected",
+													tint = MaterialTheme.colorScheme.primary
+												)
+											} else {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+													contentDescription = "Not Selected",
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOnVibration(pattern)
@@ -365,13 +366,13 @@ fun SettingsScreen(
 					}
 
 					ListItem(
-                        headlineContent = { Text("DND Off Vibration pattern") },
-                        supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
-                        trailingContent = {
-                            Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-                        },
-                        modifier = Modifier.clickable { dndOffVibrationExpanded = true }
-                    )
+						headlineContent = { Text("DND Off Vibration pattern") },
+						supportingContent = { Text(viewModel.dndOffVibration.collectAsState().value.displayName) },
+						trailingContent = {
+							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+						},
+						modifier = Modifier.clickable { dndOffVibrationExpanded = true }
+					)
 
 					if (dndOffVibrationExpanded) {
 						ModalBottomSheet(
@@ -383,19 +384,19 @@ fun SettingsScreen(
 									ListItem(
 										headlineContent = { Text(pattern.displayName) },
 										trailingContent = {
-                                                if (pattern == viewModel.dndOffVibration.collectAsState().value) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_checked),
-                                                        contentDescription = "Selected",
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                } else {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-                                                        contentDescription = "Not Selected",
-                                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
+											if (pattern == viewModel.dndOffVibration.collectAsState().value) {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_checked),
+													contentDescription = "Selected",
+													tint = MaterialTheme.colorScheme.primary
+												)
+											} else {
+												Icon(
+													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+													contentDescription = "Not Selected",
+													tint = MaterialTheme.colorScheme.onSurfaceVariant
+												)
+											}
 										},
 										modifier = Modifier.clickable {
 											viewModel.setDndOffVibration(pattern)
@@ -429,7 +430,8 @@ fun SettingsScreen(
 									onValueChange = { newStrength ->
 										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
 										val steps = listOf(0f, 0.33f, 0.66f, 1f)
-										val nearestStep = steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
+										val nearestStep =
+											steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
 										sliderPosition = nearestStep
 									},
 									onValueChangeFinished = {
@@ -444,64 +446,64 @@ fun SettingsScreen(
 					}
 				}
 			}
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+			Divider(modifier = Modifier.padding(vertical = 16.dp))
 
-            Text(
-                text = "Extras",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-            )
+			Text(
+				text = "Extras",
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontWeight = FontWeight.Bold
+				),
+				modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+			)
 
-            Column {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Join Telegram",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    },
-                    supportingContent = { Text("Join our Telegram community") },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.telegram),
-                            contentDescription = "Telegram Icon",
-														tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.width(24.dp)
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        val telegramUsername = "flip_2_dnd"
-                        val telegramUri = "tg://resolve?domain=$telegramUsername"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
-                        try {
-                            context.startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
-                            println("No activity found to handle the intent: $e")
-                        }
-                    }
-                )
+			Column {
+				ListItem(
+					headlineContent = {
+						Text(
+							"Join Telegram",
+							style = MaterialTheme.typography.titleMedium
+						)
+					},
+					supportingContent = { Text("Join our Telegram community") },
+					leadingContent = {
+						Icon(
+							painter = painterResource(id = R.drawable.telegram),
+							contentDescription = "Telegram Icon",
+							tint = MaterialTheme.colorScheme.primary,
+							modifier = Modifier.width(24.dp)
+						)
+					},
+					modifier = Modifier.clickable {
+						val telegramUsername = "flip_2_dnd"
+						val telegramUri = "tg://resolve?domain=$telegramUsername"
+						val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
+						try {
+							context.startActivity(intent)
+						} catch (e: ActivityNotFoundException) {
+							Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
+							println("No activity found to handle the intent: $e")
+						}
+					}
+				)
 
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Support Developer",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    },
-                    supportingContent = { Text("Help keep this app free and improving") },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_coin),
-                            contentDescription = "Support Icon",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    modifier = Modifier.clickable(onClick = onDonateClick)
-                )
-            }
+				ListItem(
+					headlineContent = {
+						Text(
+							"Support Developer",
+							style = MaterialTheme.typography.titleMedium
+						)
+					},
+					supportingContent = { Text("Help keep this app free and improving") },
+					leadingContent = {
+						Icon(
+							painter = painterResource(id = R.drawable.ic_coin),
+							contentDescription = "Support Icon",
+							tint = MaterialTheme.colorScheme.primary
+						)
+					},
+					modifier = Modifier.clickable(onClick = onDonateClick)
+				)
+			}
 		}
 	}
 }

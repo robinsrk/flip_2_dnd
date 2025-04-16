@@ -31,4 +31,8 @@ interface SettingsRepository {
     suspend fun setDndOffVibration(pattern: VibrationPattern)
     fun getFlipSensitivity(): Flow<Float>
     suspend fun setFlipSensitivity(sensitivity: Float)
+    fun getDndOnCustomSoundUri(): Flow<String?>
+    suspend fun setDndOnCustomSoundUri(uri: String?)
+    fun getDndOffCustomSoundUri(): Flow<String?>
+    suspend fun setDndOffCustomSoundUri(uri: String?)
 }

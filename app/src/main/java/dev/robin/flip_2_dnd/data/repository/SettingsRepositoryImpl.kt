@@ -30,6 +30,8 @@ private const val KEY_CUSTOM_VIBRATION_STRENGTH = "custom_vibration_strength"
 private const val KEY_DND_ON_VIBRATION = "dnd_on_vibration"
 private const val KEY_DND_OFF_VIBRATION = "dnd_off_vibration"
 private const val KEY_FLIP_SENSITIVITY = "flip_sensitivity"
+private const val KEY_DND_ON_CUSTOM_SOUND_URI = "dnd_on_custom_sound_uri"
+private const val KEY_DND_OFF_CUSTOM_SOUND_URI = "dnd_off_custom_sound_uri"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -74,6 +76,8 @@ class SettingsRepositoryImpl @Inject constructor(
 		)
 	)
 	private val flipSensitivity = MutableStateFlow(prefs.getFloat(KEY_FLIP_SENSITIVITY, 1f))
+	private val dndOnCustomSoundUri = MutableStateFlow<String?>(prefs.getString(KEY_DND_ON_CUSTOM_SOUND_URI, null))
+	private val dndOffCustomSoundUri = MutableStateFlow<String?>(prefs.getString(KEY_DND_OFF_CUSTOM_SOUND_URI, null))
 
 	private fun restartFlipDetectorService() {
 		try {
@@ -191,6 +195,22 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setFlipSensitivity(sensitivity: Float) {
 		prefs.edit().putFloat(KEY_FLIP_SENSITIVITY, sensitivity).apply()
 		flipSensitivity.value = sensitivity
+		restartFlipDetectorService()
+	}
+
+	override fun getDndOnCustomSoundUri(): Flow<String?> = dndOnCustomSoundUri
+
+	override suspend fun setDndOnCustomSoundUri(uri: String?) {
+		prefs.edit().putString(KEY_DND_ON_CUSTOM_SOUND_URI, uri).apply()
+		dndOnCustomSoundUri.value = uri
+		restartFlipDetectorService()
+	}
+
+	override fun getDndOffCustomSoundUri(): Flow<String?> = dndOffCustomSoundUri
+
+	override suspend fun setDndOffCustomSoundUri(uri: String?) {
+		prefs.edit().putString(KEY_DND_OFF_CUSTOM_SOUND_URI, uri).apply()
+		dndOffCustomSoundUri.value = uri
 		restartFlipDetectorService()
 	}
 }

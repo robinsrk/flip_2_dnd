@@ -205,6 +205,36 @@ fun SettingsScreen(
 											dndOnExpanded = false
 										}
 									)
+									
+									// Add a button to select custom sound if CUSTOM is selected
+									if (sound == Sound.CUSTOM && dndOnSound == Sound.CUSTOM) {
+										val dndOnCustomSoundUri by viewModel.dndOnCustomSoundUri.collectAsState()
+										Button(
+											onClick = {
+												val intent = Intent(context, SoundPickerActivity::class.java).apply {
+													putExtra(SoundPickerActivity.EXTRA_SOUND_TYPE, SoundPickerActivity.DND_ON_SOUND)
+												}
+												try {
+													context.startActivity(intent)
+												} catch (e: ActivityNotFoundException) {
+													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT).show()
+												}
+											},
+											modifier = Modifier
+												.fillMaxWidth()
+												.padding(horizontal = 16.dp, vertical = 8.dp)
+										) {
+											Text("Select Custom Sound")
+										}
+										
+										if (!dndOnCustomSoundUri.isNullOrEmpty()) {
+											Text(
+												"Custom sound selected",
+												modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+												style = MaterialTheme.typography.bodyMedium
+											)
+										}
+									}
 								}
 							}
 							Spacer(modifier = Modifier.height(20.dp))
@@ -250,6 +280,36 @@ fun SettingsScreen(
 											dndOffExpanded = false
 										}
 									)
+									
+									// Add a button to select custom sound if CUSTOM is selected
+									if (sound == Sound.CUSTOM && dndOffSound == Sound.CUSTOM) {
+										val dndOffCustomSoundUri by viewModel.dndOffCustomSoundUri.collectAsState()
+										Button(
+											onClick = {
+												val intent = Intent(context, SoundPickerActivity::class.java).apply {
+													putExtra(SoundPickerActivity.EXTRA_SOUND_TYPE, SoundPickerActivity.DND_OFF_SOUND)
+												}
+												try {
+													context.startActivity(intent)
+												} catch (e: ActivityNotFoundException) {
+													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT).show()
+												}
+											},
+											modifier = Modifier
+												.fillMaxWidth()
+												.padding(horizontal = 16.dp, vertical = 8.dp)
+										) {
+											Text("Select Custom Sound")
+										}
+										
+										if (!dndOffCustomSoundUri.isNullOrEmpty()) {
+											Text(
+												"Custom sound selected",
+												modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+												style = MaterialTheme.typography.bodyMedium
+											)
+										}
+									}
 								}
 							}
 							Spacer(modifier = Modifier.height(20.dp))

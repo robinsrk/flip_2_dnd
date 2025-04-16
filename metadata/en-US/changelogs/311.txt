@@ -1,0 +1,2 @@
+* feat - added custom sound feature
+* feat - notification feedback control

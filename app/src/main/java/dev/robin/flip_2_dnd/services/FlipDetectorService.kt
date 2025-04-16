@@ -16,6 +16,7 @@ import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.first
 
 private const val TAG = "FlipDetectorService"
 private const val SERVICE_NOTIFICATION_ID = 1
@@ -263,40 +264,63 @@ class FlipDetectorService : Service() {
         val flipChannel = NotificationChannel(
             FLIP_CHANNEL_ID,
             "Flip State Notifications",
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = "Notifications about phone flip state and DND changes"
+            setSound(null, null)
+            enableVibration(false)
+            enableLights(false)
         }
 
         notificationManager.createNotificationChannels(listOf(serviceChannel, flipChannel))
     }
 
     private fun showFlipDetectedNotification() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = NotificationCompat.Builder(this, FLIP_CHANNEL_ID)
-            .setContentTitle("Flip Detected")
-            .setContentText("DND will activate in 2 seconds")
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVibrate(longArrayOf(0, 250))
-            .build()
+        // Use runBlocking to get the current notification preference synchronously
+        serviceScope.launch {
+            val notificationsEnabled = settingsRepository.getNotificationsEnabled().first()
+            if (!notificationsEnabled) {
+                Log.d(TAG, "Notifications disabled in settings - skipping flip notification")
+                return@launch
+            }
+            
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = NotificationCompat.Builder(this@FlipDetectorService, FLIP_CHANNEL_ID)
+                .setContentTitle("Flip Detected")
+                .setContentText("DND will activate in 2 seconds")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSilent(true) // Make notification silent
+                .build()
 
-        notificationManager.notify(FLIP_NOTIFICATION_ID, notification)
+            notificationManager.notify(FLIP_NOTIFICATION_ID, notification)
+            Log.d(TAG, "Flip detected notification shown")
+        }
     }
 
     private fun showDndStateNotification(enabled: Boolean) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification = NotificationCompat.Builder(this, FLIP_CHANNEL_ID)
-            .setContentTitle("DND State Changed")
-            .setContentText(if (enabled) "DND mode activated" else "DND mode deactivated")
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVibrate(longArrayOf(0, 250))
-            .build()
+        // Use runBlocking to get the current notification preference synchronously
+        serviceScope.launch {
+            val notificationsEnabled = settingsRepository.getNotificationsEnabled().first()
+            if (!notificationsEnabled) {
+                Log.d(TAG, "Notifications disabled in settings - skipping DND state notification")
+                return@launch
+            }
+            
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notification = NotificationCompat.Builder(this@FlipDetectorService, FLIP_CHANNEL_ID)
+                .setContentTitle("DND State Changed")
+                .setContentText(if (enabled) "DND mode activated" else "DND mode deactivated")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSilent(true) // Make notification silent
+                .build()
 
-        notificationManager.notify(DND_NOTIFICATION_ID, notification)
+            notificationManager.notify(DND_NOTIFICATION_ID, notification)
+            Log.d(TAG, "DND state notification shown: DND ${if (enabled) "enabled" else "disabled"}")
+        }
     }
 
     private fun createServiceNotification(): Notification {

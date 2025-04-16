@@ -35,4 +35,6 @@ interface SettingsRepository {
     suspend fun setDndOnCustomSoundUri(uri: String?)
     fun getDndOffCustomSoundUri(): Flow<String?>
     suspend fun setDndOffCustomSoundUri(uri: String?)
+    fun getNotificationsEnabled(): Flow<Boolean>
+    suspend fun setNotificationsEnabled(enabled: Boolean)
 }

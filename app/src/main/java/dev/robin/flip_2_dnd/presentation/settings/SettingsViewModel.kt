@@ -27,6 +27,9 @@ class SettingsViewModel @Inject constructor(
 
 	private val _priorityDndEnabled = MutableStateFlow(false)
 	val priorityDndEnabled = _priorityDndEnabled.asStateFlow()
+	
+	private val _notificationsEnabled = MutableStateFlow(true)
+	val notificationsEnabled = _notificationsEnabled.asStateFlow()
 
 	private val _dndOnSound = MutableStateFlow(Sound.SLUSH)
 	val dndOnSound = _dndOnSound.asStateFlow()
@@ -82,6 +85,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getPriorityDndEnabled().collect { enabled ->
 				_priorityDndEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getNotificationsEnabled().collect { enabled ->
+				_notificationsEnabled.value = enabled
 			}
 		}
 		viewModelScope.launch {
@@ -216,6 +224,12 @@ class SettingsViewModel @Inject constructor(
 	fun setFlipSensitivity(sensitivity: Float) {
 		viewModelScope.launch {
 			settingsRepository.setFlipSensitivity(sensitivity)
+		}
+	}
+	
+	fun setNotificationsEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setNotificationsEnabled(enabled)
 		}
 	}
 

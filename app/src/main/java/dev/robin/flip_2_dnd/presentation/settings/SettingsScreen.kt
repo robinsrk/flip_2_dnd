@@ -114,6 +114,14 @@ fun SettingsScreen(
 					onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
 				)
 
+				val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = "Notification Feedback",
+					description = "Show notifications when flip is detected or DND state changes",
+					checked = notificationsEnabled,
+					onCheckedChange = { viewModel.setNotificationsEnabled(it) },
+				)
+
 				ListItem(
 					headlineContent = { Text("Flip Sensitivity") },
 					supportingContent = { Text("Adjust the sensitivity of flip detection") },

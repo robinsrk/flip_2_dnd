@@ -37,6 +37,7 @@ class SensorService(context: Context) {
 	private var isProcessing = false
 	private var isRegistered = false
 	private var sensitivity = 0.5f
+	private var highSensitivityMode = false
 
 	init {
 		if (accelerometer == null) {
@@ -51,6 +52,14 @@ class SensorService(context: Context) {
 			settingsRepository.getFlipSensitivity().collect { newSensitivity ->
 				sensitivity = newSensitivity
 				Log.d(TAG, "Sensitivity updated to: $sensitivity")
+			}
+		}
+		
+		// Observe high sensitivity mode changes
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getHighSensitivityModeEnabled().collect { enabled ->
+				highSensitivityMode = enabled
+				Log.d(TAG, "High sensitivity mode updated to: $highSensitivityMode")
 			}
 		}
 	}
@@ -154,8 +163,17 @@ class SensorService(context: Context) {
 				Log.d(TAG, "z value: ${abs(z)} $z (threshold: $accelThreshold, stable: $isStable)")
 				if (isStable) "Face down" else _orientation.value
 			}
-
-			else -> "Face up"
+			
+			// When high sensitivity mode is enabled, any orientation that's not face down is considered face up
+			else -> {
+				if (highSensitivityMode) {
+						"Face up"
+				} else if (abs(z) >= accelThreshold && z > 0) {
+						"Face up"
+				} else {
+						_orientation.value
+				}
+		}
 		}
 
 		if (orientation != _orientation.value) {

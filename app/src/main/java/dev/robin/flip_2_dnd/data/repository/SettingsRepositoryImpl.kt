@@ -33,6 +33,7 @@ private const val KEY_FLIP_SENSITIVITY = "flip_sensitivity"
 private const val KEY_DND_ON_CUSTOM_SOUND_URI = "dnd_on_custom_sound_uri"
 private const val KEY_DND_OFF_CUSTOM_SOUND_URI = "dnd_off_custom_sound_uri"
 private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
+private const val KEY_HIGH_SENSITIVITY_MODE = "high_sensitivity_mode"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -80,6 +81,7 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val dndOnCustomSoundUri = MutableStateFlow<String?>(prefs.getString(KEY_DND_ON_CUSTOM_SOUND_URI, null))
 	private val dndOffCustomSoundUri = MutableStateFlow<String?>(prefs.getString(KEY_DND_OFF_CUSTOM_SOUND_URI, null))
 	private val notificationsEnabled = MutableStateFlow(prefs.getBoolean(KEY_NOTIFICATIONS_ENABLED, true))
+	private val highSensitivityModeEnabled = MutableStateFlow(prefs.getBoolean(KEY_HIGH_SENSITIVITY_MODE, false))
 
 	private fun restartFlipDetectorService() {
 		try {
@@ -221,6 +223,14 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setNotificationsEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, enabled).apply()
 		notificationsEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getHighSensitivityModeEnabled(): Flow<Boolean> = highSensitivityModeEnabled
+
+	override suspend fun setHighSensitivityModeEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_HIGH_SENSITIVITY_MODE, enabled).apply()
+		highSensitivityModeEnabled.value = enabled
 		restartFlipDetectorService()
 	}
 }

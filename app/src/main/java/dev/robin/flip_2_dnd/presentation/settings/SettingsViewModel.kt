@@ -31,6 +31,9 @@ class SettingsViewModel @Inject constructor(
 	private val _notificationsEnabled = MutableStateFlow(true)
 	val notificationsEnabled = _notificationsEnabled.asStateFlow()
 
+	private val _highSensitivityModeEnabled = MutableStateFlow(false)
+	val highSensitivityModeEnabled = _highSensitivityModeEnabled.asStateFlow()
+
 	private val _dndOnSound = MutableStateFlow(Sound.SLUSH)
 	val dndOnSound = _dndOnSound.asStateFlow()
 
@@ -90,6 +93,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getNotificationsEnabled().collect { enabled ->
 				_notificationsEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHighSensitivityModeEnabled().collect { enabled ->
+				_highSensitivityModeEnabled.value = enabled
 			}
 		}
 		viewModelScope.launch {
@@ -230,6 +238,12 @@ class SettingsViewModel @Inject constructor(
 	fun setNotificationsEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setNotificationsEnabled(enabled)
+		}
+	}
+
+	fun setHighSensitivityModeEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setHighSensitivityModeEnabled(enabled)
 		}
 	}
 

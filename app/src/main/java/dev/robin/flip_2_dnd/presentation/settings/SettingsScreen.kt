@@ -122,6 +122,14 @@ fun SettingsScreen(
 					onCheckedChange = { viewModel.setNotificationsEnabled(it) },
 				)
 
+				val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = "High Sensitivity Mode",
+					description = "When enabled, any orientation that's not face down will be considered face up",
+					checked = highSensitivityModeEnabled,
+					onCheckedChange = { viewModel.setHighSensitiviflip up sensitivity increased.
+				)
+
 				ListItem(
 					headlineContent = { Text("Flip Sensitivity") },
 					supportingContent = { Text("Adjust the sensitivity of flip detection") },

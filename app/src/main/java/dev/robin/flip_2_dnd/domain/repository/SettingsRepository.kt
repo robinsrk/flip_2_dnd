@@ -37,4 +37,6 @@ interface SettingsRepository {
     suspend fun setDndOffCustomSoundUri(uri: String?)
     fun getNotificationsEnabled(): Flow<Boolean>
     suspend fun setNotificationsEnabled(enabled: Boolean)
+    fun getHighSensitivityModeEnabled(): Flow<Boolean>
+    suspend fun setHighSensitivityModeEnabled(enabled: Boolean)
 }

@@ -127,7 +127,7 @@ fun SettingsScreen(
 					title = "High Sensitivity Mode",
 					description = "When enabled, any orientation that's not face down will be considered face up",
 					checked = highSensitivityModeEnabled,
-					onCheckedChange = { viewModel.setHighSensitiviflip up sensitivity increased.
+					onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
 				)
 
 				ListItem(

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-	namespace = "dev.robin.flip_2_dnd"
+	namespace = "dev.robin.dndfy"
 	compileSdk = 34
 
 	defaultConfig {
-		applicationId = "dev.robin.flip_2_dnd"
+		applicationId = "dev.robin.dndfy"
 		minSdk = 23
 		targetSdk = 34
 		versionCode = 400
@@ -82,5 +82,6 @@ dependencies {
 }
 
 kapt {
-	correctErrorTypes = true
+        correctErrorTypes = true
+        strictMode = false
 }

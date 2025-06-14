@@ -19,18 +19,18 @@
 		android:required="false" />
 
 	<application
-		android:name=".FlipDndApp"
+		android:name=".DNDfyApp"
 		android:allowBackup="true"
 		android:dataExtractionRules="@xml/data_extraction_rules"
 		android:fullBackupContent="@xml/backup_rules"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:supportsRtl="true"
-		android:theme="@style/Theme.Flip_2_DND"
+		android:theme="@style/Theme.DNDfy"
 		tools:targetApi="31">
 
 		<service
-			android:name=".services.FlipDetectorService"
+			android:name=".services.DNDfyDetectorService"
 			android:enabled="true"
 			android:exported="false"
 			android:foregroundServiceType="specialUse"
@@ -39,7 +39,7 @@
 		<activity
 			android:name=".MainActivity"
 			android:exported="true"
-			android:theme="@style/Theme.Flip_2_DND"
+			android:theme="@style/Theme.DNDfy"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,7 @@
 		<activity
 			android:name=".presentation.settings.SoundPickerActivity"
 			android:exported="false"
-			android:theme="@style/Theme.Flip_2_DND">
+			android:theme="@style/Theme.DNDfy">
 		</activity>
 
 		<receiver
@@ -62,14 +62,14 @@
 		</receiver>
 
 		<receiver
-			android:name=".widget.FlipDndWidgetProvider"
+			android:name=".widget.DNDfyWidgetProvider"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 			</intent-filter>
 			<meta-data
 				android:name="android.appwidget.provider"
-				android:resource="@xml/flip_dnd_widget_info" />
+				android:resource="@xml/dndfy_widget_info" />
 		</receiver>
 	</application>
 </manifest>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Flip_2_DND.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.DNDfy.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@android:color/system_accent1_800</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher</item>
-        <item name="postSplashScreenTheme">@style/Theme.Flip_2_DND</item>
+        <item name="postSplashScreenTheme">@style/Theme.DNDfy</item>
     </style>
 </resources>

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
 	}
 }
 
-rootProject.name = "Flip_2_DND"
+rootProject.name = "DND-fy"
 include(":app")
  

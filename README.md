@@ -49,4 +49,4 @@ DND-fy is a modern Android application that intelligently manages your Do Not Di
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=robinsrk/dndfy&type=Date)](https://www.star-history.com/#robinsrk/dndfy&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#robinsrk/flip_2_dnd&Date)

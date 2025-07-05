@@ -3,16 +3,17 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("com.google.dagger.hilt.android")
 	id("kotlin-kapt")
+	alias(libs.plugins.compose.compiler)
 }
 
 android {
 	namespace = "dev.robin.flip_2_dnd"
-	compileSdk = 34
+	compileSdk = 36
 
 	defaultConfig {
 		applicationId = "dev.robin.flip_2_dnd"
 		minSdk = 23
-		targetSdk = 34
+		targetSdk = 35
 		versionCode = 400
 		versionName = "4.0.0"
 		vectorDrawables {
@@ -50,7 +51,7 @@ android {
 	}
 
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.15"
+		kotlinCompilerExtensionVersion = "1.5.21"
 	}
 
 	packaging {
@@ -61,24 +62,24 @@ android {
 }
 
 dependencies {
-	implementation("androidx.core:core-ktx:1.12.0")
-	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-	implementation("androidx.activity:activity-compose:1.8.2")
-	implementation(platform("androidx.compose:compose-bom:2024.01.00"))
-	implementation("androidx.compose.ui:ui")
-	implementation("androidx.compose.ui:ui-graphics")
-	implementation("androidx.compose.material3:material3")
-	implementation("androidx.compose.material3:material3-window-size-class")
-	implementation("androidx.core:core-splashscreen:1.0.1")
-
+	implementation("androidx.core:core-ktx:1.17.0-beta01")
+	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
+	implementation("androidx.activity:activity-compose:1.12.0-alpha04")
+	implementation(platform("androidx.compose:compose-bom:2025.06.01"))
+	implementation("androidx.compose.ui:ui:1.9.0-beta02")
+	implementation("androidx.compose.ui:ui-graphics:1.9.0-beta02")
+	implementation("androidx.compose.material3:material3:1.4.0-alpha17")
+	implementation("androidx.compose.material3:material3-window-size-class:1.4.0-alpha17")
+	implementation("androidx.core:core-splashscreen:1.2.0-rc01")
+	implementation("androidx.compose.material:material-icons-extended-android:") // Use the same version as your other Compose libraries
 	// Hilt
-	implementation("com.google.dagger:hilt-android:2.48")
-	kapt("com.google.dagger:hilt-android-compiler:2.48")
-	implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+	implementation("com.google.dagger:hilt-android:2.56.2")
+	kapt("com.google.dagger:hilt-android-compiler:2.56.2")
+	implementation("androidx.hilt:hilt-navigation-compose:1.3.0-alpha01")
 
 	// Accompanist
-	implementation("com.google.accompanist:accompanist-pager:0.32.0")
-	implementation("com.google.accompanist:accompanist-pager-indicators:0.32.0")
+	implementation("com.google.accompanist:accompanist-pager:0.36.0")
+	implementation("com.google.accompanist:accompanist-pager-indicators:0.36.0")
 }
 
 kapt {

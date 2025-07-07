@@ -23,8 +23,9 @@ import dev.robin.flip_2_dnd.R
 @Composable
 fun DonationScreen(navController: NavController? = null) {
     val context = LocalContext.current
-    val usdtAddress = "0xA11C1eD5213705517E050DB075D1D238e21f5D15"
-    val btcAddress = "1DxZPSf4xraev8S3mJFtA4mH7QEeZHzDdQ"
+    val redotpayID = "1986637347"
+    val usdtAddress = "0x9fC1AcF713A474e5317473A7fbcd7774E2fCF7C5"
+    val btcAddress = "12jF3RASnsPMzvDYVKavGrmNZkMUPHJrgq"
 
     Scaffold(
         topBar = {
@@ -62,49 +63,7 @@ fun DonationScreen(navController: NavController? = null) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateContentSize()
-                    .clickable {
-                        copyAddressToClipboard(context, "754979664")
-                        val binancePayUrl = "https://app.binance.com/en/wallet"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(binancePayUrl))
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        try {
-                            context.startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(binancePayUrl))
-                            webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            context.startActivity(webIntent)
-                        }
-                    }
-            ) {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Pay with Binance",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    supportingContent = { Text("Binance ID") },
-                    trailingContent = { 
-                        Text(
-                            "754979664",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_coin),
-                            contentDescription = "Binance Icon",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                )
-            }
-
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateContentSize()
-                    .clickable { copyAddressToClipboard(context, "1406425251") }
+                    .clickable { copyAddressToClipboard(context, redotpayID) }
             ) {
                 ListItem(
                     headlineContent = { 
@@ -113,10 +72,10 @@ fun DonationScreen(navController: NavController? = null) {
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     },
-                    supportingContent = { Text("RedotPay ID") },
+                    supportingContent = { Text(redotpayID) },
                     trailingContent = { 
                         Text(
-                            "1406425251",
+                            "RedotPay ID",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     },
@@ -143,10 +102,10 @@ fun DonationScreen(navController: NavController? = null) {
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     },
-                    supportingContent = { Text("BNB Smart Chain (BEP20)") },
+                    supportingContent = { Text(usdtAddress) },
                     trailingContent = { 
-                        Text(
-                            usdtAddress,
+                        Text("BNB Smart Chain (BEP20)",
+                            
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -173,10 +132,10 @@ fun DonationScreen(navController: NavController? = null) {
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     },
-                    supportingContent = { Text("BNB Smart Chain (BEP20)") },
+                    supportingContent = { Text(usdtAddress) },
                     trailingContent = { 
                         Text(
-                            usdtAddress,
+                            "BNB Smart Chain (BEP20)",
                             style = MaterialTheme.typography.bodySmall
                         )
                     },
@@ -203,10 +162,10 @@ fun DonationScreen(navController: NavController? = null) {
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                         )
                     },
-                    supportingContent = { Text("Bitcoin") },
+                    supportingContent = { Text(btcAddress) },
                     trailingContent = { 
                         Text(
-                            btcAddress,
+                            "Bitcoin",
                             style = MaterialTheme.typography.bodySmall
                         )
                     },

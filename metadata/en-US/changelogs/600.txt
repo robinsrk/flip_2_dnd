@@ -1,0 +1,1 @@
+* adapt app design with material 3 expressive

@@ -14,8 +14,8 @@ android {
 		applicationId = "dev.robin.flip_2_dnd"
 		minSdk = 23
 		targetSdk = 35
-		versionCode = 500
-		versionName = "5.0.0"
+		versionCode = 600
+		versionName = "6.0.0"
 		vectorDrawables {
 			useSupportLibrary = true
 		}
@@ -74,6 +74,7 @@ dependencies {
 	implementation("androidx.compose.material:material-icons-extended-android:") // Use the same version as your other Compose libraries
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.56.2")
+	implementation(libs.material3)
 	kapt("com.google.dagger:hilt-android-compiler:2.56.2")
 	implementation("androidx.hilt:hilt-navigation-compose:1.3.0-alpha01")
 

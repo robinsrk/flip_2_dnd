@@ -54,7 +54,7 @@ class SensorService(context: Context) {
 				Log.d(TAG, "Sensitivity updated to: $sensitivity")
 			}
 		}
-		
+
 		// Observe high sensitivity mode changes
 		CoroutineScope(Dispatchers.Main).launch {
 			settingsRepository.getHighSensitivityModeEnabled().collect { enabled ->
@@ -70,14 +70,14 @@ class SensorService(context: Context) {
 				Sensor.TYPE_ACCELEROMETER -> {
 					lastAccelReading = event.values.clone()
 					_accelerometerData.value = event.values.clone()
-					Log.d(TAG, "Accelerometer data: ${lastAccelReading.contentToString()}")
+//					Log.d(TAG, "Accelerometer data: ${lastAccelReading.contentToString()}")
 					processOrientation()
 				}
 
 				Sensor.TYPE_GYROSCOPE -> {
 					lastGyroReading = event.values.clone()
 					_gyroscopeData.value = event.values.clone()
-					Log.d(TAG, "Gyroscope data: ${lastGyroReading.contentToString()}")
+//					Log.d(TAG, "Gyroscope data: ${lastGyroReading.contentToString()}")
 				}
 			}
 		}
@@ -163,17 +163,17 @@ class SensorService(context: Context) {
 				Log.d(TAG, "z value: ${abs(z)} $z (threshold: $accelThreshold, stable: $isStable)")
 				if (isStable) "Face down" else _orientation.value
 			}
-			
+
 			// When high sensitivity mode is enabled, any orientation that's not face down is considered face up
 			else -> {
 				if (highSensitivityMode) {
-						"Face up"
+					"Face up"
 				} else if (abs(z) >= accelThreshold && z > 0) {
-						"Face up"
+					"Face up"
 				} else {
-						_orientation.value
+					_orientation.value
 				}
-		}
+			}
 		}
 
 		if (orientation != _orientation.value) {

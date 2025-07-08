@@ -21,23 +21,17 @@ fun MainScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 title = { 
                     Text(
                         "Flip 2 DND",
                         style = MaterialTheme.typography.headlineLarge.copy(
                             fontWeight = FontWeight.Bold
-                        )
+                        ),
+						modifier = Modifier.padding(start = 8.dp) // Added padding
                     ) 
                 },
-                actions = {
-                    IconButton(onClick = onDonateClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_coin),
-                            contentDescription = "Support"
-                        )
-                    }
-                }
+				Modifier.padding(horizontal = 8.dp) // Added padding
             )
         },
         floatingActionButton = {

@@ -7,11 +7,14 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,18 +32,30 @@ fun DonationScreen(navController: NavController? = null) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Support the Developer") },
-                navigationIcon = {
-                    if (navController != null) {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_arrow_back),
-                                contentDescription = "Back"
-                            )
-                        }
-                    }
-                }
+            LargeTopAppBar(
+                title = { 
+                    Text(
+                        "Support the Developer",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) 
+                },
+				navigationIcon = {
+					FilledIconButton(
+						onClick = {navController?.popBackStack()},
+						colors = IconButtonDefaults.filledIconButtonColors(
+							containerColor = MaterialTheme.colorScheme.primary,
+							contentColor = MaterialTheme.colorScheme.onPrimary
+						)
+					) {
+						Icon(
+							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+							contentDescription = "Back"
+						)
+					}
+				},
+				modifier = Modifier.padding(horizontal = 8.dp) // Added padding
             )
         }
     ) { paddingValues ->
@@ -65,21 +80,11 @@ fun DonationScreen(navController: NavController? = null) {
                     .animateContentSize()
                     .clickable { copyAddressToClipboard(context, redotpayID) }
             ) {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Pay with RedotPay",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    supportingContent = { Text(redotpayID) },
-                    trailingContent = { 
-                        Text(
-                            "RedotPay ID",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    leadingContent = {
+                DonationItem(
+                    title = "Pay with RedotPay",
+                    description = redotpayID,
+                    trailingText = "RedotPay ID",
+                    leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_coin),
                             contentDescription = "RedotPay Icon",
@@ -95,21 +100,12 @@ fun DonationScreen(navController: NavController? = null) {
                     .animateContentSize()
                     .clickable { copyAddressToClipboard(context, usdtAddress) }
             ) {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Pay with USDT",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    supportingContent = { Text(usdtAddress) },
-                    trailingContent = { 
-                        Text("BNB Smart Chain (BEP20)",
-                            
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    leadingContent = {
+                DonationItem(
+                    title = "Pay with USDT",
+                    description = usdtAddress,
+                    trailingText = "BNB Smart Chain (BEP20)",
+                    trailingTextStyle = MaterialTheme.typography.bodySmall,
+                    leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_coin),
                             contentDescription = "USDT Icon",
@@ -125,21 +121,12 @@ fun DonationScreen(navController: NavController? = null) {
                     .animateContentSize()
                     .clickable { copyAddressToClipboard(context, usdtAddress) }
             ) {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Pay with ETH",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    supportingContent = { Text(usdtAddress) },
-                    trailingContent = { 
-                        Text(
-                            "BNB Smart Chain (BEP20)",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    leadingContent = {
+                DonationItem(
+                    title = "Pay with ETH",
+                    description = usdtAddress,
+                    trailingText = "BNB Smart Chain (BEP20)",
+                    trailingTextStyle = MaterialTheme.typography.bodySmall,
+                    leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_coin),
                             contentDescription = "ETH Icon",
@@ -155,21 +142,12 @@ fun DonationScreen(navController: NavController? = null) {
                     .animateContentSize()
                     .clickable { copyAddressToClipboard(context, btcAddress) }
             ) {
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            "Pay with BTC",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    supportingContent = { Text(btcAddress) },
-                    trailingContent = { 
-                        Text(
-                            "Bitcoin",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    leadingContent = {
+                DonationItem(
+                    title = "Pay with BTC",
+                    description = btcAddress,
+                    trailingText = "Bitcoin",
+                    trailingTextStyle = MaterialTheme.typography.bodySmall,
+                    leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_coin),
                             contentDescription = "BTC Icon",
@@ -184,6 +162,48 @@ fun DonationScreen(navController: NavController? = null) {
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun DonationItem(
+    title: String,
+    description: String,
+    trailingText: String? = null,
+    trailingTextStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    leadingIcon: @Composable (() -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (leadingIcon != null) {
+            Box(modifier = Modifier.padding(end = 16.dp)) {
+                leadingIcon()
+            }
+        }
+        
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        
+        if (trailingText != null) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = trailingText,
+                style = trailingTextStyle
             )
         }
     }

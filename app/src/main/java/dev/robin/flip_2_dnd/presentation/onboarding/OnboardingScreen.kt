@@ -61,7 +61,7 @@ fun OnboardingScreen(
 
     Scaffold(
         topBar = {
-            MediumTopAppBar(
+            LargeTopAppBar(
                 title = { 
                     Text(
                         text = "Flip 2 DND Setup",

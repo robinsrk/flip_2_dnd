@@ -60,6 +60,16 @@ fun OnboardingScreen(
     }
 
     Scaffold(
+        topBar = {
+            MediumTopAppBar(
+                title = { 
+                    Text(
+                        text = "Flip 2 DND Setup",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
+            )
+        },
         bottomBar = {
             BottomAppBar(
                 actions = {
@@ -146,6 +156,25 @@ fun OnboardingScreen(
 }
 
 @Composable
+fun OnboardingCard(content: @Composable () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
 fun WelcomePage(onNext: () -> Unit) {
     Column(
         modifier = Modifier
@@ -154,18 +183,20 @@ fun WelcomePage(onNext: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Welcome to Flip 2 DND",
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Control your phone's Do Not Disturb mode by simply flipping it face down.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
+        OnboardingCard {
+            Text(
+                text = "Welcome to Flip 2 DND",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Control your phone's Do Not Disturb mode by simply flipping it face down.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
@@ -178,23 +209,25 @@ fun FeaturePage(onNext: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_dnd_on),
-            contentDescription = "Feature illustration",
-            modifier = Modifier.size(120.dp)
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "Simple and Effective",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "To use this app effectively, we'll need a few permissions. Let's set those up together.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
+        OnboardingCard {
+            Image(
+                painter = painterResource(id = R.drawable.ic_dnd_on),
+                contentDescription = "Feature illustration",
+                modifier = Modifier.size(120.dp)
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Simple and Effective",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "To use this app effectively, we'll need a few permissions. Let's set those up together.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
@@ -221,30 +254,32 @@ fun DndPermissionPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "DND Permission",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "We need permission to control Do Not Disturb mode.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = {
-                if (isPermissionGranted) {
-                    onNext()
-                } else {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                    dndPermissionLauncher.launch(intent)
-                }
-            },
-            enabled = !isPermissionGranted
-        ) {
-            Text(if (isPermissionGranted) "Permission Granted" else "Grant Permission")
+        OnboardingCard {
+            Text(
+                text = "DND Permission",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "We need permission to control Do Not Disturb mode.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    if (isPermissionGranted) {
+                        onNext()
+                    } else {
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        dndPermissionLauncher.launch(intent)
+                    }
+                },
+                enabled = !isPermissionGranted
+            ) {
+                Text(if (isPermissionGranted) "Permission Granted" else "Grant Permission")
+            }
         }
     }
 }
@@ -277,33 +312,35 @@ fun BatteryOptimizationPage(onNext: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Battery Optimization",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "To ensure reliable operation, we need to disable battery optimization for this app.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = {
-                if (isOptimizationDisabled) {
-                    onNext()
-                } else {
-                    val intent = Intent().apply {
-                        action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                        data = Uri.parse("package:${context.packageName}")
+        OnboardingCard {
+            Text(
+                text = "Battery Optimization",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "To ensure reliable operation, we need to disable battery optimization for this app.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    if (isOptimizationDisabled) {
+                        onNext()
+                    } else {
+                        val intent = Intent().apply {
+                            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                            data = Uri.parse("package:${context.packageName}")
+                        }
+                        batteryOptimizationLauncher.launch(intent)
                     }
-                    batteryOptimizationLauncher.launch(intent)
-                }
-            },
-            enabled = !isOptimizationDisabled
-        ) {
-            Text(if (isOptimizationDisabled) "Permission Granted" else "Disable Battery Optimization")
+                },
+                enabled = !isOptimizationDisabled
+            ) {
+                Text(if (isOptimizationDisabled) "Permission Granted" else "Disable Battery Optimization")
+            }
         }
     }
 }
@@ -320,24 +357,26 @@ fun NotificationPermissionPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Notifications",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "We need permission to send you notifications about the app's status.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = {
-                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        OnboardingCard {
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "We need permission to send you notifications about the app's status.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = {
+                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            ) {
+                Text("Grant Permission")
             }
-        ) {
-            Text("Grant Permission")
         }
     }
 }
@@ -351,16 +390,18 @@ fun CompletePage(onNext: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "All Set!",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "You're ready to use Flip 2 DND. Just flip your phone face down to enable Do Not Disturb mode.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
-        )
+        OnboardingCard {
+            Text(
+                text = "All Set!",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "You're ready to use Flip 2 DND. Just flip your phone face down to enable Do Not Disturb mode.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

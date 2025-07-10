@@ -21,7 +21,7 @@ fun MainScreen(
 ) {
     Scaffold(
         topBar = {
-            LargeTopAppBar(
+            MediumTopAppBar(
                 title = { 
                     Text(
                         "Flip 2 DND",

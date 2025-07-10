@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,9 +25,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -80,7 +79,7 @@ fun SettingsScreen(
 
 	Scaffold(
 		topBar = {
-			LargeTopAppBar(
+			MediumTopAppBar(
 				title = {
 					val expandedTextStyle =
 						MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold)
@@ -107,7 +106,8 @@ fun SettingsScreen(
 				},
 				navigationIcon = {
 					FilledIconButton(
-						onClick = {navController?.popBackStack()},
+						onClick = { navController?.popBackStack() },
+						modifier = Modifier.padding(start = 16.dp),
 						colors = IconButtonDefaults.filledIconButtonColors(
 							containerColor = MaterialTheme.colorScheme.primary,
 							contentColor = MaterialTheme.colorScheme.onPrimary
@@ -119,7 +119,7 @@ fun SettingsScreen(
 						)
 					}
 				},
-				colors = TopAppBarDefaults.largeTopAppBarColors(
+				colors = TopAppBarDefaults.topAppBarColors(
 					containerColor = Color.Transparent,
 					scrolledContainerColor = Color.Transparent
 				),
@@ -133,7 +133,7 @@ fun SettingsScreen(
 				Modifier
 					.fillMaxSize()
 					.padding(paddingValues)
-					.padding(horizontal = 16.dp)
+					.padding(horizontal = 32.dp)
 					.nestedScroll(scrollBehavior.nestedScrollConnection)
 		) {
 			item {
@@ -395,30 +395,30 @@ fun SettingsScreen(
 
 					if (useCustomVolume) {
 						SettingsSliderItem(
-						title = "Sound Volume",
-						sliderContent = {
-							var sliderPosition by remember { mutableStateOf(customVolume) }
-							LaunchedEffect(customVolume) {
-								sliderPosition = customVolume
+							title = "Sound Volume",
+							sliderContent = {
+								var sliderPosition by remember { mutableStateOf(customVolume) }
+								LaunchedEffect(customVolume) {
+									sliderPosition = customVolume
+								}
+								Slider(
+									value = sliderPosition,
+									onValueChange = { newVolume ->
+										val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
+										val nearestStep =
+											steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
+										sliderPosition = nearestStep
+									},
+									onValueChangeFinished = {
+										viewModel.setCustomVolume(sliderPosition)
+										// Play DND on sound as feedback when slider changes
+										viewModel.playSelectedSound(viewModel.dndOnSound.value)
+									},
+									modifier = Modifier.width(200.dp),
+									steps = 9
+								)
 							}
-							Slider(
-								value = sliderPosition,
-								onValueChange = { newVolume ->
-									val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
-									val nearestStep =
-										steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
-									sliderPosition = nearestStep
-								},
-								onValueChangeFinished = {
-									viewModel.setCustomVolume(sliderPosition)
-									// Play DND on sound as feedback when slider changes
-									viewModel.playSelectedSound(viewModel.dndOnSound.value)
-								},
-								modifier = Modifier.width(200.dp),
-								steps = 9
-							)
-						}
-					)
+						)
 					}
 				}
 
@@ -545,30 +545,30 @@ fun SettingsScreen(
 
 					if (useCustomVibration) {
 						SettingsSliderItem(
-						title = "Vibration Strength",
-						sliderContent = {
-							var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
-							LaunchedEffect(customVibrationStrength) {
-								sliderPosition = customVibrationStrength
+							title = "Vibration Strength",
+							sliderContent = {
+								var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
+								LaunchedEffect(customVibrationStrength) {
+									sliderPosition = customVibrationStrength
+								}
+								Slider(
+									value = sliderPosition,
+									onValueChange = { newStrength ->
+										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
+										val steps = listOf(0f, 0.33f, 0.66f, 1f)
+										val nearestStep =
+											steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
+										sliderPosition = nearestStep
+									},
+									onValueChangeFinished = {
+										viewModel.setCustomVibrationStrength(sliderPosition)
+										viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
+									},
+									modifier = Modifier.width(200.dp),
+									steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
+								)
 							}
-							Slider(
-								value = sliderPosition,
-								onValueChange = { newStrength ->
-									// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
-									val steps = listOf(0f, 0.33f, 0.66f, 1f)
-									val nearestStep =
-										steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
-									sliderPosition = nearestStep
-								},
-								onValueChangeFinished = {
-									viewModel.setCustomVibrationStrength(sliderPosition)
-									viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
-								},
-								modifier = Modifier.width(200.dp),
-								steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
-							)
-						}
-					)
+						)
 					}
 				}
 				Divider(modifier = Modifier.padding(vertical = 16.dp))
@@ -631,18 +631,18 @@ fun SettingsSwitchItem(
 	onCheckedChange: (Boolean) -> Unit,
 ) {
 	Card(
-	 shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable { onCheckedChange(!checked) }
+		shape = RoundedCornerShape(16.dp),
+		colors = CardDefaults.cardColors(
+			containerColor = MaterialTheme.colorScheme.surfaceContainer
+		),
+		elevation = CardDefaults.cardElevation(
+			defaultElevation = 1.dp
+		),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(vertical = 6.dp)
+			.clip(RoundedCornerShape(16.dp))
+			.clickable { onCheckedChange(!checked) }
 	) {
 		Column(
 			modifier = Modifier

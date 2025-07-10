@@ -54,13 +54,12 @@ fun DonationScreen(navController: NavController? = null) {
 						style = MaterialTheme.typography.headlineLarge.copy(
 							fontWeight = FontWeight.Bold
 						),
-						modifier = Modifier.padding(start = 8.dp)
 					)
 				},
 				navigationIcon = {
 					FilledIconButton(
+						modifier = Modifier.padding(8.dp),
 						onClick = { navController?.popBackStack() },
-						modifier = Modifier.padding(start = 16.dp),
 						colors = IconButtonDefaults.filledIconButtonColors(
 							containerColor = MaterialTheme.colorScheme.primary,
 							contentColor = MaterialTheme.colorScheme.onPrimary
@@ -80,7 +79,7 @@ fun DonationScreen(navController: NavController? = null) {
 			Modifier
           .fillMaxSize()
           .padding(paddingValues)
-          .padding(32.dp),
+          .padding(24.dp),
 			verticalArrangement = Arrangement.spacedBy(16.dp),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {

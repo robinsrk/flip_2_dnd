@@ -101,13 +101,12 @@ fun SettingsScreen(
 						),
 						maxLines = 1,
 						overflow = TextOverflow.Ellipsis,
-						modifier = Modifier.padding(start = 8.dp) // Added padding
 					)
 				},
 				navigationIcon = {
 					FilledIconButton(
+						modifier = Modifier.padding(8.dp),
 						onClick = { navController?.popBackStack() },
-						modifier = Modifier.padding(start = 16.dp),
 						colors = IconButtonDefaults.filledIconButtonColors(
 							containerColor = MaterialTheme.colorScheme.primary,
 							contentColor = MaterialTheme.colorScheme.onPrimary
@@ -133,7 +132,7 @@ fun SettingsScreen(
 				Modifier
 					.fillMaxSize()
 					.padding(paddingValues)
-					.padding(horizontal = 32.dp)
+					.padding(horizontal = 24.dp)
 					.nestedScroll(scrollBehavior.nestedScrollConnection)
 		) {
 			item {

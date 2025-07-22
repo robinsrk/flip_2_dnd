@@ -2,8 +2,8 @@ plugins {
 	id("com.android.application")
 	id("org.jetbrains.kotlin.android")
 	id("com.google.dagger.hilt.android")
-	id("kotlin-kapt")
 	alias(libs.plugins.compose.compiler)
+	id("kotlin-kapt")
 }
 
 android {

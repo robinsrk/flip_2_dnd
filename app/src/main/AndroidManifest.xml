@@ -25,6 +25,7 @@
 		android:fullBackupContent="@xml/backup_rules"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
+		android:localeConfig="@xml/locales_config"
 		android:supportsRtl="true"
 		android:theme="@style/Theme.Flip_2_DND"
 		tools:targetApi="31">
@@ -50,8 +51,7 @@
 		<activity
 			android:name=".presentation.settings.SoundPickerActivity"
 			android:exported="false"
-			android:theme="@style/Theme.Flip_2_DND">
-		</activity>
+			android:theme="@style/Theme.Flip_2_DND"></activity>
 
 		<receiver
 			android:name=".services.AutoStartService"

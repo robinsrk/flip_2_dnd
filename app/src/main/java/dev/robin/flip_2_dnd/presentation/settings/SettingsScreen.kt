@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -94,7 +95,7 @@ fun SettingsScreen(
 						if (fraction < 0.5f) FontWeight.Bold else FontWeight.Bold // Changed to FontWeight.Bold
 
 					Text(
-						text = "Settings",
+						text = stringResource(id = R.string.settings),
 						style = MaterialTheme.typography.headlineSmall.copy(
 							fontSize = currentFontSize,
 							fontWeight = currentFontWeight
@@ -138,7 +139,7 @@ fun SettingsScreen(
 			item {
 
 				Text(
-					text = "Behavior",
+					text = stringResource(id = R.string.behavior),
 					color = MaterialTheme.colorScheme.primary,
 					style = MaterialTheme.typography.titleLarge.copy(
 						fontWeight = FontWeight.Bold
@@ -147,38 +148,38 @@ fun SettingsScreen(
 				)
 
 				SettingsSwitchItem(
-					title = "Screen Off Only",
-					description = "Enable DND only when screen is off",
+					title = stringResource(id = R.string.screen_off_only),
+					description = stringResource(id = R.string.screen_off_only_description),
 					checked = screenOffOnly,
 					onCheckedChange = { viewModel.setScreenOffOnly(it) },
 				)
 
 				SettingsSwitchItem(
-					title = "Priority DND",
-					description = "Enable Priority mode DND instead of Total Silence",
+					title = stringResource(id = R.string.priority_dnd),
+					description = stringResource(id = R.string.priority_dnd_description),
 					checked = priorityDndEnabled,
 					onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
 				)
 
 				val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
 				SettingsSwitchItem(
-					title = "Notification Feedback",
-					description = "Show notifications when flip is detected or DND state changes",
+					title = stringResource(id = R.string.notifications_enabled),
+					description = stringResource(id = R.string.notifications_enabled_description),
 					checked = notificationsEnabled,
 					onCheckedChange = { viewModel.setNotificationsEnabled(it) },
 				)
 
 				val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
 				SettingsSwitchItem(
-					title = "High Sensitivity Mode",
-					description = "When enabled, any orientation that's not face down will be considered face up",
+					title = stringResource(id = R.string.high_sensitivity_mode),
+					description = stringResource(id = R.string.high_sensitivity_mode_description),
 					checked = highSensitivityModeEnabled,
 					onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
 				)
 
 				SettingsSliderItem(
-					title = "Flip Sensitivity",
-					description = "Adjust the sensitivity of flip detection",
+					title = stringResource(id = R.string.flip_sensitivity),
+					description = stringResource(id = R.string.flip_sensitivity_description),
 					sliderContent = {
 						val flipSensitivity by viewModel.flipSensitivity.collectAsState()
 						var sliderPosition by remember { mutableStateOf(flipSensitivity) }
@@ -207,7 +208,7 @@ fun SettingsScreen(
 				Divider(modifier = Modifier.padding(vertical = 16.dp))
 
 				Text(
-					text = "Sound",
+					text = stringResource(id = R.string.sound),
 					color = MaterialTheme.colorScheme.primary,
 					style = MaterialTheme.typography.titleLarge.copy(
 						fontWeight = FontWeight.Bold
@@ -216,8 +217,8 @@ fun SettingsScreen(
 				)
 
 				SettingsSwitchItem(
-					title = "Sound",
-					description = "Play sound when DND changes",
+					title = stringResource(id = R.string.sound_enabled),
+					description = stringResource(id = R.string.sound_enabled_description),
 					checked = soundEnabled,
 					onCheckedChange = { viewModel.setSoundEnabled(it) },
 				)
@@ -228,7 +229,7 @@ fun SettingsScreen(
 					val soundSheetState = rememberModalBottomSheetState()
 
 					SettingsClickableItem(
-						title = "DND On Sound",
+						title = stringResource(id = R.string.dnd_on_sound),
 						description = dndOnSound.name,
 						trailingIcon = {
 							Icon(Icons.Default.ArrowDropDown, "Select sound")
@@ -307,7 +308,7 @@ fun SettingsScreen(
 					}
 
 					SettingsClickableItem(
-						title = "DND Off Sound",
+						title = stringResource(id = R.string.dnd_off_sound),
 						description = dndOffSound.name,
 						trailingIcon = {
 							Icon(Icons.Default.ArrowDropDown, "Select sound")
@@ -386,15 +387,15 @@ fun SettingsScreen(
 					}
 
 					SettingsSwitchItem(
-						title = "Custom Volume",
-						description = "Use custom volume instead of system media volume",
+						title = stringResource(id = R.string.use_custom_volume),
+						description = stringResource(id = R.string.use_custom_volume_description),
 						checked = useCustomVolume,
 						onCheckedChange = { viewModel.setUseCustomVolume(it) },
 					)
 
 					if (useCustomVolume) {
 						SettingsSliderItem(
-							title = "Sound Volume",
+							title = stringResource(id = R.string.custom_volume),
 							sliderContent = {
 								var sliderPosition by remember { mutableStateOf(customVolume) }
 								LaunchedEffect(customVolume) {
@@ -425,7 +426,7 @@ fun SettingsScreen(
 
 				// Vibration Section
 				Text(
-					text = "Vibration",
+					text = stringResource(id = R.string.vibration),
 					color = MaterialTheme.colorScheme.primary,
 					style = MaterialTheme.typography.titleLarge.copy(
 						fontWeight = FontWeight.Bold
@@ -434,8 +435,8 @@ fun SettingsScreen(
 				)
 
 				SettingsSwitchItem(
-					title = "Vibration",
-					description = "Vibrate when DND changes",
+					title = stringResource(id = R.string.vibration_enabled),
+					description = stringResource(id = R.string.vibration_enabled_description),
 					checked = vibrationEnabled,
 					onCheckedChange = { viewModel.setVibrationEnabled(it) },
 				)
@@ -446,7 +447,7 @@ fun SettingsScreen(
 					val vibrationSheetState = rememberModalBottomSheetState()
 
 					SettingsClickableItem(
-						title = "DND On Vibration pattern",
+						title = stringResource(id = R.string.dnd_on_vibration_pattern),
 						description = viewModel.dndOnVibration.collectAsState().value.displayName,
 						trailingIcon = {
 							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
@@ -491,7 +492,7 @@ fun SettingsScreen(
 					}
 
 					SettingsClickableItem(
-						title = "DND Off Vibration pattern",
+						title = stringResource(id = R.string.dnd_off_vibration_pattern),
 						description = viewModel.dndOffVibration.collectAsState().value.displayName,
 						trailingIcon = {
 							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
@@ -536,15 +537,15 @@ fun SettingsScreen(
 					}
 
 					SettingsSwitchItem(
-						title = "Custom Vibration strength",
-						description = "Use custom vibration strength instead of system default",
+						title = stringResource(id = R.string.use_custom_vibration_strength),
+						description = stringResource(id = R.string.use_custom_vibration_description),
 						checked = useCustomVibration,
 						onCheckedChange = { viewModel.setUseCustomVibration(it) },
 					)
 
 					if (useCustomVibration) {
 						SettingsSliderItem(
-							title = "Vibration Strength",
+							title = stringResource(id = R.string.custom_vibration_strength),
 							sliderContent = {
 								var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
 								LaunchedEffect(customVibrationStrength) {
@@ -573,7 +574,7 @@ fun SettingsScreen(
 				Divider(modifier = Modifier.padding(vertical = 16.dp))
 
 				Text(
-					text = "Extras",
+					text = stringResource(id = R.string.extras),
 					color = MaterialTheme.colorScheme.primary,
 					style = MaterialTheme.typography.titleLarge.copy(
 						fontWeight = FontWeight.Bold
@@ -582,8 +583,8 @@ fun SettingsScreen(
 				)
 
 				SettingsClickableItem(
-					title = "Join Telegram",
-					description = "Join our Telegram community",
+					title = stringResource(id = R.string.join_telegram),
+					description = stringResource(id = R.string.join_telegram_description),
 					leadingIcon = {
 						Icon(
 							painter = painterResource(id = R.drawable.telegram),
@@ -606,8 +607,8 @@ fun SettingsScreen(
 				)
 
 				SettingsClickableItem(
-					title = "Support Developer",
-					description = "Help keep this app free and improving",
+					title = stringResource(id = R.string.support_developer),
+					description = stringResource(id = R.string.support_developer_description),
 					leadingIcon = {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_coin),

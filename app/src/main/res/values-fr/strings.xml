@@ -1,7 +1,6 @@
 <resources>
-    <!-- Translations in French -->
     <string name="app_name">Flip 2 DND</string>
-    <string name="service_description">Utilise les capteurs de l'appareil pour détecter l'orientation du téléphone et activer automatiquement le mode Ne pas déranger lorsqu'il est face vers le bas</string>
+    <string name="service_description">Utilise les capteurs de l\'appareil pour détecter l\'orientation du téléphone et activer automatiquement le mode Ne pas déranger lorsqu\'il est face vers le bas</string>
     <string name="widget_toggle_description">Basculer le service Flip 2 DND</string>
     <string name="home">Accueil</string>
     <string name="settings">Paramètres</string>
@@ -20,7 +19,7 @@
     <string name="priority_dnd">DND Prioritaire</string>
     <string name="notifications_enabled">Notifications activées</string>
     <string name="high_sensitivity_mode">Mode haute sensibilité</string>
-    <string name="battery_saver">Économie d'énergie</string>
+    <string name="battery_saver">Économie d\'énergie</string>
     <string name="dnd_on_sound">Son DND activé</string>
     <string name="dnd_off_sound">Son DND désactivé</string>
     <string name="use_custom_volume">Utiliser un volume personnalisé</string>
@@ -31,18 +30,18 @@
     <string name="vibration_enabled">Vibration activée</string>
     <string name="dnd_on_vibration_pattern">Motif de vibration DND activé</string>
     <string name="dnd_off_vibration_pattern">Motif de vibration DND désactivé</string>
-    <string name="flip_sensitivity_description">Définit la sensibilité de l'application au retournement du téléphone</string>
-    <string name="screen_off_only_description">Active le DND uniquement lorsque l'écran est éteint</string>
+    <string name="flip_sensitivity_description">Définit la sensibilité de l\'application au retournement du téléphone</string>
+    <string name="screen_off_only_description">Active le DND uniquement lorsque l\'écran est éteint</string>
     <string name="priority_dnd_description">Utilise le mode DND prioritaire pour permettre les notifications importantes</string>
     <string name="notifications_enabled_description">Affiche des notifications lorsque le service est actif</string>
     <string name="high_sensitivity_mode_description">Augmente la sensibilité pour une détection plus rapide du retournement</string>
-    <string name="battery_saver_description">Réduit la consommation d'énergie en optimisant l'utilisation des capteurs</string>
+    <string name="battery_saver_description">Réduit la consommation d\'énergie en optimisant l\'utilisation des capteurs</string>
     <string name="dnd_on_sound_description">Joue un son lorsque DND est activé</string>
     <string name="dnd_off_sound_description">Joue un son lorsque DND est désactivé</string>
     <string name="use_custom_volume_description">Permet de définir un volume personnalisé pour le son DND</string>
     <string name="custom_volume_description">Règle le volume personnalisé pour les notifications sonores</string>
     <string name="use_custom_vibration_description">Active les paramètres de vibration personnalisés</string>
-    <string name="custom_vibration_strength_description">Ajuste l’intensité de la vibration</string>
+    <string name="custom_vibration_strength_description">Ajuste l\'intensité de la vibration</string>
     <string name="sound_enabled_description">Active les notifications sonores pour les événements DND</string>
     <string name="vibration_enabled_description">Active les notifications par vibration pour les événements DND</string>
     <string name="use_custom_vibration_strength">Utiliser une intensité de vibration personnalisée</string>
@@ -50,7 +49,7 @@
     <string name="join_telegram">Rejoindre Telegram</string>
     <string name="join_telegram_description">Rejoignez notre communauté Telegram</string>
     <string name="support_developer">Soutenir le développeur</string>
-    <string name="support_developer_description">Aidez à garder l'application gratuite et en amélioration constante</string>
-    <string name="your_support_helps">Votre soutien aide à garder cette application gratuite et à l'améliorer continuellement !</string>
+    <string name="support_developer_description">Aidez à garder l\'application gratuite et en amélioration constante</string>
+    <string name="your_support_helps">Votre soutien aide à garder cette application gratuite et à l\'améliorer continuellement !</string>
     <string name="thanks_for_support">Merci pour votre généreux soutien ! ❤️</string>
 </resources>

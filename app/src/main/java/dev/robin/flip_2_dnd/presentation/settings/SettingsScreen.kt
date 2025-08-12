@@ -26,7 +26,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -80,7 +80,7 @@ fun SettingsScreen(
 
 	Scaffold(
 		topBar = {
-			MediumTopAppBar(
+			LargeTopAppBar(
 				title = {
 					val expandedTextStyle =
 						MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold)

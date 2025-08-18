@@ -52,4 +52,8 @@
 	<string name="support_developer_description">অ্যাপটি বিনামূল্যে ও উন্নত রাখতে সাহায্য করুন</string>
 	<string name="your_support_helps">আপনার সহায়তা এই অ্যাপটিকে বিনামূল্যে ও ধারাবাহিকভাবে উন্নত রাখতে সাহায্য করে!</string>
 	<string name="thanks_for_support">আপনার উদার সহায়তার জন্য ধন্যবাদ! ❤️</string>
+	<string name="general">সাধারণ</string>
+	<string name="language">ভাষা</string>
+	<string name="language_description">অ্যাপের ভাষা পরিবর্তন করুন</string>
+	<string name="error_opening_language_settings">ভাষা সেটিংস খোলা যায়নি</string>
 </resources>

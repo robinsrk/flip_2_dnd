@@ -53,4 +53,8 @@
     <string name="support_developer_description">アプリを無料かつ改善し続けられるよう支援してください</string>
     <string name="your_support_helps">あなたの支援により、このアプリを無料で改善し続けることができます！</string>
     <string name="thanks_for_support">ご支援ありがとうございます！❤️</string>
+    <string name="general">一般</string>
+    <string name="language">言語</string>
+    <string name="language_description">アプリの言語を変更</string>
+    <string name="error_opening_language_settings">言語設定を開けませんでした</string>
 </resources>

@@ -53,4 +53,8 @@
     <string name="support_developer_description">앱을 무료로 유지하고 지속적으로 개선할 수 있도록 도와주세요</string>
     <string name="your_support_helps">여러분의 지원은 이 앱을 무료로 유지하고 지속적인 개선에 큰 도움이 됩니다!</string>
     <string name="thanks_for_support">여러분의 소중한 지원에 감사합니다! ❤️</string>
+    <string name="general">일반</string>
+    <string name="language">언어</string>
+    <string name="language_description">앱 언어 변경</string>
+    <string name="error_opening_language_settings">언어 설정을 열 수 없습니다</string>
 </resources>

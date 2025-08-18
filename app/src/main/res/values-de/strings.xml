@@ -53,4 +53,8 @@
     <string name="support_developer_description">Hilf mit, die App kostenlos und verbessert zu halten</string>
     <string name="your_support_helps">Deine Unterstützung hilft dabei, diese App kostenlos und ständig verbessert zu halten!</string>
     <string name="thanks_for_support">Vielen Dank für deine großzügige Unterstützung! ❤️</string>
+    <string name="general">Allgemein</string>
+    <string name="language">Sprache</string>
+    <string name="language_description">App-Sprache ändern</string>
+    <string name="error_opening_language_settings">Spracheinstellungen konnten nicht geöffnet werden</string>
 </resources>

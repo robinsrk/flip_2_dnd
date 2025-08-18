@@ -52,4 +52,8 @@
 	<string name="support_developer_description">Помогите сохранить приложение бесплатным и улучшать его</string>
 	<string name="your_support_helps">Ваша поддержка помогает сохранять это приложение бесплатным и постоянно улучшать его!</string>
 	<string name="thanks_for_support">Спасибо за вашу щедрую поддержку! ❤️</string>
+    <string name="general">Общие</string>
+    <string name="language">Язык</string>
+    <string name="language_description">Изменить язык приложения</string>
+    <string name="error_opening_language_settings">Не удалось открыть настройки языка</string>
 </resources>

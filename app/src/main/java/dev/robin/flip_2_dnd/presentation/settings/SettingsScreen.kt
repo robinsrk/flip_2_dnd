@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -56,6 +55,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import android.os.Build
+import android.provider.Settings
+import androidx.compose.ui.platform.LocalContext
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,7 +207,40 @@ fun SettingsScreen(
 					}
 				)
 
-				Divider(modifier = Modifier.padding(vertical = 16.dp))
+				Spacer(modifier = Modifier.height(16.dp))
+
+				Text(
+					text = stringResource(id = R.string.general),
+					color = MaterialTheme.colorScheme.primary,
+					style = MaterialTheme.typography.titleLarge.copy(
+						fontWeight = FontWeight.Bold
+					),
+					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+				)
+
+SettingsClickableItem(
+    title = stringResource(id = R.string.language),
+    description = stringResource(id = R.string.language_description),
+    onClick = {
+        try {
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
+            } else {
+                Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
+            }
+            intent.data = Uri.fromParts("package", context.packageName, null)
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(
+                context,
+                R.string.error_opening_language_settings,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+)
+
+				Spacer(modifier = Modifier.height(16.dp))
 
 				Text(
 					text = stringResource(id = R.string.sound),
@@ -422,7 +457,6 @@ fun SettingsScreen(
 					}
 				}
 
-				Divider(modifier = Modifier.padding(vertical = 16.dp))
 
 				// Vibration Section
 				Text(
@@ -571,7 +605,6 @@ fun SettingsScreen(
 						)
 					}
 				}
-				Divider(modifier = Modifier.padding(vertical = 16.dp))
 
 				Text(
 					text = stringResource(id = R.string.extras),

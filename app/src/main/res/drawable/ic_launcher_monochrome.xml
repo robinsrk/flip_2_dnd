@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Bell shape - monochrome version -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M54,30 C48,30 43,35 43,41 L43,59 L40,62 L40,65 L68,65 L68,62 L65,59 L65,41 C65,35 60,30 54,30 Z M50,67 C50,69.2 51.8,71 54,71 C56.2,71 58,69.2 58,67 L50,67"/>
+
+    <!-- Slash through bell - monochrome version -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M38,38 L70,70"/>
+</vector>

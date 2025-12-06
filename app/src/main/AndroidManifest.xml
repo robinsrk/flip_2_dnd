@@ -51,7 +51,7 @@
 		<activity
 			android:name=".presentation.settings.SoundPickerActivity"
 			android:exported="false"
-			android:theme="@style/Theme.Flip_2_DND"></activity>
+			android:theme="@style/Theme.Flip_2_DND" />
 
 		<receiver
 			android:name=".services.AutoStartService"
@@ -71,5 +71,17 @@
 				android:name="android.appwidget.provider"
 				android:resource="@xml/flip_dnd_widget_info" />
 		</receiver>
+
+		<!-- Quick Settings Tile Service -->
+		<service
+			android:name=".quicksettings.FlipQuickSettingsTileService"
+			android:label="@string/qs_tile_label"
+			android:icon="@drawable/ic_widget_inactive"
+			android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.service.quicksettings.action.QS_TILE" />
+			</intent-filter>
+		</service>
 	</application>
 </manifest>

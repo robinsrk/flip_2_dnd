@@ -14,8 +14,8 @@ android {
 		applicationId = "dev.robin.flip_2_dnd"
 		minSdk = 23
 		targetSdk = 35
-		versionCode = 801
-		versionName = "8.0.1"
+		versionCode = 900
+		versionName = "9.0.0"
 		vectorDrawables {
 			useSupportLibrary = true
 		}
@@ -62,21 +62,20 @@ android {
 }
 
 dependencies {
-	implementation("androidx.core:core-ktx:1.17.0-beta01")
-	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
-	implementation("androidx.activity:activity-compose:1.12.0-alpha04")
-	implementation(platform("androidx.compose:compose-bom:2025.06.01"))
-	implementation("androidx.compose.ui:ui:1.9.0-beta02")
-	implementation("androidx.compose.ui:ui-graphics:1.9.0-beta02")
-	implementation("androidx.compose.material3:material3:1.4.0-alpha17")
-	implementation("androidx.compose.material3:material3-window-size-class:1.4.0-alpha17")
-	implementation("androidx.core:core-splashscreen:1.2.0-rc01")
-	implementation("androidx.compose.material:material-icons-extended-android:") // Use the same version as your other Compose libraries
+	implementation("androidx.core:core-ktx:1.17.0")
+	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
+	implementation("androidx.activity:activity-compose:1.12.0-rc01")
+	implementation(platform("androidx.compose:compose-bom:2025.11.00"))
+	implementation("androidx.compose.ui:ui:1.9.4")
+	implementation("androidx.compose.ui:ui-graphics:1.9.4")
+	implementation("androidx.compose.material3:material3-window-size-class:1.4.0")
+	implementation("androidx.core:core-splashscreen:1.2.0")
+	implementation(libs.androidx.compose.material.icons.extended.android) 
 	// Hilt
-	implementation("com.google.dagger:hilt-android:2.56.2")
+	implementation("com.google.dagger:hilt-android:2.57.2")
 	implementation(libs.material3)
-	kapt("com.google.dagger:hilt-android-compiler:2.56.2")
-	implementation("androidx.hilt:hilt-navigation-compose:1.3.0-alpha01")
+	kapt("com.google.dagger:hilt-android-compiler:2.57.2")
+	implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
 	// Accompanist
 	implementation("com.google.accompanist:accompanist-pager:0.36.0")

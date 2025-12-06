@@ -1,0 +1,1 @@
+* added qs tile for flip service

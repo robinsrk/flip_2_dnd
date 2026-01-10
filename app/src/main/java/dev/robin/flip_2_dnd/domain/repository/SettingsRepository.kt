@@ -39,4 +39,8 @@ interface SettingsRepository {
     suspend fun setNotificationsEnabled(enabled: Boolean)
     fun getHighSensitivityModeEnabled(): Flow<Boolean>
     suspend fun setHighSensitivityModeEnabled(enabled: Boolean)
+    fun getBatterySaverOnFlipEnabled(): Flow<Boolean>
+    suspend fun setBatterySaverOnFlipEnabled(enabled: Boolean)
+    fun getActivationDelay(): Flow<Int>
+    suspend fun setActivationDelay(seconds: Int)
 }

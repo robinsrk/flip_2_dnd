@@ -34,6 +34,8 @@ private const val KEY_DND_ON_CUSTOM_SOUND_URI = "dnd_on_custom_sound_uri"
 private const val KEY_DND_OFF_CUSTOM_SOUND_URI = "dnd_off_custom_sound_uri"
 private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
 private const val KEY_HIGH_SENSITIVITY_MODE = "high_sensitivity_mode"
+private const val KEY_BATTERY_SAVER_ON_FLIP = "battery_saver_on_flip"
+private const val KEY_ACTIVATION_DELAY = "activation_delay"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -82,6 +84,8 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val dndOffCustomSoundUri = MutableStateFlow<String?>(prefs.getString(KEY_DND_OFF_CUSTOM_SOUND_URI, null))
 	private val notificationsEnabled = MutableStateFlow(prefs.getBoolean(KEY_NOTIFICATIONS_ENABLED, true))
 	private val highSensitivityModeEnabled = MutableStateFlow(prefs.getBoolean(KEY_HIGH_SENSITIVITY_MODE, false))
+	private val batterySaverOnFlipEnabled = MutableStateFlow(prefs.getBoolean(KEY_BATTERY_SAVER_ON_FLIP, false))
+	private val activationDelay = MutableStateFlow(prefs.getInt(KEY_ACTIVATION_DELAY, 2))
 
 	private fun restartFlipDetectorService() {
 		try {
@@ -231,6 +235,22 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setHighSensitivityModeEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_HIGH_SENSITIVITY_MODE, enabled).apply()
 		highSensitivityModeEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getBatterySaverOnFlipEnabled(): Flow<Boolean> = batterySaverOnFlipEnabled
+
+	override suspend fun setBatterySaverOnFlipEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_BATTERY_SAVER_ON_FLIP, enabled).apply()
+		batterySaverOnFlipEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getActivationDelay(): Flow<Int> = activationDelay
+
+	override suspend fun setActivationDelay(seconds: Int) {
+		prefs.edit().putInt(KEY_ACTIVATION_DELAY, seconds).apply()
+		activationDelay.value = seconds
 		restartFlipDetectorService()
 	}
 }

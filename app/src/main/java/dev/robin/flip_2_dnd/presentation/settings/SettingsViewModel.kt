@@ -34,6 +34,12 @@ class SettingsViewModel @Inject constructor(
 	private val _highSensitivityModeEnabled = MutableStateFlow(false)
 	val highSensitivityModeEnabled = _highSensitivityModeEnabled.asStateFlow()
 
+	private val _batterySaverOnFlipEnabled = MutableStateFlow(false)
+	val batterySaverOnFlipEnabled = _batterySaverOnFlipEnabled.asStateFlow()
+
+	private val _activationDelay = MutableStateFlow(2)
+	val activationDelay = _activationDelay.asStateFlow()
+
 	private val _dndOnSound = MutableStateFlow(Sound.SLUSH)
 	val dndOnSound = _dndOnSound.asStateFlow()
 
@@ -63,6 +69,9 @@ class SettingsViewModel @Inject constructor(
 	private val _flipSensitivity = MutableStateFlow(1f)
 	val flipSensitivity = _flipSensitivity.asStateFlow()
 
+	private val _hasSecureSettingsPermission = MutableStateFlow(false)
+	val hasSecureSettingsPermission = _hasSecureSettingsPermission.asStateFlow()
+
 	private val _dndOnCustomSoundUri = MutableStateFlow<String?>(null)
 	val dndOnCustomSoundUri = _dndOnCustomSoundUri.asStateFlow()
 
@@ -70,6 +79,7 @@ class SettingsViewModel @Inject constructor(
 	val dndOffCustomSoundUri = _dndOffCustomSoundUri.asStateFlow()
 
 	init {
+		checkSecureSettingsPermission()
 		viewModelScope.launch {
 			settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
 				_screenOffOnly.value = enabled
@@ -98,6 +108,16 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getHighSensitivityModeEnabled().collect { enabled ->
 				_highSensitivityModeEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getBatterySaverOnFlipEnabled().collect { enabled ->
+				_batterySaverOnFlipEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getActivationDelay().collect { delay ->
+				_activationDelay.value = delay
 			}
 		}
 		viewModelScope.launch {
@@ -245,6 +265,24 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.setHighSensitivityModeEnabled(enabled)
 		}
+	}
+
+	fun setBatterySaverOnFlipEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setBatterySaverOnFlipEnabled(enabled)
+		}
+	}
+
+	fun setActivationDelay(seconds: Int) {
+		viewModelScope.launch {
+			settingsRepository.setActivationDelay(seconds)
+		}
+	}
+
+	fun checkSecureSettingsPermission() {
+		val permission = android.Manifest.permission.WRITE_SECURE_SETTINGS
+		val isGranted = getApplication<Application>().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED
+		_hasSecureSettingsPermission.value = isGranted
 	}
 
 	fun setDndOnCustomSoundUri(uri: String?) {

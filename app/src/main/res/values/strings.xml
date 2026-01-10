@@ -20,6 +20,9 @@
 	<string name="notifications_enabled">Notifications Enabled</string>
 	<string name="high_sensitivity_mode">High Sensitivity Mode</string>
 	<string name="battery_saver">Battery Saver</string>
+	<string name="activation_delay">Activation Delay</string>
+	<string name="activation_delay_description">Delay before activating DND after flipping the phone</string>
+	<string name="seconds">%1$d seconds</string>
 	<string name="dnd_on_sound">DND On Sound</string>
 	<string name="dnd_off_sound">DND Off Sound</string>
 	<string name="use_custom_volume">Use Custom Volume</string>
@@ -35,7 +38,12 @@
 	<string name="priority_dnd_description">Enable Priority mode DND instead of Total Silence</string>
 	<string name="notifications_enabled_description">Show notifications when flip is detected or DND state changes</string>
 	<string name="high_sensitivity_mode_description">When enabled, any orientation that\'s not face down will be considered face up</string>
-	<string name="battery_saver_description">Disable sensor detection and DND services when phone is in battery saver mode</string>
+	<string name="battery_saver_description">Automatically toggles Battery Saver with DND (Requires ADB permission for automatic toggle)</string>
+	<string name="adb_permission_required">ADB Permission Required</string>
+	<string name="adb_command_description">To enable automatic Battery Saver toggling, please grant the WRITE_SECURE_SETTINGS permission using the following ADB command:</string>
+	<string name="copy_command">Copy Command</string>
+	<string name="close">Close</string>
+	<string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
 	<string name="dnd_on_sound_description">Sound to play when DND is enabled</string>
 	<string name="dnd_off_sound_description">Sound to play when DND is disabled</string>
 	<string name="use_custom_volume_description">Use custom volume for DND sounds</string>

@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +58,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import android.os.Build
 import android.provider.Settings
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +77,7 @@ fun SettingsScreen(
 	onDonateClick: () -> Unit,
 ) {
 	val context = LocalContext.current
+	val clipboardManager = LocalClipboardManager.current
 	val soundEnabled by viewModel.soundEnabled.collectAsState()
 	val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
 	val screenOffOnly by viewModel.screenOffOnly.collectAsState()
@@ -78,6 +88,9 @@ fun SettingsScreen(
 	val customVolume by viewModel.customVolume.collectAsState()
 	val useCustomVibration by viewModel.useCustomVibration.collectAsState()
 	val customVibrationStrength by viewModel.customVibrationStrength.collectAsState()
+	val hasSecureSettingsPermission by viewModel.hasSecureSettingsPermission.collectAsState()
+	var showAdbDialog by remember { mutableStateOf(false) }
+
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
 	Scaffold(
@@ -177,6 +190,91 @@ fun SettingsScreen(
 					description = stringResource(id = R.string.high_sensitivity_mode_description),
 					checked = highSensitivityModeEnabled,
 					onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
+				)
+
+				val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = stringResource(id = R.string.battery_saver),
+					description = stringResource(id = R.string.battery_saver_description),
+					checked = batterySaverOnFlipEnabled,
+					onCheckedChange = { 
+						if (hasSecureSettingsPermission) {
+							viewModel.setBatterySaverOnFlipEnabled(it)
+						} else {
+							showAdbDialog = true
+						}
+					},
+					enabled = hasSecureSettingsPermission,
+					alpha = if (hasSecureSettingsPermission) 1f else 0.5f
+				)
+
+				if (showAdbDialog) {
+					AlertDialog(
+						onDismissRequest = { showAdbDialog = false },
+						title = { Text(stringResource(R.string.adb_permission_required)) },
+						text = {
+							Column {
+								Text(stringResource(R.string.adb_command_description))
+								Spacer(modifier = Modifier.height(16.dp))
+								Text(
+									text = stringResource(R.string.adb_command_text),
+									style = MaterialTheme.typography.bodySmall,
+									modifier = Modifier
+										.fillMaxWidth()
+										.background(
+											MaterialTheme.colorScheme.surfaceVariant,
+											RoundedCornerShape(8.dp)
+										)
+										.padding(12.dp),
+									textAlign = TextAlign.Start,
+									fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+								)
+							}
+						},
+						confirmButton = {
+							TextButton(onClick = {
+								clipboardManager.setText(AnnotatedString(context.getString(R.string.adb_command_text)))
+								Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
+							}) {
+								Text(stringResource(R.string.copy_command))
+							}
+						},
+						dismissButton = {
+							TextButton(onClick = { showAdbDialog = false }) {
+								Text(stringResource(R.string.close))
+							}
+						}
+					)
+				}
+
+				val activationDelay by viewModel.activationDelay.collectAsState()
+				SettingsSliderItem(
+					title = stringResource(id = R.string.activation_delay),
+					description = stringResource(id = R.string.activation_delay_description),
+					sliderContent = {
+						var sliderPosition by remember { mutableStateOf(activationDelay.toFloat()) }
+						LaunchedEffect(activationDelay) {
+							sliderPosition = activationDelay.toFloat()
+						}
+						Column {
+							Slider(
+								value = sliderPosition,
+								onValueChange = { sliderPosition = it },
+								onValueChangeFinished = {
+									viewModel.setActivationDelay(sliderPosition.toInt())
+								},
+								valueRange = 0f..10f,
+								steps = 9,
+								modifier = Modifier.width(200.dp)
+							)
+							Text(
+								text = stringResource(id = R.string.seconds, sliderPosition.toInt()),
+								style = MaterialTheme.typography.bodySmall,
+								color = MaterialTheme.colorScheme.onSurfaceVariant,
+								modifier = Modifier.padding(start = 8.dp)
+							)
+						}
+					}
 				)
 
 				SettingsSliderItem(
@@ -662,6 +760,8 @@ fun SettingsSwitchItem(
 	description: String,
 	checked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
+	enabled: Boolean = true,
+	alpha: Float = 1f
 ) {
 	Card(
 		shape = RoundedCornerShape(16.dp),
@@ -676,6 +776,7 @@ fun SettingsSwitchItem(
 			.padding(vertical = 6.dp)
 			.clip(RoundedCornerShape(16.dp))
 			.clickable { onCheckedChange(!checked) }
+			.alpha(alpha)
 	) {
 		Column(
 			modifier = Modifier
@@ -704,6 +805,7 @@ fun SettingsSwitchItem(
 				Switch(
 					checked = checked,
 					onCheckedChange = onCheckedChange,
+					enabled = enabled
 				)
 			}
 		}

@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dev.robin.flip_2_dnd.MainActivity
@@ -37,6 +38,7 @@ class FlipDetectorService : Service() {
     private val _isScreenOff = MutableStateFlow(false)
     private val isScreenOff = _isScreenOff.asStateFlow()
     private var onlyWhenScreenOff = false
+    private var activationDelaySeconds = 0
     private var orientationJob: Job? = null
 
     private val screenStateReceiver = object : BroadcastReceiver() {
@@ -144,6 +146,13 @@ class FlipDetectorService : Service() {
                     Log.d(TAG, "Settings updated - Only when screen off: $enabled")
                 }
             }
+
+            serviceScope.launch {
+                settingsRepository.getActivationDelay().collect { delay ->
+                    activationDelaySeconds = delay
+                    Log.d(TAG, "Settings updated - Activation delay: $delay seconds")
+                }
+            }
             
             // Observe orientation changes
             serviceScope.launch {
@@ -185,19 +194,29 @@ class FlipDetectorService : Service() {
                             return
                         }
                         
-                        Log.d(TAG, "Phone is face down and DND is OFF - Starting 2-second delay")
+                        Log.d(TAG, "Phone is face down and DND is OFF - Starting $activationDelaySeconds-second delay")
                         showFlipDetectedNotification()
                         orientationJob = serviceScope.launch {
-                            delay(2000) // 2-second delay
+                            delay(activationDelaySeconds * 1000L)
                             // Double check screen state and orientation after delay
                             if (onlyWhenScreenOff && !isScreenOff.value) {
                                 Log.d(TAG, "Screen turned ON during delay - Cancelling DND toggle")
                                 return@launch
                             }
                             if (sensorService.orientation.value == "Face down") {
-                                Log.d(TAG, "2-second delay completed, phone still face down - Enabling DND")
+                                Log.d(TAG, "$activationDelaySeconds-second delay completed, phone still face down - Enabling DND")
                                 dndService.toggleDnd()
                                 showDndStateNotification(true)
+
+                                // Handle Battery Saver
+                                try {
+                                    val enableBatterySaver = settingsRepository.getBatterySaverOnFlipEnabled().first()
+                                    if (enableBatterySaver) {
+                                        setBatterySaverEnabled(true)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Error handling battery saver: ${e.message}", e)
+                                }
                             } else {
                                 Log.d(TAG, "Phone orientation changed during delay - Cancelling DND toggle")
                             }
@@ -212,6 +231,18 @@ class FlipDetectorService : Service() {
                         Log.d(TAG, "Phone is not face down ($orientation) and DND was enabled by app - Disabling DND")
                         dndService.toggleDnd()
                         showDndStateNotification(false)
+
+                        // Disable battery saver when flipping back up
+                        serviceScope.launch {
+                            try {
+                                val enableBatterySaver = settingsRepository.getBatterySaverOnFlipEnabled().first()
+                                if (enableBatterySaver) {
+                                    setBatterySaverEnabled(false)
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error disabling battery saver: ${e.message}", e)
+                            }
+                        }
                     } else if (currentDndState) {
                         Log.d(TAG, "Phone is not face down ($orientation) but DND was enabled by user - No action needed")
                     } else {
@@ -285,9 +316,14 @@ class FlipDetectorService : Service() {
             }
             
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationText = if (activationDelaySeconds > 0) {
+                getString(R.string.seconds, activationDelaySeconds).let { "DND will activate in $it" }
+            } else {
+                "DND will activate now"
+            }
             val notification = NotificationCompat.Builder(this@FlipDetectorService, FLIP_CHANNEL_ID)
                 .setContentTitle("Flip Detected")
-                .setContentText("DND will activate in 2 seconds")
+                .setContentText(notificationText)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -320,6 +356,62 @@ class FlipDetectorService : Service() {
 
             notificationManager.notify(DND_NOTIFICATION_ID, notification)
             Log.d(TAG, "DND state notification shown: DND ${if (enabled) "enabled" else "disabled"}")
+        }
+    }
+
+    private fun setBatterySaverEnabled(enabled: Boolean) {
+        try {
+            val isPowerSaveMode = powerManager.isPowerSaveMode
+            if (enabled == isPowerSaveMode) {
+                Log.d(TAG, "Battery Saver is already ${if (enabled) "enabled" else "disabled"}")
+                return
+            }
+
+            // Attempt to toggle battery saver directly
+            // This requires WRITE_SECURE_SETTINGS permission granted via ADB
+            val value = if (enabled) 1 else 0
+            val success = Settings.Global.putInt(contentResolver, "low_power", value)
+            
+            if (success) {
+                Log.d(TAG, "Battery Saver ${if (enabled) "enabled" else "disabled"} via Secure Settings")
+            } else {
+                Log.w(TAG, "Failed to set Battery Saver via Secure Settings - Falling back to prompt")
+                if (enabled) promptEnableBatterySaver()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error toggling Battery Saver: ${e.message}")
+            // Fallback to notification prompt if we're trying to enable it
+            if (enabled) promptEnableBatterySaver()
+        }
+    }
+
+    private fun promptEnableBatterySaver() {
+        try {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val intent = Intent(android.provider.Settings.ACTION_BATTERY_SAVER_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                this, 100,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val notification = NotificationCompat.Builder(this@FlipDetectorService, FLIP_CHANNEL_ID)
+                .setContentTitle("Battery Saver suggested")
+                .setContentText("Tap to enable Battery Saver")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setSilent(true)
+                .build()
+
+            notificationManager.notify(FLIP_NOTIFICATION_ID + 100, notification)
+            Log.d(TAG, "Battery Saver prompt notification shown")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error prompting Battery Saver: ${e.message}", e)
         }
     }
 

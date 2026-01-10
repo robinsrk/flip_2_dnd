@@ -1,0 +1,4 @@
+- Added activation delay slider (0-10 seconds) in settings.
+- Added automatic battery saver toggle when phone is flipped.
+- Added permission check and ADB command dialog for battery saver toggle.
+- Fixed UI alignment and improved stability.

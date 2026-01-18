@@ -65,4 +65,11 @@
 	<string name="language_description">Change the app language</string>
 	<string name="error_opening_language_settings">Could not open language settings</string>
 	<string name="qs_tile_label">Flip DND service</string>
+	<string name="detection">Detection</string>
+	<string name="flashlight_detection">Flashlight Detection</string>
+	<string name="flashlight_detection_description">Pause service when flashlight is on</string>
+	<string name="media_playback_detection">Media Playback Detection</string>
+	<string name="media_playback_detection_description">Pause service when media is playing</string>
+	<string name="headphone_detection">Headphone Detection</string>
+	<string name="headphone_detection_description">Pause service when headphones are connected</string>
 </resources>

@@ -305,6 +305,43 @@ fun SettingsScreen(
 					}
 				)
 
+
+
+				Spacer(modifier = Modifier.height(16.dp))
+
+				Text(
+					text = stringResource(id = R.string.detection),
+					color = MaterialTheme.colorScheme.primary,
+					style = MaterialTheme.typography.titleLarge.copy(
+						fontWeight = FontWeight.Bold
+					),
+					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+				)
+
+				val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = stringResource(id = R.string.flashlight_detection),
+					description = stringResource(id = R.string.flashlight_detection_description),
+					checked = flashlightDetectionEnabled,
+					onCheckedChange = { viewModel.setFlashlightDetectionEnabled(it) },
+				)
+
+				val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = stringResource(id = R.string.media_playback_detection),
+					description = stringResource(id = R.string.media_playback_detection_description),
+					checked = mediaPlaybackDetectionEnabled,
+					onCheckedChange = { viewModel.setMediaPlaybackDetectionEnabled(it) },
+				)
+
+				val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
+				SettingsSwitchItem(
+					title = stringResource(id = R.string.headphone_detection),
+					description = stringResource(id = R.string.headphone_detection_description),
+					checked = headphoneDetectionEnabled,
+					onCheckedChange = { viewModel.setHeadphoneDetectionEnabled(it) },
+				)
+
 				Spacer(modifier = Modifier.height(16.dp))
 
 				Text(

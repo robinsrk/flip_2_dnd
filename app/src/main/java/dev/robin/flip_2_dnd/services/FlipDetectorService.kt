@@ -41,6 +41,21 @@ class FlipDetectorService : Service() {
     private var activationDelaySeconds = 0
     private var orientationJob: Job? = null
 
+    // Helper vars
+    private var isFlashlightOn = false
+    private var flashlightDetectionEnabled = false
+    private var mediaPlaybackDetectionEnabled = false
+    private var headphoneDetectionEnabled = false
+
+    private lateinit var cameraManager: android.hardware.camera2.CameraManager
+    private val torchCallback = object : android.hardware.camera2.CameraManager.TorchCallback() {
+        override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+            super.onTorchModeChanged(cameraId, enabled)
+            isFlashlightOn = enabled
+            Log.d(TAG, "Torch mode changed: $enabled")
+        }
+    }
+
     private val screenStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
@@ -109,6 +124,9 @@ class FlipDetectorService : Service() {
             dndService = DndService(this)
             settingsRepository = SettingsRepositoryImpl(this)
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            cameraManager = getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
+
+            cameraManager.registerTorchCallback(torchCallback, null)
             
             // Initialize screen state
             _isScreenOff.value = !powerManager.isInteractive
@@ -154,6 +172,28 @@ class FlipDetectorService : Service() {
                 }
             }
             
+            // Observe detection settings
+            serviceScope.launch {
+                settingsRepository.getFlashlightDetectionEnabled().collect { enabled ->
+                    flashlightDetectionEnabled = enabled
+                    Log.d(TAG, "Settings updated - Flashlight detection: $enabled")
+                }
+            }
+
+            serviceScope.launch {
+                settingsRepository.getMediaPlaybackDetectionEnabled().collect { enabled ->
+                    mediaPlaybackDetectionEnabled = enabled
+                    Log.d(TAG, "Settings updated - Media playback detection: $enabled")
+                }
+            }
+
+            serviceScope.launch {
+                settingsRepository.getHeadphoneDetectionEnabled().collect { enabled ->
+                    headphoneDetectionEnabled = enabled
+                    Log.d(TAG, "Settings updated - Headphone detection: $enabled")
+                }
+            }
+            
             // Observe orientation changes
             serviceScope.launch {
                 combine(
@@ -194,6 +234,22 @@ class FlipDetectorService : Service() {
                             return
                         }
                         
+                         // Check Detection Settings
+                        if (flashlightDetectionEnabled && isFlashlightOn) {
+                            Log.d(TAG, "Flashlight is ON - Ignoring face down")
+                            return
+                        }
+
+                        if (mediaPlaybackDetectionEnabled && isMediaPlaying()) {
+                            Log.d(TAG, "Media is playing - Ignoring face down")
+                            return
+                        }
+
+                        if (headphoneDetectionEnabled && areHeadphonesConnected()) {
+                            Log.d(TAG, "Headphones are connected - Ignoring face down")
+                            return
+                        }
+
                         Log.d(TAG, "Phone is face down and DND is OFF - Starting $activationDelaySeconds-second delay")
                         showFlipDetectedNotification()
                         orientationJob = serviceScope.launch {
@@ -261,6 +317,9 @@ class FlipDetectorService : Service() {
         try {
             // Unregister screen state receiver
             unregisterReceiver(screenStateReceiver)
+            
+             // Unregister torch callback
+            cameraManager.unregisterTorchCallback(torchCallback)
             
             // Stop sensor monitoring
             sensorService.stopMonitoring()
@@ -441,5 +500,29 @@ class FlipDetectorService : Service() {
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .build()
+    }
+    private fun isMediaPlaying(): Boolean {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+        return audioManager.isMusicActive
+    }
+
+    private fun areHeadphonesConnected(): Boolean {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
+            for (device in devices) {
+                if (device.type == android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET ||
+                    device.type == android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
+                    device.type == android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
+                    device.type == android.media.AudioDeviceInfo.TYPE_USB_HEADSET
+                ) {
+                    return true
+                }
+            }
+            return false
+        } else {
+            @Suppress("DEPRECATION")
+            return audioManager.isWiredHeadsetOn || audioManager.isBluetoothA2dpOn
+        }
     }
 }

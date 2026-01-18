@@ -36,6 +36,9 @@ private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
 private const val KEY_HIGH_SENSITIVITY_MODE = "high_sensitivity_mode"
 private const val KEY_BATTERY_SAVER_ON_FLIP = "battery_saver_on_flip"
 private const val KEY_ACTIVATION_DELAY = "activation_delay"
+private const val KEY_FLASHLIGHT_DETECTION = "flashlight_detection"
+private const val KEY_MEDIA_PLAYBACK_DETECTION = "media_playback_detection"
+private const val KEY_HEADPHONE_DETECTION = "headphone_detection"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -86,6 +89,9 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val highSensitivityModeEnabled = MutableStateFlow(prefs.getBoolean(KEY_HIGH_SENSITIVITY_MODE, false))
 	private val batterySaverOnFlipEnabled = MutableStateFlow(prefs.getBoolean(KEY_BATTERY_SAVER_ON_FLIP, false))
 	private val activationDelay = MutableStateFlow(prefs.getInt(KEY_ACTIVATION_DELAY, 2))
+	private val flashlightDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_DETECTION, false))
+	private val mediaPlaybackDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_MEDIA_PLAYBACK_DETECTION, false))
+	private val headphoneDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_HEADPHONE_DETECTION, false))
 
 	private fun restartFlipDetectorService() {
 		try {
@@ -251,6 +257,30 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setActivationDelay(seconds: Int) {
 		prefs.edit().putInt(KEY_ACTIVATION_DELAY, seconds).apply()
 		activationDelay.value = seconds
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightDetectionEnabled(): Flow<Boolean> = flashlightDetectionEnabled
+
+	override suspend fun setFlashlightDetectionEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_FLASHLIGHT_DETECTION, enabled).apply()
+		flashlightDetectionEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getMediaPlaybackDetectionEnabled(): Flow<Boolean> = mediaPlaybackDetectionEnabled
+
+	override suspend fun setMediaPlaybackDetectionEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_MEDIA_PLAYBACK_DETECTION, enabled).apply()
+		mediaPlaybackDetectionEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getHeadphoneDetectionEnabled(): Flow<Boolean> = headphoneDetectionEnabled
+
+	override suspend fun setHeadphoneDetectionEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_HEADPHONE_DETECTION, enabled).apply()
+		headphoneDetectionEnabled.value = enabled
 		restartFlipDetectorService()
 	}
 }

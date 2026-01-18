@@ -78,6 +78,15 @@ class SettingsViewModel @Inject constructor(
 	private val _dndOffCustomSoundUri = MutableStateFlow<String?>(null)
 	val dndOffCustomSoundUri = _dndOffCustomSoundUri.asStateFlow()
 
+	private val _flashlightDetectionEnabled = MutableStateFlow(false)
+	val flashlightDetectionEnabled = _flashlightDetectionEnabled.asStateFlow()
+
+	private val _mediaPlaybackDetectionEnabled = MutableStateFlow(false)
+	val mediaPlaybackDetectionEnabled = _mediaPlaybackDetectionEnabled.asStateFlow()
+
+	private val _headphoneDetectionEnabled = MutableStateFlow(false)
+	val headphoneDetectionEnabled = _headphoneDetectionEnabled.asStateFlow()
+
 	init {
 		checkSecureSettingsPermission()
 		viewModelScope.launch {
@@ -173,6 +182,21 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getFlipSensitivity().collect { sensitivity ->
 				_flipSensitivity.value = sensitivity
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightDetectionEnabled().collect { enabled ->
+				_flashlightDetectionEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getMediaPlaybackDetectionEnabled().collect { enabled ->
+				_mediaPlaybackDetectionEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHeadphoneDetectionEnabled().collect { enabled ->
+				_headphoneDetectionEnabled.value = enabled
 			}
 		}
 	}
@@ -276,6 +300,24 @@ class SettingsViewModel @Inject constructor(
 	fun setActivationDelay(seconds: Int) {
 		viewModelScope.launch {
 			settingsRepository.setActivationDelay(seconds)
+		}
+	}
+
+	fun setFlashlightDetectionEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightDetectionEnabled(enabled)
+		}
+	}
+
+	fun setMediaPlaybackDetectionEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setMediaPlaybackDetectionEnabled(enabled)
+		}
+	}
+
+	fun setHeadphoneDetectionEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setHeadphoneDetectionEnabled(enabled)
 		}
 	}
 

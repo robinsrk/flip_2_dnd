@@ -43,4 +43,10 @@ interface SettingsRepository {
     suspend fun setBatterySaverOnFlipEnabled(enabled: Boolean)
     fun getActivationDelay(): Flow<Int>
     suspend fun setActivationDelay(seconds: Int)
+    fun getFlashlightDetectionEnabled(): Flow<Boolean>
+    suspend fun setFlashlightDetectionEnabled(enabled: Boolean)
+    fun getMediaPlaybackDetectionEnabled(): Flow<Boolean>
+    suspend fun setMediaPlaybackDetectionEnabled(enabled: Boolean)
+    fun getHeadphoneDetectionEnabled(): Flow<Boolean>
+    suspend fun setHeadphoneDetectionEnabled(enabled: Boolean)
 }

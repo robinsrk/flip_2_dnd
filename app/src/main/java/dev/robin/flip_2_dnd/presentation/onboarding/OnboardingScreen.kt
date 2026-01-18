@@ -1,6 +1,5 @@
 package dev.robin.flip_2_dnd.presentation.onboarding
 
-import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -8,26 +7,48 @@ import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import dev.robin.flip_2_dnd.R
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.launch
+import dev.robin.flip_2_dnd.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 fun isNotificationPolicyAccessGranted(context: Context): Boolean {
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -47,361 +68,398 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val activity = context as Activity
+
+    // Hoist state here to ensure button updates
+    var dndGranted by remember { mutableStateOf(isNotificationPolicyAccessGranted(context)) }
+    var batteryGranted by remember { mutableStateOf(isBatteryOptimizationDisabled(context)) }
+
+    // Poll for updates (e.g. when user comes back from settings)
+    LaunchedEffect(Unit) {
+        while(true) {
+            dndGranted = isNotificationPolicyAccessGranted(context)
+            batteryGranted = isBatteryOptimizationDisabled(context)
+            delay(500)
+        }
+    }
 
     val dndPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
-    ) { result ->
-        if (isNotificationPolicyAccessGranted(context)) {
-            scope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-            }
-        }
+    ) {
+        // State updates via polling
     }
 
-    Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                title = { 
-                    Text(
-                        text = "Flip 2 DND Setup",
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                actions = {
-                    if (pagerState.currentPage > 0) {
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                                }
-                            },
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Previous",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
-                },
-                floatingActionButton = {
-                    Button(
-                        onClick = {
-                            when (pagerState.currentPage) {
-                                5 -> onComplete()
-                                else -> {
-                                    scope.launch {
-                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                    }
-                                }
-                            }
-                        },
-                        enabled = when (pagerState.currentPage) {
-                            2 -> isNotificationPolicyAccessGranted(context)
-                            3 -> isBatteryOptimizationDisabled(context)
-                            else -> true
-                        },
-                        modifier = Modifier.padding(16.dp).also {
-                            if (pagerState.currentPage == 3) {
-                                println("Battery optimization disabled: ${isBatteryOptimizationDisabled(context)}")
-                            }
-                        }
-                    ) {
-                        Text(
-                            text = when (pagerState.currentPage) {
-                                5 -> "Get Started"
-                                else -> "Next"
-                            },
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                },
-                tonalElevation = 0.dp
-            )
-        }
-    ) { paddingValues ->
-        val notificationPermissionLauncher = rememberLauncherForActivityResult(
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
-            scope.launch {
-                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-            }
-        }
+        // State updates via polling
     }
 
-    HorizontalPager(
-            count = 6,
-            state = pagerState,
-            userScrollEnabled = false,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) { page ->
-            when (page) {
-                0 -> WelcomePage(onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                1 -> FeaturePage(onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                2 -> DndPermissionPage(dndPermissionLauncher, onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                3 -> BatteryOptimizationPage(onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                4 -> NotificationPermissionPage(notificationPermissionLauncher, onNext = { scope.launch { pagerState.animateScrollToPage(page + 1) } })
-                5 -> CompletePage(onNext = onComplete)
-            }
-        }
-    }
-}
-
-@Composable
-fun OnboardingCard(content: @Composable () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    // Background color surface for the whole screen
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .systemBarsPadding() 
         ) {
-            content()
-        }
-    }
-}
-
-@Composable
-fun WelcomePage(onNext: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        OnboardingCard {
-            Text(
-                text = "Welcome to Flip 2 DND",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Control your phone's Do Not Disturb mode by simply flipping it face down.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-fun FeaturePage(onNext: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        OnboardingCard {
-            Image(
-                painter = painterResource(id = R.drawable.ic_dnd_on),
-                contentDescription = "Feature illustration",
-                modifier = Modifier.size(120.dp)
-            )
+            // Top section: Empty for now (Skip button removed)
             Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = "Simple and Effective",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "To use this app effectively, we'll need a few permissions. Let's set those up together.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
 
-@Composable
-fun DndPermissionPage(
-    dndPermissionLauncher: ActivityResultLauncher<Intent>,
-    onNext: () -> Unit
-) {
-    val context = LocalContext.current
-    var isPermissionGranted by remember { mutableStateOf(isNotificationPolicyAccessGranted(context)) }
-    
-    LaunchedEffect(Unit) {
-        // Continuously check the permission state
-        while (true) {
-            isPermissionGranted = isNotificationPolicyAccessGranted(context)
-            delay(500) // Check every 500ms
-        }
-    }
+            // Middle section: Pager
+            HorizontalPager(
+                count = 4,
+                state = pagerState,
+                userScrollEnabled = false,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) { page ->
+                when (page) {
+                    0 -> OnboardingContentPage(
+                        title = "Welcome to Flip 2 DND",
+                        description = "Control your phone's Do Not Disturb mode by simply flipping it face down.",
+                        iconRes = R.drawable.ic_launcher,
+                        iconTint = Color.Unspecified
+                    )
+                    1 -> OnboardingContentPage(
+                        title = "Simple & Effective",
+                        description = "Focus on what matters. Flip your phone to silence interruptions instantly.",
+                        iconRes = R.drawable.ic_dnd_on,
+                        iconTint = MaterialTheme.colorScheme.secondary
+                    )
+                    2 -> UnifiedPermissionsPage(
+                        dndPermissionLauncher = dndPermissionLauncher,
+                        notificationPermissionLauncher = notificationPermissionLauncher,
+                        dndGranted = dndGranted,
+                        batteryGranted = batteryGranted
+                    )
+                    3 -> OnboardingContentPage(
+                        title = "You're All Set!",
+                        description = "Flip your phone face down to try it out.",
+                        iconVector = Icons.Default.Check,
+                        iconTint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        OnboardingCard {
-            Text(
-                text = "DND Permission",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "We need permission to control Do Not Disturb mode.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = {
-                    if (isPermissionGranted) {
-                        onNext()
-                    } else {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                        dndPermissionLauncher.launch(intent)
+            // Bottom section: Indicators and Navigation
+            BottomNavigationSection(
+                pagerState = pagerState,
+                onNext = {
+                    scope.launch {
+                        if (pagerState.currentPage < 3) {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        } else {
+                            onComplete()
+                        }
                     }
                 },
-                enabled = !isPermissionGranted
-            ) {
-                Text(if (isPermissionGranted) "Permission Granted" else "Grant Permission")
+                onComplete = onComplete,
+                dndGranted = dndGranted,
+                batteryGranted = batteryGranted
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun BottomNavigationSection(
+    pagerState: PagerState,
+    onNext: () -> Unit,
+    onComplete: () -> Unit,
+    dndGranted: Boolean,
+    batteryGranted: Boolean
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Page Indicators
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(4) { index ->
+                val isSelected = pagerState.currentPage == index
+                val width = if (isSelected) 24.dp else 8.dp
+                val color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+
+                Box(
+                    modifier = Modifier
+                        .height(8.dp)
+                        .width(width)
+                        .clip(CircleShape)
+                        .background(color)
+                        .animateContentSize(animationSpec = spring<IntSize>(stiffness = Spring.StiffnessLow))
+                )
+            }
+        }
+
+        // Action Button
+        val isLastPage = pagerState.currentPage == 3
+        val canProceed = when(pagerState.currentPage) {
+            2 -> dndGranted && batteryGranted
+            else -> true
+        }
+
+        Button(
+            onClick = {
+                if (isLastPage) onComplete() else onNext()
+            },
+            enabled = if (isLastPage) true else canProceed,
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+            modifier = Modifier.height(50.dp)
+        ) {
+            Text(
+                text = if (isLastPage) "Get Started" else "Next",
+                style = MaterialTheme.typography.labelLarge
+            )
+            if (!isLastPage) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = Icons.Default.NavigateNext,
+                    contentDescription = null
+                )
             }
         }
     }
 }
 
 @Composable
-fun BatteryOptimizationPage(onNext: () -> Unit) {
-    val context = LocalContext.current
-    var isOptimizationDisabled by remember { mutableStateOf(isBatteryOptimizationDisabled(context)) }
-    
-    val batteryOptimizationLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-    ) { result ->
-        if (isBatteryOptimizationDisabled(context)) {
-            onNext()
-        }
-    }
-    
-    LaunchedEffect(Unit) {
-        // Continuously check the permission state
-        while (true) {
-            isOptimizationDisabled = isBatteryOptimizationDisabled(context)
-            delay(500) // Check every 500ms
-        }
-    }
-
+fun OnboardingContentPage(
+    title: String,
+    description: String,
+    iconRes: Int? = null,
+    iconVector: ImageVector? = null,
+    iconTint: Color = MaterialTheme.colorScheme.primary
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        OnboardingCard {
-            Text(
-                text = "Battery Optimization",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "To ensure reliable operation, we need to disable battery optimization for this app.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
+        Box(
+            modifier = Modifier
+                .size(160.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (iconVector != null) {
+                Icon(
+                    imageVector = iconVector,
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp),
+                    tint = iconTint
+                )
+            } else if (iconRes != null) {
+                Icon(
+                    painter = painterResource(id = iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp),
+                    tint = iconTint
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+fun UnifiedPermissionsPage(
+    dndPermissionLauncher: ActivityResultLauncher<Intent>,
+    notificationPermissionLauncher: ActivityResultLauncher<String>,
+    dndGranted: Boolean,
+    batteryGranted: Boolean
+) {
+    val context = LocalContext.current
+    
+    // We rely on parent passed state now
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Text(
+            text = "Setup Permissions",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+             text = "Grant the following permissions to ensure Flip 2 DND works correctly.",
+             style = MaterialTheme.typography.bodyMedium,
+             textAlign = TextAlign.Center,
+             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Permission List
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            
+            PermissionItem(
+                title = "Do Not Disturb Access",
+                description = "Required to toggle DND mode.",
+                icon = Icons.Default.Settings,
+                isGranted = dndGranted,
+                isRequired = true,
                 onClick = {
-                    if (isOptimizationDisabled) {
-                        onNext()
-                    } else {
+                    if (!dndGranted) {
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        dndPermissionLauncher.launch(intent)
+                    }
+                }
+            )
+
+            PermissionItem(
+                title = "Battery Optimization",
+                description = "Required for background reliability.",
+                icon = Icons.Default.BatteryAlert,
+                isGranted = batteryGranted,
+                isRequired = true,
+                onClick = {
+                    if (!batteryGranted) {
                         val intent = Intent().apply {
                             action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                             data = Uri.parse("package:${context.packageName}")
                         }
-                        batteryOptimizationLauncher.launch(intent)
+                        context.startActivity(intent)
                     }
-                },
-                enabled = !isOptimizationDisabled
-            ) {
-                Text(if (isOptimizationDisabled) "Permission Granted" else "Disable Battery Optimization")
-            }
-        }
-    }
-}
+                }
+            )
 
-@Composable
-fun NotificationPermissionPage(
-    notificationPermissionLauncher: ActivityResultLauncher<String>,
-    onNext: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        OnboardingCard {
-            Text(
-                text = "Notifications",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "We need permission to send you notifications about the app's status.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
+            PermissionItem(
+                title = "Notifications",
+                description = "Optional. Shows service status.",
+                icon = Icons.Default.Notifications,
+                isGranted = false, // Polling this is complex without permission helper, keep simple
+                isRequired = false,
                 onClick = {
                     notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
-            ) {
-                Text("Grant Permission")
-            }
+            )
         }
     }
 }
 
 @Composable
-fun CompletePage(onNext: () -> Unit) {
-    Column(
+fun PermissionItem(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    isGranted: Boolean,
+    isRequired: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (isGranted) 
+        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) 
+    else 
+        MaterialTheme.colorScheme.surface
+
+    val borderColor = if (isGranted) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
+
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(enabled = !isGranted, onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        border = if (!isGranted) androidx.compose.foundation.BorderStroke(1.dp, borderColor) else null
     ) {
-        OnboardingCard {
-            Text(
-                text = "All Set!",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "You're ready to use Flip 2 DND. Just flip your phone face down to enable Do Not Disturb mode.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
-            )
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (isRequired) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "*",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(8.dp))
+            
+            if (isGranted) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Granted",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                Button(
+                    onClick = onClick,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    modifier = Modifier.height(32.dp)
+                ) {
+                    Text("Grant", style = MaterialTheme.typography.labelSmall)
+                }
+            }
         }
     }
 }

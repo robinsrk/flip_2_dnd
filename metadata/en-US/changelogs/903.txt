@@ -1,0 +1,5 @@
+New Features:
+- Complete redesign of onboarding screens for a modern look.
+- Consolidated permission requests into a single, easy-to-use page.
+- Improved user guidance and flow.
+- Removed clutter for a cleaner experience.

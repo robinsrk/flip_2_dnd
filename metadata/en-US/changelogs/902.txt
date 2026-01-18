@@ -1,0 +1,4 @@
+New Features:
+- Added Flashlight Detection: prevent DND when flashlight is on
+- Added Media Playback Detection: prevent DND when media is playing
+- Added Headphone Detection: prevent DND when headphones are connected

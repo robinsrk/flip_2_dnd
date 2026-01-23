@@ -1,52 +1,94 @@
 # Flip 2 DND
 
 <p align="center">
-  <img src="./metadata/en-US/images/icon.png" alt="App Icon" width="150"/>
+  <img src="./metadata/en-US/images/icon.png" alt="App Icon" width="120"/>
+  <br>
+  <b>A modern, open-source Android utility to automate your focus.</b>
 </p>
 
-## Overview
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/robinsrk/Flip_2_DND?style=for-the-badge&color=6200EE" alt="Release">
+  <img src="https://img.shields.io/github/license/robinsrk/Flip_2_DND?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/github/stars/robinsrk/Flip_2_DND?style=for-the-badge" alt="Stars">
+</p>
 
-Flip 2 DND is a modern Android application that intelligently manages your Do Not Disturb (DND) mode based on your phone's orientation. Just flip your phone face down to activate DND and face up to turn it off—it's that simple!
+---
 
-## 📥 Download
+## 📖 Overview
+
+**Flip 2 DND** is a minimalist and intelligent Android application designed to enhance your productivity and peace of mind. By leveraging your device's orientation sensors, it automatically toggles **Do Not Disturb (DND)** mode based on physical movement. 
+
+Simply **flip your phone face down** to silence notifications and stay focused. **Flip it back up** to return to your normal state. It's seamless, intuitive, and respects your privacy.
+
+---
+
+## 🚀 Key Features
+
+- 🔄 **Intelligent Flip Detection**: Automatically toggles DND mode based on phone orientation.
+- ⏱️ **Customizable Activation Delay**: Fine-tune the timing (0-10 seconds) to prevent accidental triggers.
+- 🔋 **Battery Saver Integration**: Automatically enable Battery Saver when flipped (Requires ADB permission).
+- 🎨 **Modern Material 3 UI**: Built with Jetpack Compose, featuring a clean interface and dynamic "Material You" theming.
+- 🔔 **Custom Feedback**: Personalize your experience with custom vibration patterns and sound notifications.
+- 🌑 **Dark Mode Support**: Fully optimized for both light and dark themes.
+- 🛠️ **Quick Settings Tile**: Control the service directly from your notification shade.
+- 🔒 **Privacy Focused**: No tracking, no ads, and minimal permissions.
+
+---
+
+## 📥 Installation
+
+Choose your preferred platform to download the latest version:
 
 <p align="center">
   <a href="https://apt.izzysoft.de/fdroid/index/apk/dev.robin.flip_2_dnd">
-    <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="150"/>
+    <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="160"/>
+  </a>
+  <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
+    <img src="./assets/images/getItf-droid.png" alt="F-Droid" width="160"/>
   </a>
   <a href="https://github.com/robinsrk/Flip_2_DND/releases/">
-    <img src="./assets/images/getItGithub.png" alt="GitHub" width="150"/>
+    <img src="./assets/images/getItGithub.png" alt="GitHub" width="160"/>
   </a>
-   </br>
-   <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
-   <img src="./assets/images/getItf-droid.png" alt="Obtainium" width="150"/>
-   </a>
-   <a href="https://www.openapk.net/flip-2-dnd/dev.robin.flip_2_dnd/">
-    <img src="./assets/images/getItOpenapk.png" alt="OpenAPK" width="150"/>
-   </a>
+  <a href="https://www.openapk.net/flip-2-dnd/dev.robin.flip_2_dnd/">
+    <img src="./assets/images/getItOpenapk.png" alt="OpenAPK" width="160"/>
+  </a>
 </p>
 
-## 🚀 Features
+---
 
-- **Automatic DND Toggle**: Effortlessly switch DND on/off based on your phone's position.
-- **Delay Mechanism**: A 2-second delay prevents accidental toggles.
-- **Sleek UI**: Built with Jetpack Compose for a clean, modern look.
-- **Material You Design**: Dynamic theming for a personalized experience.
-- **Customizable Feedback**: Choose between vibration and sound notifications.
-- **User-Friendly Settings**: Easily customize your DND preferences.
-
-## 📱 Screenshots
+## 📱 Visual Experience
 
 <p align="center">
   <img src="./metadata/en-US/images/phoneScreenshots/01-Home-Light.png" alt="Home Screen (Light)" width="200"/>
-  <img src="./metadata/en-US/images/phoneScreenshots/02-Home-Settings-Light.png" alt="Home Settings (Light)" width="200"/>
   <img src="./metadata/en-US/images/phoneScreenshots/03-Settings-Light.png" alt="Settings (Light)" width="200"/>
-</p>
-<p align="center">
   <img src="./metadata/en-US/images/phoneScreenshots/04-Home-Dark.png" alt="Home Screen (Dark)" width="200"/>
   <img src="./metadata/en-US/images/phoneScreenshots/05-Settings-Dark.png" alt="Settings (Dark)" width="200"/>
 </p>
 
-## Star History
+---
 
-[![Star History Chart](https://api.star-history.com/svg?repos=robinsrk/flip_2_dnd&type=Date)](https://www.star-history.com/#robinsrk/flip_2_dnd&Date)
+## ⚡ Battery Saver Setup (Optional)
+
+To enable automatic Battery Saver toggling, you need to grant the `WRITE_SECURE_SETTINGS` permission via ADB:
+
+```bash
+adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS
+```
+
+---
+
+## 📈 Growth & Support
+
+<p align="center">
+  <a href="https://star-history.com/#robinsrk/flip_2_dnd&Date">
+    <img src="https://api.star-history.com/svg?repos=robinsrk/flip_2_dnd&type=Date" alt="Star History Chart" width="100%">
+  </a>
+</p>
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE). 
+
+Built with ❤️ using **Kotlin** and **Jetpack Compose**.

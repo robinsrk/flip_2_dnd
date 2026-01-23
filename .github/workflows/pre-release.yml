@@ -1,10 +1,9 @@
-name: Release Jetpack Compose App
+name: Pre-release Jetpack Compose App
 
 on:
   push:
     tags:
-      - 'v*'
-      - '!v*-pre*'
+      - 'v*-pre*'
   workflow_dispatch:
 
 jobs:
@@ -111,11 +110,11 @@ jobs:
           files: app/build/outputs/apk/release/app-release.apk
           generate_release_notes: true
           draft: false
-          prerelease: false
+          prerelease: true
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: app-pre-release
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error

@@ -72,4 +72,14 @@
 	<string name="media_playback_detection_description">Pause service when media is playing</string>
 	<string name="headphone_detection">Headphone Detection</string>
 	<string name="headphone_detection_description">Pause service when headphones are connected</string>
+	<string name="dnd_activation_schedule">DND Activation Schedule</string>
+    <string name="sound_schedule">Sound Schedule</string>
+    <string name="vibration_schedule">Vibration Schedule</string>
+    <string name="schedule_enabled">Enable Schedule</string>
+    <string name="dnd_schedule_description">Only activate DND during these times.</string>
+    <string name="sound_schedule_description">Only play sound feedback during these times.</string>
+    <string name="vibration_schedule_description">Only vibrate during these times.</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="days">Days</string>
 </resources>

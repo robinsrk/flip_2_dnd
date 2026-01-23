@@ -41,6 +41,12 @@ class FlipDetectorService : Service() {
     private var activationDelaySeconds = 0
     private var orientationJob: Job? = null
 
+    // DND Activation Schedule settings
+    private var dndScheduleEnabled = false
+    private var dndScheduleStartTime = "22:00"
+    private var dndScheduleEndTime = "07:00"
+    private var dndScheduleDays = setOf(1, 2, 3, 4, 5, 6, 7)
+
     // Helper vars
     private var isFlashlightOn = false
     private var flashlightDetectionEnabled = false
@@ -193,6 +199,35 @@ class FlipDetectorService : Service() {
                     Log.d(TAG, "Settings updated - Headphone detection: $enabled")
                 }
             }
+
+            // Observe DND activation schedule settings
+            serviceScope.launch {
+                settingsRepository.getDndScheduleEnabled().collect { enabled ->
+                    dndScheduleEnabled = enabled
+                    Log.d(TAG, "Settings updated - DND Schedule enabled: $enabled")
+                }
+            }
+
+            serviceScope.launch {
+                settingsRepository.getDndScheduleStartTime().collect { time ->
+                    dndScheduleStartTime = time
+                    Log.d(TAG, "Settings updated - DND Schedule start time: $time")
+                }
+            }
+
+            serviceScope.launch {
+                settingsRepository.getDndScheduleEndTime().collect { time ->
+                    dndScheduleEndTime = time
+                    Log.d(TAG, "Settings updated - DND Schedule end time: $time")
+                }
+            }
+
+            serviceScope.launch {
+                settingsRepository.getDndScheduleDays().collect { days ->
+                    dndScheduleDays = days
+                    Log.d(TAG, "Settings updated - DND Schedule days: $days")
+                }
+            }
             
             // Observe orientation changes
             serviceScope.launch {
@@ -215,18 +250,24 @@ class FlipDetectorService : Service() {
         try {
             Log.d(TAG, "Screen state: ${if (screenOff) "OFF" else "ON"}, Only when screen off: $onlyWhenScreenOff")
             Log.d(TAG, "Handling orientation change: $orientation")
-            
+
             // Cancel any existing orientation job
             orientationJob?.cancel()
-            
+
             // Update DND status before making any changes
             dndService.updateDndStatus()
             val currentDndState = dndService.isDndEnabled.value
             val isAppEnabled = dndService.isAppEnabledDnd.value
             Log.d(TAG, "Current DND state: enabled=$currentDndState, appEnabled=$isAppEnabled")
-            
+
             when (orientation) {
                 "Face down" -> {
+                    // Check DND schedule if enabled
+                    if (dndScheduleEnabled && !isWithinDndSchedule()) {
+                        Log.d(TAG, "Current time is outside DND schedule - Ignoring face down")
+                        return
+                    }
+
                     if (!currentDndState) {
                         // Only check screen off and stability when turning ON DND
                         if (onlyWhenScreenOff && !screenOff) {
@@ -337,6 +378,31 @@ class FlipDetectorService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    private fun isWithinDndSchedule(): Boolean {
+        try {
+            val now = java.util.Calendar.getInstance()
+            val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
+            
+            if (!dndScheduleDays.contains(dayOfWeek)) {
+                return false
+            }
+
+            val currentTime = String.format("%02d:%02d", 
+                now.get(java.util.Calendar.HOUR_OF_DAY), 
+                now.get(java.util.Calendar.MINUTE))
+            
+            return if (dndScheduleStartTime <= dndScheduleEndTime) {
+                currentTime in dndScheduleStartTime..dndScheduleEndTime
+            } else {
+                // Overnight schedule (e.g., 22:00 to 07:00)
+                currentTime >= dndScheduleStartTime || currentTime <= dndScheduleEndTime
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking DND schedule: ${e.message}")
+            return true // Default to true if error
+        }
+    }
 
     private fun createNotificationChannels() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -58,9 +58,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import android.os.Build
 import android.provider.Settings
+import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
@@ -89,6 +92,23 @@ fun SettingsScreen(
 	val useCustomVibration by viewModel.useCustomVibration.collectAsState()
 	val customVibrationStrength by viewModel.customVibrationStrength.collectAsState()
 	val hasSecureSettingsPermission by viewModel.hasSecureSettingsPermission.collectAsState()
+	val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
+
+	val dndScheduleEnabled by viewModel.dndScheduleEnabled.collectAsState()
+	val dndScheduleStartTime by viewModel.dndScheduleStartTime.collectAsState()
+	val dndScheduleEndTime by viewModel.dndScheduleEndTime.collectAsState()
+	val dndScheduleDays by viewModel.dndScheduleDays.collectAsState()
+
+	val soundScheduleEnabled by viewModel.soundScheduleEnabled.collectAsState()
+	val soundScheduleStartTime by viewModel.soundScheduleStartTime.collectAsState()
+	val soundScheduleEndTime by viewModel.soundScheduleEndTime.collectAsState()
+	val soundScheduleDays by viewModel.soundScheduleDays.collectAsState()
+
+	val vibrationScheduleEnabled by viewModel.vibrationScheduleEnabled.collectAsState()
+	val vibrationScheduleStartTime by viewModel.vibrationScheduleStartTime.collectAsState()
+	val vibrationScheduleEndTime by viewModel.vibrationScheduleEndTime.collectAsState()
+	val vibrationScheduleDays by viewModel.vibrationScheduleDays.collectAsState()
+
 	var showAdbDialog by remember { mutableStateOf(false) }
 
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -152,260 +172,332 @@ fun SettingsScreen(
 					.nestedScroll(scrollBehavior.nestedScrollConnection)
 		) {
 			item {
+				Column {
+					Text(
+						text = stringResource(id = R.string.behavior),
+						color = MaterialTheme.colorScheme.primary,
+						style = MaterialTheme.typography.titleLarge.copy(
+							fontWeight = FontWeight.Bold
+						),
+						modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+					)
 
-				Text(
-					text = stringResource(id = R.string.behavior),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-				)
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.screen_off_only),
+						description = stringResource(id = R.string.screen_off_only_description),
+						checked = screenOffOnly,
+						onCheckedChange = { viewModel.setScreenOffOnly(it) },
+					)
 
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.screen_off_only),
-					description = stringResource(id = R.string.screen_off_only_description),
-					checked = screenOffOnly,
-					onCheckedChange = { viewModel.setScreenOffOnly(it) },
-				)
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.priority_dnd),
+						description = stringResource(id = R.string.priority_dnd_description),
+						checked = priorityDndEnabled,
+						onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
+					)
 
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.priority_dnd),
-					description = stringResource(id = R.string.priority_dnd_description),
-					checked = priorityDndEnabled,
-					onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
-				)
+					val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.notifications_enabled),
+						description = stringResource(id = R.string.notifications_enabled_description),
+						checked = notificationsEnabled,
+						onCheckedChange = { viewModel.setNotificationsEnabled(it) },
+					)
 
-				val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.notifications_enabled),
-					description = stringResource(id = R.string.notifications_enabled_description),
-					checked = notificationsEnabled,
-					onCheckedChange = { viewModel.setNotificationsEnabled(it) },
-				)
+					val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.high_sensitivity_mode),
+						description = stringResource(id = R.string.high_sensitivity_mode_description),
+						checked = highSensitivityModeEnabled,
+						onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
+					)
 
-				val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.high_sensitivity_mode),
-					description = stringResource(id = R.string.high_sensitivity_mode_description),
-					checked = highSensitivityModeEnabled,
-					onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
-				)
+					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.battery_saver),
+						description = stringResource(id = R.string.battery_saver_description),
+						checked = batterySaverOnFlipEnabled,
+						onCheckedChange = {
+							if (hasSecureSettingsPermission) {
+								viewModel.setBatterySaverOnFlipEnabled(it)
+							} else {
+								showAdbDialog = true
+							}
+						},
+						enabled = hasSecureSettingsPermission,
+						alpha = if (hasSecureSettingsPermission) 1f else 0.5f
+					)
 
-				val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.battery_saver),
-					description = stringResource(id = R.string.battery_saver_description),
-					checked = batterySaverOnFlipEnabled,
-					onCheckedChange = { 
-						if (hasSecureSettingsPermission) {
-							viewModel.setBatterySaverOnFlipEnabled(it)
-						} else {
-							showAdbDialog = true
-						}
-					},
-					enabled = hasSecureSettingsPermission,
-					alpha = if (hasSecureSettingsPermission) 1f else 0.5f
-				)
+					if (showAdbDialog) {
+						AlertDialog(
+							onDismissRequest = { showAdbDialog = false },
+							title = { Text(stringResource(R.string.adb_permission_required)) },
+							text = {
+								Column {
+									Text(stringResource(R.string.adb_command_description))
+									Spacer(modifier = Modifier.height(16.dp))
+									Text(
+										text = stringResource(R.string.adb_command_text),
+										style = MaterialTheme.typography.bodySmall,
+										modifier = Modifier
+											.fillMaxWidth()
+											.background(
+												MaterialTheme.colorScheme.surfaceVariant,
+												RoundedCornerShape(8.dp)
+											)
+											.padding(12.dp),
+										textAlign = TextAlign.Start,
+										fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+									)
+								}
+							},
+							confirmButton = {
+								TextButton(onClick = {
+									clipboardManager.setText(AnnotatedString(context.getString(R.string.adb_command_text)))
+									Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
+									showAdbDialog = false
+								}) {
+									Text(stringResource(R.string.copy_command))
+								}
+							},
+							dismissButton = {
+								TextButton(onClick = { showAdbDialog = false }) {
+									Text(stringResource(R.string.close))
+								}
+							}
+						)
+					}
 
-				if (showAdbDialog) {
-					AlertDialog(
-						onDismissRequest = { showAdbDialog = false },
-						title = { Text(stringResource(R.string.adb_permission_required)) },
-						text = {
+					val activationDelay by viewModel.activationDelay.collectAsState()
+					SettingsSliderItem(
+						title = stringResource(id = R.string.activation_delay),
+						description = stringResource(id = R.string.activation_delay_description),
+						sliderContent = {
+							var sliderPosition by remember { mutableStateOf(activationDelay.toFloat()) }
+							LaunchedEffect(activationDelay) {
+								sliderPosition = activationDelay.toFloat()
+							}
 							Column {
-								Text(stringResource(R.string.adb_command_description))
-								Spacer(modifier = Modifier.height(16.dp))
+								Slider(
+									value = sliderPosition,
+									onValueChange = { sliderPosition = it },
+									onValueChangeFinished = {
+										viewModel.setActivationDelay(sliderPosition.toInt())
+									},
+									valueRange = 0f..10f,
+									steps = 9,
+									modifier = Modifier.width(200.dp)
+								)
 								Text(
-									text = stringResource(R.string.adb_command_text),
+									text = stringResource(id = R.string.seconds, sliderPosition.toInt()),
 									style = MaterialTheme.typography.bodySmall,
-									modifier = Modifier
-										.fillMaxWidth()
-										.background(
-											MaterialTheme.colorScheme.surfaceVariant,
-											RoundedCornerShape(8.dp)
-										)
-										.padding(12.dp),
-									textAlign = TextAlign.Start,
-									fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+									color = MaterialTheme.colorScheme.onSurfaceVariant,
+									modifier = Modifier.padding(start = 8.dp)
 								)
 							}
-						},
-						confirmButton = {
-							TextButton(onClick = {
-								clipboardManager.setText(AnnotatedString(context.getString(R.string.adb_command_text)))
-								Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
-							}) {
-								Text(stringResource(R.string.copy_command))
+						}
+					)
+
+					SettingsSliderItem(
+						title = stringResource(id = R.string.flip_sensitivity),
+						description = stringResource(id = R.string.flip_sensitivity_description),
+						sliderContent = {
+							val flipSensitivity by viewModel.flipSensitivity.collectAsState()
+							var sliderPosition by remember { mutableStateOf(flipSensitivity) }
+
+							LaunchedEffect(flipSensitivity) {
+								sliderPosition = flipSensitivity
 							}
-						},
-						dismissButton = {
-							TextButton(onClick = { showAdbDialog = false }) {
-								Text(stringResource(R.string.close))
-							}
+
+							Slider(
+								value = sliderPosition,
+								onValueChange = { newSensitivity ->
+									val steps = listOf(0f, 0.33f, 0.66f, 1f)
+									val nearestStep =
+										steps.minByOrNull { kotlin.math.abs(it - newSensitivity) } ?: newSensitivity
+									sliderPosition = nearestStep
+								},
+								onValueChangeFinished = {
+									viewModel.setFlipSensitivity(sliderPosition)
+								},
+								modifier = Modifier.width(200.dp),
+								steps = 2
+							)
 						}
 					)
 				}
+			}
 
-				val activationDelay by viewModel.activationDelay.collectAsState()
-				SettingsSliderItem(
-					title = stringResource(id = R.string.activation_delay),
-					description = stringResource(id = R.string.activation_delay_description),
-					sliderContent = {
-						var sliderPosition by remember { mutableStateOf(activationDelay.toFloat()) }
-						LaunchedEffect(activationDelay) {
-							sliderPosition = activationDelay.toFloat()
-						}
-						Column {
-							Slider(
-								value = sliderPosition,
-								onValueChange = { sliderPosition = it },
-								onValueChangeFinished = {
-									viewModel.setActivationDelay(sliderPosition.toInt())
-								},
-								valueRange = 0f..10f,
-								steps = 9,
-								modifier = Modifier.width(200.dp)
-							)
-							Text(
-								text = stringResource(id = R.string.seconds, sliderPosition.toInt()),
-								style = MaterialTheme.typography.bodySmall,
-								color = MaterialTheme.colorScheme.onSurfaceVariant,
-								modifier = Modifier.padding(start = 8.dp)
-							)
-						}
-					}
-				)
+	item {
+		Column {
+			Spacer(modifier = Modifier.height(16.dp))
 
-				SettingsSliderItem(
-					title = stringResource(id = R.string.flip_sensitivity),
-					description = stringResource(id = R.string.flip_sensitivity_description),
-					sliderContent = {
-						val flipSensitivity by viewModel.flipSensitivity.collectAsState()
-						var sliderPosition by remember { mutableStateOf(flipSensitivity) }
+			ScheduleSection(
+				title = stringResource(id = R.string.dnd_activation_schedule),
+				enabled = dndScheduleEnabled,
+				onEnabledChange = { viewModel.setDndScheduleEnabled(it) },
+				description = stringResource(id = R.string.dnd_schedule_description),
+				startTime = dndScheduleStartTime,
+				onStartTimeChange = { viewModel.setDndScheduleStartTime(it) },
+				endTime = dndScheduleEndTime,
+				onEndTimeChange = { viewModel.setDndScheduleEndTime(it) },
+				selectedDays = dndScheduleDays,
+				onDaysChange = { viewModel.setDndScheduleDays(it) }
+			)
+		}
+	}
 
-						LaunchedEffect(flipSensitivity) {
-							sliderPosition = flipSensitivity
-						}
+	item {
+		Column {
+			Spacer(modifier = Modifier.height(16.dp))
 
-						Slider(
-							value = sliderPosition,
-							onValueChange = { newSensitivity ->
-								val steps = listOf(0f, 0.33f, 0.66f, 1f)
-								val nearestStep =
-									steps.minByOrNull { kotlin.math.abs(it - newSensitivity) } ?: newSensitivity
-								sliderPosition = nearestStep
-							},
-							onValueChangeFinished = {
-								viewModel.setFlipSensitivity(sliderPosition)
-							},
-							modifier = Modifier.width(200.dp),
-							steps = 2
-						)
-					}
-				)
+			ScheduleSection(
+				title = stringResource(id = R.string.sound_schedule),
+				enabled = soundScheduleEnabled,
+				onEnabledChange = { viewModel.setSoundScheduleEnabled(it) },
+				description = stringResource(id = R.string.sound_schedule_description),
+				startTime = soundScheduleStartTime,
+				onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
+				endTime = soundScheduleEndTime,
+				onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
+				selectedDays = soundScheduleDays,
+				onDaysChange = { viewModel.setSoundScheduleDays(it) }
+			)
+		}
+	}
 
+	item {
+		Column {
+			Spacer(modifier = Modifier.height(16.dp))
 
+			ScheduleSection(
+				title = stringResource(id = R.string.vibration_schedule),
+				enabled = vibrationScheduleEnabled,
+				onEnabledChange = { viewModel.setVibrationScheduleEnabled(it) },
+				description = stringResource(id = R.string.vibration_schedule_description),
+				startTime = vibrationScheduleStartTime,
+				onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
+				endTime = vibrationScheduleEndTime,
+				onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
+				selectedDays = vibrationScheduleDays,
+				onDaysChange = { viewModel.setVibrationScheduleDays(it) }
+			)
+		}
+	}
 
-				Spacer(modifier = Modifier.height(16.dp))
+    item {
+        Column {
+            Spacer(modifier = Modifier.height(16.dp))
 
-				Text(
-					text = stringResource(id = R.string.detection),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-				)
+            Text(
+                text = stringResource(id = R.string.detection),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
 
-				val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.flashlight_detection),
-					description = stringResource(id = R.string.flashlight_detection_description),
-					checked = flashlightDetectionEnabled,
-					onCheckedChange = { viewModel.setFlashlightDetectionEnabled(it) },
-				)
+            val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
+            SettingsSwitchItem(
+                title = stringResource(id = R.string.flashlight_detection),
+                description = stringResource(id = R.string.flashlight_detection_description),
+                checked = flashlightDetectionEnabled,
+                onCheckedChange = { viewModel.setFlashlightDetectionEnabled(it) },
+            )
 
-				val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.media_playback_detection),
-					description = stringResource(id = R.string.media_playback_detection_description),
-					checked = mediaPlaybackDetectionEnabled,
-					onCheckedChange = { viewModel.setMediaPlaybackDetectionEnabled(it) },
-				)
+            val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
+            SettingsSwitchItem(
+                title = stringResource(id = R.string.media_playback_detection),
+                description = stringResource(id = R.string.media_playback_detection_description),
+                checked = mediaPlaybackDetectionEnabled,
+                onCheckedChange = { viewModel.setMediaPlaybackDetectionEnabled(it) },
+            )
 
-				val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.headphone_detection),
-					description = stringResource(id = R.string.headphone_detection_description),
-					checked = headphoneDetectionEnabled,
-					onCheckedChange = { viewModel.setHeadphoneDetectionEnabled(it) },
-				)
-
-				Spacer(modifier = Modifier.height(16.dp))
-
-				Text(
-					text = stringResource(id = R.string.general),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-				)
-
-SettingsClickableItem(
-    title = stringResource(id = R.string.language),
-    description = stringResource(id = R.string.language_description),
-    onClick = {
-        try {
-            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
-            } else {
-                Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
-            }
-            intent.data = Uri.fromParts("package", context.packageName, null)
-            context.startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(
-                context,
-                R.string.error_opening_language_settings,
-                Toast.LENGTH_SHORT
-            ).show()
+            val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
+            SettingsSwitchItem(
+                title = stringResource(id = R.string.headphone_detection),
+                description = stringResource(id = R.string.headphone_detection_description),
+                checked = headphoneDetectionEnabled,
+                onCheckedChange = { viewModel.setHeadphoneDetectionEnabled(it) },
+            )
         }
     }
-)
 
-				Spacer(modifier = Modifier.height(16.dp))
+    item {
+        Column {
+            Spacer(modifier = Modifier.height(16.dp))
 
-				Text(
-					text = stringResource(id = R.string.sound),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-				)
+            Text(
+                text = stringResource(id = R.string.general),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
 
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.sound_enabled),
-					description = stringResource(id = R.string.sound_enabled_description),
-					checked = soundEnabled,
-					onCheckedChange = { viewModel.setSoundEnabled(it) },
-				)
+            SettingsClickableItem(
+                title = stringResource(id = R.string.language),
+                description = stringResource(id = R.string.language_description),
+                onClick = {
+                    try {
+                        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
+                        } else {
+                            Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
+                        }
+                        intent.data = Uri.fromParts("package", context.packageName, null)
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(
+                            context,
+                            R.string.error_opening_language_settings,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            )
+        }
+    }
 
-				if (soundEnabled) {
-					var dndOnExpanded by remember { mutableStateOf(false) }
-					var dndOffExpanded by remember { mutableStateOf(false) }
-					val soundSheetState = rememberModalBottomSheetState()
+    item {
+        Column {
+            Spacer(modifier = Modifier.height(16.dp))
 
-					SettingsClickableItem(
-						title = stringResource(id = R.string.dnd_on_sound),
-						description = dndOnSound.name,
-						trailingIcon = {
-							Icon(Icons.Default.ArrowDropDown, "Select sound")
-						},
-						onClick = { dndOnExpanded = true }
-					)
+            Text(
+                text = stringResource(id = R.string.sound),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
+
+            SettingsSwitchItem(
+                title = stringResource(id = R.string.sound_enabled),
+                description = stringResource(id = R.string.sound_enabled_description),
+                checked = soundEnabled,
+                onCheckedChange = { viewModel.setSoundEnabled(it) },
+            )
+        }
+    }
+
+    item {
+        if (soundEnabled) {
+            Column {
+                var dndOnExpanded by remember { mutableStateOf(false) }
+                var dndOffExpanded by remember { mutableStateOf(false) }
+                val soundSheetState = rememberModalBottomSheetState()
+
+                SettingsClickableItem(
+                    title = stringResource(id = R.string.dnd_on_sound),
+                    description = dndOnSound.name,
+                    trailingIcon = {
+                        Icon(Icons.Default.ArrowDropDown, "Select sound")
+                    },
+                    onClick = { dndOnExpanded = true }
+                )
 
 					if (dndOnExpanded) {
 						ModalBottomSheet(
@@ -591,204 +683,339 @@ SettingsClickableItem(
 						)
 					}
 				}
+			}
+		}
 
+	item {
+		Column {
+			// Vibration Section
+			Text(
+				text = stringResource(id = R.string.vibration),
+				color = MaterialTheme.colorScheme.primary,
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontWeight = FontWeight.Bold
+				),
+				modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+			)
 
-				// Vibration Section
-				Text(
-					text = stringResource(id = R.string.vibration),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+			SettingsSwitchItem(
+				title = stringResource(id = R.string.vibration_enabled),
+				description = stringResource(id = R.string.vibration_enabled_description),
+				checked = vibrationEnabled,
+				onCheckedChange = { viewModel.setVibrationEnabled(it) },
+			)
+
+			if (vibrationEnabled) {
+				var dndOnVibrationExpanded by remember { mutableStateOf(false) }
+				var dndOffVibrationExpanded by remember { mutableStateOf(false) }
+				val vibrationSheetState = rememberModalBottomSheetState()
+
+				SettingsClickableItem(
+					title = stringResource(id = R.string.dnd_on_vibration_pattern),
+					description = viewModel.dndOnVibration.collectAsState().value.displayName,
+					trailingIcon = {
+						Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+					},
+					onClick = { dndOnVibrationExpanded = true }
 				)
 
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.vibration_enabled),
-					description = stringResource(id = R.string.vibration_enabled_description),
-					checked = vibrationEnabled,
-					onCheckedChange = { viewModel.setVibrationEnabled(it) },
-				)
-
-				if (vibrationEnabled) {
-					var dndOnVibrationExpanded by remember { mutableStateOf(false) }
-					var dndOffVibrationExpanded by remember { mutableStateOf(false) }
-					val vibrationSheetState = rememberModalBottomSheetState()
-
-					SettingsClickableItem(
-						title = stringResource(id = R.string.dnd_on_vibration_pattern),
-						description = viewModel.dndOnVibration.collectAsState().value.displayName,
-						trailingIcon = {
-							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-						},
-						onClick = { dndOnVibrationExpanded = true }
-					)
-
-					if (dndOnVibrationExpanded) {
-						ModalBottomSheet(
-							onDismissRequest = { dndOnVibrationExpanded = false },
-							sheetState = vibrationSheetState
-						) {
-							Column {
-								viewModel.availableVibrationPatterns.forEach { pattern ->
-									SettingsClickableItem(
-										title = pattern.displayName,
-										trailingIcon = {
-											if (pattern == viewModel.dndOnVibration.collectAsState().value) {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = "Selected",
-													tint = MaterialTheme.colorScheme.primary
-												)
-											} else {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = "Not Selected",
-													tint = MaterialTheme.colorScheme.onSurfaceVariant
-												)
-											}
-										},
-										onClick = {
-											viewModel.setDndOnVibration(pattern)
-											viewModel.playSelectedVibration(pattern)
-											dndOnVibrationExpanded = false
+				if (dndOnVibrationExpanded) {
+					ModalBottomSheet(
+						onDismissRequest = { dndOnVibrationExpanded = false },
+						sheetState = vibrationSheetState
+					) {
+						Column {
+							viewModel.availableVibrationPatterns.forEach { pattern ->
+								SettingsClickableItem(
+									title = pattern.displayName,
+									trailingIcon = {
+										if (pattern == viewModel.dndOnVibration.collectAsState().value) {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_checked),
+												contentDescription = "Selected",
+												tint = MaterialTheme.colorScheme.primary
+											)
+										} else {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+												contentDescription = "Not Selected",
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
 										}
-									)
-								}
-							}
-							Spacer(modifier = Modifier.height(20.dp))
-						}
-					}
-
-					SettingsClickableItem(
-						title = stringResource(id = R.string.dnd_off_vibration_pattern),
-						description = viewModel.dndOffVibration.collectAsState().value.displayName,
-						trailingIcon = {
-							Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
-						},
-						onClick = { dndOffVibrationExpanded = true }
-					)
-
-					if (dndOffVibrationExpanded) {
-						ModalBottomSheet(
-							onDismissRequest = { dndOffVibrationExpanded = false },
-							sheetState = vibrationSheetState
-						) {
-							Column {
-								viewModel.availableVibrationPatterns.forEach { pattern ->
-									SettingsClickableItem(
-										title = pattern.displayName,
-										trailingIcon = {
-											if (pattern == viewModel.dndOffVibration.collectAsState().value) {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = "Selected",
-													tint = MaterialTheme.colorScheme.primary
-												)
-											} else {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = "Not Selected",
-													tint = MaterialTheme.colorScheme.onSurfaceVariant
-												)
-											}
-										},
-										onClick = {
-											viewModel.setDndOffVibration(pattern)
-											viewModel.playSelectedVibration(pattern)
-											dndOffVibrationExpanded = false
-										}
-									)
-								}
-							}
-							Spacer(modifier = Modifier.height(20.dp))
-						}
-					}
-
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.use_custom_vibration_strength),
-						description = stringResource(id = R.string.use_custom_vibration_description),
-						checked = useCustomVibration,
-						onCheckedChange = { viewModel.setUseCustomVibration(it) },
-					)
-
-					if (useCustomVibration) {
-						SettingsSliderItem(
-							title = stringResource(id = R.string.custom_vibration_strength),
-							sliderContent = {
-								var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
-								LaunchedEffect(customVibrationStrength) {
-									sliderPosition = customVibrationStrength
-								}
-								Slider(
-									value = sliderPosition,
-									onValueChange = { newStrength ->
-										// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
-										val steps = listOf(0f, 0.33f, 0.66f, 1f)
-										val nearestStep =
-											steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
-										sliderPosition = nearestStep
 									},
-									onValueChangeFinished = {
-										viewModel.setCustomVibrationStrength(sliderPosition)
-										viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
-									},
-									modifier = Modifier.width(200.dp),
-									steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
+									onClick = {
+										viewModel.setDndOnVibration(pattern)
+										viewModel.playSelectedVibration(pattern)
+										dndOnVibrationExpanded = false
+									}
 								)
 							}
-						)
+						}
+						Spacer(modifier = Modifier.height(20.dp))
 					}
 				}
 
-				Text(
-					text = stringResource(id = R.string.extras),
-					color = MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.titleLarge.copy(
-						fontWeight = FontWeight.Bold
-					),
-					modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+				SettingsClickableItem(
+					title = stringResource(id = R.string.dnd_off_vibration_pattern),
+					description = viewModel.dndOffVibration.collectAsState().value.displayName,
+					trailingIcon = {
+						Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+					},
+					onClick = { dndOffVibrationExpanded = true }
 				)
 
-				SettingsClickableItem(
-					title = stringResource(id = R.string.join_telegram),
-					description = stringResource(id = R.string.join_telegram_description),
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.telegram),
-							contentDescription = "Telegram Icon",
-							tint = MaterialTheme.colorScheme.primary,
-							modifier = Modifier.width(24.dp)
-						)
-					},
-					onClick = {
-						val telegramUsername = "flip_2_dnd"
-						val telegramUri = "tg://resolve?domain=$telegramUsername"
-						val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
-						try {
-							context.startActivity(intent)
-						} catch (e: ActivityNotFoundException) {
-							Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
-							println("No activity found to handle the intent: $e")
+				if (dndOffVibrationExpanded) {
+					ModalBottomSheet(
+						onDismissRequest = { dndOffVibrationExpanded = false },
+						sheetState = vibrationSheetState
+					) {
+						Column {
+							viewModel.availableVibrationPatterns.forEach { pattern ->
+								SettingsClickableItem(
+									title = pattern.displayName,
+									trailingIcon = {
+										if (pattern == viewModel.dndOffVibration.collectAsState().value) {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_checked),
+												contentDescription = "Selected",
+												tint = MaterialTheme.colorScheme.primary
+											)
+										} else {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+												contentDescription = "Not Selected",
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									},
+									onClick = {
+										viewModel.setDndOffVibration(pattern)
+										viewModel.playSelectedVibration(pattern)
+										dndOffVibrationExpanded = false
+									}
+								)
+							}
 						}
+						Spacer(modifier = Modifier.height(20.dp))
 					}
+				}
+
+				SettingsSwitchItem(
+					title = stringResource(id = R.string.use_custom_vibration_strength),
+					description = stringResource(id = R.string.use_custom_vibration_description),
+					checked = useCustomVibration,
+					onCheckedChange = { viewModel.setUseCustomVibration(it) },
 				)
 
-				SettingsClickableItem(
-					title = stringResource(id = R.string.support_developer),
-					description = stringResource(id = R.string.support_developer_description),
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "Support Icon",
-							tint = MaterialTheme.colorScheme.primary
-						)
-					},
-					onClick = onDonateClick
-				)
+				if (useCustomVibration) {
+					SettingsSliderItem(
+						title = stringResource(id = R.string.custom_vibration_strength),
+						sliderContent = {
+							var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
+							LaunchedEffect(customVibrationStrength) {
+								sliderPosition = customVibrationStrength
+							}
+							Slider(
+								value = sliderPosition,
+								onValueChange = { newStrength ->
+									// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
+									val steps = listOf(0f, 0.33f, 0.66f, 1f)
+									val nearestStep =
+										steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
+									sliderPosition = nearestStep
+								},
+								onValueChangeFinished = {
+									viewModel.setCustomVibrationStrength(sliderPosition)
+									viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
+								},
+								modifier = Modifier.width(200.dp),
+								steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
+							)
+						}
+					)
+				}
 			}
 		}
 	}
+
+	item {
+		Column {
+			Text(
+				text = stringResource(id = R.string.extras),
+				color = MaterialTheme.colorScheme.primary,
+				style = MaterialTheme.typography.titleLarge.copy(
+					fontWeight = FontWeight.Bold
+				),
+				modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+			)
+
+			SettingsClickableItem(
+				title = stringResource(id = R.string.join_telegram),
+				description = stringResource(id = R.string.join_telegram_description),
+				leadingIcon = {
+					Icon(
+						painter = painterResource(id = R.drawable.telegram),
+						contentDescription = "Telegram Icon",
+						tint = MaterialTheme.colorScheme.primary,
+						modifier = Modifier.width(24.dp)
+					)
+				},
+				onClick = {
+					val telegramUsername = "flip_2_dnd"
+					val telegramUri = "tg://resolve?domain=$telegramUsername"
+					val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
+					try {
+						context.startActivity(intent)
+					} catch (e: ActivityNotFoundException) {
+						Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
+						println("No activity found to handle the intent: $e")
+					}
+				}
+			)
+
+			SettingsClickableItem(
+				title = stringResource(id = R.string.support_developer),
+				description = stringResource(id = R.string.support_developer_description),
+				leadingIcon = {
+					Icon(
+						painter = painterResource(id = R.drawable.ic_coin),
+						contentDescription = "Support Icon",
+						tint = MaterialTheme.colorScheme.primary
+					)
+				},
+				onClick = onDonateClick
+			)
+		}
+}
+}
+}
+}
+
+@Composable
+private fun ScheduleSection(
+    title: String,
+    enabled: Boolean,
+    onEnabledChange: (Boolean) -> Unit,
+    description: String,
+    startTime: String,
+    onStartTimeChange: (String) -> Unit,
+    endTime: String,
+    onEndTimeChange: (String) -> Unit,
+    selectedDays: Set<Int>,
+    onDaysChange: (Set<Int>) -> Unit
+) {
+    val context = LocalContext.current
+
+    Column {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+        )
+
+        SettingsSwitchItem(
+            title = stringResource(id = R.string.schedule_enabled),
+            description = description,
+            checked = enabled,
+            onCheckedChange = onEnabledChange,
+        )
+
+        if (enabled) {
+            SettingsClickableItem(
+                title = stringResource(id = R.string.start_time),
+                description = startTime,
+                onClick = {
+                    val parts = startTime.split(":")
+                    val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                    val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                    TimePickerDialog(
+                        context,
+                        { _, h, m ->
+                            onStartTimeChange(String.format("%02d:%02d", h, m))
+                        },
+                        hour,
+                        minute,
+                        true
+                    ).show()
+                }
+            )
+
+            SettingsClickableItem(
+                title = stringResource(id = R.string.end_time),
+                description = endTime,
+                onClick = {
+                    val parts = endTime.split(":")
+                    val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                    val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                    TimePickerDialog(
+                        context,
+                        { _, h, m ->
+                            onEndTimeChange(String.format("%02d:%02d", h, m))
+                        },
+                        hour,
+                        minute,
+                        true
+                    ).show()
+                }
+            )
+
+            Text(
+                text = stringResource(id = R.string.days),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+
+            DayPicker(
+                selectedDays = selectedDays,
+                onDaysChange = onDaysChange
+            )
+        }
+    }
+}
+
+@Composable
+private fun DayPicker(
+    selectedDays: Set<Int>,
+    onDaysChange: (Set<Int>) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        val daysOfWeek = listOf("S", "M", "T", "W", "T", "F", "S")
+        daysOfWeek.forEachIndexed { index, day ->
+            val dayValue = index + 1
+            val isSelected = selectedDays.contains(dayValue)
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    .clickable {
+                        val newDays = if (isSelected) {
+                            selectedDays - dayValue
+                        } else {
+                            selectedDays + dayValue
+                        }
+                        onDaysChange(newDays)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = day,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -812,7 +1039,7 @@ fun SettingsSwitchItem(
 			.fillMaxWidth()
 			.padding(vertical = 6.dp)
 			.clip(RoundedCornerShape(16.dp))
-			.clickable { onCheckedChange(!checked) }
+			.clickable(enabled = enabled) { onCheckedChange(!checked) }
 			.alpha(alpha)
 	) {
 		Column(
@@ -820,10 +1047,10 @@ fun SettingsSwitchItem(
 				.fillMaxWidth()
 				.padding(horizontal = 16.dp, vertical = 12.dp)
 		) {
-			androidx.compose.foundation.layout.Row(
+			Row(
 				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-				horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
 			) {
 				Column(
 					modifier = Modifier.weight(1f)
@@ -873,10 +1100,10 @@ fun SettingsSliderItem(
 				.fillMaxWidth()
 				.padding(horizontal = 16.dp, vertical = 12.dp)
 		) {
-			androidx.compose.foundation.layout.Row(
+			Row(
 				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-				horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween
 			) {
 				Column(
 					modifier = Modifier.weight(1f)
@@ -927,9 +1154,9 @@ fun SettingsClickableItem(
 				.fillMaxWidth()
 				.padding(horizontal = 16.dp, vertical = 12.dp)
 		) {
-			androidx.compose.foundation.layout.Row(
+			Row(
 				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+				verticalAlignment = Alignment.CenterVertically,
 			) {
 				if (leadingIcon != null) {
 					leadingIcon()

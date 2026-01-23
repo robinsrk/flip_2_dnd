@@ -49,4 +49,31 @@ interface SettingsRepository {
     suspend fun setMediaPlaybackDetectionEnabled(enabled: Boolean)
     fun getHeadphoneDetectionEnabled(): Flow<Boolean>
     suspend fun setHeadphoneDetectionEnabled(enabled: Boolean)
+
+    fun getDndScheduleEnabled(): Flow<Boolean>
+    suspend fun setDndScheduleEnabled(enabled: Boolean)
+    fun getDndScheduleStartTime(): Flow<String>
+    suspend fun setDndScheduleStartTime(startTime: String)
+    fun getDndScheduleEndTime(): Flow<String>
+    suspend fun setDndScheduleEndTime(endTime: String)
+    fun getDndScheduleDays(): Flow<Set<Int>>
+    suspend fun setDndScheduleDays(days: Set<Int>)
+
+    fun getSoundScheduleEnabled(): Flow<Boolean>
+    suspend fun setSoundScheduleEnabled(enabled: Boolean)
+    fun getSoundScheduleStartTime(): Flow<String>
+    suspend fun setSoundScheduleStartTime(startTime: String)
+    fun getSoundScheduleEndTime(): Flow<String>
+    suspend fun setSoundScheduleEndTime(endTime: String)
+    fun getSoundScheduleDays(): Flow<Set<Int>>
+    suspend fun setSoundScheduleDays(days: Set<Int>)
+
+    fun getVibrationScheduleEnabled(): Flow<Boolean>
+    suspend fun setVibrationScheduleEnabled(enabled: Boolean)
+    fun getVibrationScheduleStartTime(): Flow<String>
+    suspend fun setVibrationScheduleStartTime(startTime: String)
+    fun getVibrationScheduleEndTime(): Flow<String>
+    suspend fun setVibrationScheduleEndTime(endTime: String)
+    fun getVibrationScheduleDays(): Flow<Set<Int>>
+    suspend fun setVibrationScheduleDays(days: Set<Int>)
 }

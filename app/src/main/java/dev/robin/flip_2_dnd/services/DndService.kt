@@ -59,6 +59,18 @@ class DndService(private val context: Context) {
 				return@runBlocking
 			}
 
+			// Check vibration schedule
+			val scheduleEnabled = settingsRepository.getVibrationScheduleEnabled().first()
+			if (scheduleEnabled) {
+				val startTime = settingsRepository.getVibrationScheduleStartTime().first()
+				val endTime = settingsRepository.getVibrationScheduleEndTime().first()
+				val days = settingsRepository.getVibrationScheduleDays().first()
+				if (!isWithinSchedule(startTime, endTime, days)) {
+					Log.d(TAG, "Current time is outside vibration schedule. Skipping vibration.")
+					return@runBlocking
+				}
+			}
+
 			try {
 				val useCustomVibration = settingsRepository.getUseCustomVibration().first()
 				val customStrength = if (useCustomVibration) {
@@ -94,7 +106,19 @@ class DndService(private val context: Context) {
 	}
 
     private fun playSound(isEnabled: Boolean) {
-        soundService.playDndSound(isEnabled)
+        runBlocking {
+            val scheduleEnabled = settingsRepository.getSoundScheduleEnabled().first()
+            if (scheduleEnabled) {
+                val startTime = settingsRepository.getSoundScheduleStartTime().first()
+                val endTime = settingsRepository.getSoundScheduleEndTime().first()
+                val days = settingsRepository.getSoundScheduleDays().first()
+                if (!isWithinSchedule(startTime, endTime, days)) {
+                    Log.d(TAG, "Current time is outside sound schedule. Skipping sound.")
+                    return@runBlocking
+                }
+            }
+            soundService.playDndSound(isEnabled)
+        }
     }
 
     private fun checkDndPermission(): Boolean {
@@ -217,6 +241,31 @@ class DndService(private val context: Context) {
             )
         } catch (e: Exception) {
             Log.e(TAG, "Error updating DND status: ${e.message}", e)
+        }
+    }
+
+    private fun isWithinSchedule(startTime: String, endTime: String, days: Set<Int>): Boolean {
+        try {
+            val now = java.util.Calendar.getInstance()
+            val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
+            
+            if (!days.contains(dayOfWeek)) {
+                return false
+            }
+
+            val currentTime = String.format("%02d:%02d", 
+                now.get(java.util.Calendar.HOUR_OF_DAY), 
+                now.get(java.util.Calendar.MINUTE))
+            
+            return if (startTime <= endTime) {
+                currentTime in startTime..endTime
+            } else {
+                // Overnight schedule
+                currentTime >= startTime || currentTime <= endTime
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking schedule: ${e.message}")
+            return true
         }
     }
 }

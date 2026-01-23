@@ -87,6 +87,42 @@ class SettingsViewModel @Inject constructor(
 	private val _headphoneDetectionEnabled = MutableStateFlow(false)
 	val headphoneDetectionEnabled = _headphoneDetectionEnabled.asStateFlow()
 
+	private val _dndScheduleEnabled = MutableStateFlow(false)
+    val dndScheduleEnabled = _dndScheduleEnabled.asStateFlow()
+
+    private val _dndScheduleStartTime = MutableStateFlow("22:00")
+    val dndScheduleStartTime = _dndScheduleStartTime.asStateFlow()
+
+    private val _dndScheduleEndTime = MutableStateFlow("07:00")
+    val dndScheduleEndTime = _dndScheduleEndTime.asStateFlow()
+
+    private val _dndScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
+    val dndScheduleDays = _dndScheduleDays.asStateFlow()
+
+    private val _soundScheduleEnabled = MutableStateFlow(false)
+    val soundScheduleEnabled = _soundScheduleEnabled.asStateFlow()
+
+    private val _soundScheduleStartTime = MutableStateFlow("22:00")
+    val soundScheduleStartTime = _soundScheduleStartTime.asStateFlow()
+
+    private val _soundScheduleEndTime = MutableStateFlow("07:00")
+    val soundScheduleEndTime = _soundScheduleEndTime.asStateFlow()
+
+    private val _soundScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
+    val soundScheduleDays = _soundScheduleDays.asStateFlow()
+
+    private val _vibrationScheduleEnabled = MutableStateFlow(false)
+    val vibrationScheduleEnabled = _vibrationScheduleEnabled.asStateFlow()
+
+    private val _vibrationScheduleStartTime = MutableStateFlow("22:00")
+    val vibrationScheduleStartTime = _vibrationScheduleStartTime.asStateFlow()
+
+    private val _vibrationScheduleEndTime = MutableStateFlow("07:00")
+    val vibrationScheduleEndTime = _vibrationScheduleEndTime.asStateFlow()
+
+    private val _vibrationScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
+    val vibrationScheduleDays = _vibrationScheduleDays.asStateFlow()
+
 	init {
 		checkSecureSettingsPermission()
 		viewModelScope.launch {
@@ -197,6 +233,66 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getHeadphoneDetectionEnabled().collect { enabled ->
 				_headphoneDetectionEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndScheduleEnabled().collect { enabled ->
+				_dndScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndScheduleStartTime().collect { time ->
+				_dndScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndScheduleEndTime().collect { time ->
+				_dndScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndScheduleDays().collect { days ->
+				_dndScheduleDays.value = days
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getSoundScheduleEnabled().collect { enabled ->
+				_soundScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getSoundScheduleStartTime().collect { time ->
+				_soundScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getSoundScheduleEndTime().collect { time ->
+				_soundScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getSoundScheduleDays().collect { days ->
+				_soundScheduleDays.value = days
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleEnabled().collect { enabled ->
+				_vibrationScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleStartTime().collect { time ->
+				_vibrationScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleEndTime().collect { time ->
+				_vibrationScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleDays().collect { days ->
+				_vibrationScheduleDays.value = days
 			}
 		}
 	}
@@ -318,6 +414,78 @@ class SettingsViewModel @Inject constructor(
 	fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setHeadphoneDetectionEnabled(enabled)
+		}
+	}
+
+	fun setDndScheduleEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setDndScheduleEnabled(enabled)
+		}
+	}
+
+	fun setDndScheduleStartTime(startTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setDndScheduleStartTime(startTime)
+		}
+	}
+
+	fun setDndScheduleEndTime(endTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setDndScheduleEndTime(endTime)
+		}
+	}
+
+	fun setDndScheduleDays(days: Set<Int>) {
+		viewModelScope.launch {
+			settingsRepository.setDndScheduleDays(days)
+		}
+	}
+
+	fun setSoundScheduleEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setSoundScheduleEnabled(enabled)
+		}
+	}
+
+	fun setSoundScheduleStartTime(startTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setSoundScheduleStartTime(startTime)
+		}
+	}
+
+	fun setSoundScheduleEndTime(endTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setSoundScheduleEndTime(endTime)
+		}
+	}
+
+	fun setSoundScheduleDays(days: Set<Int>) {
+		viewModelScope.launch {
+			settingsRepository.setSoundScheduleDays(days)
+		}
+	}
+
+	fun setVibrationScheduleEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setVibrationScheduleEnabled(enabled)
+		}
+	}
+
+	fun setVibrationScheduleStartTime(startTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setVibrationScheduleStartTime(startTime)
+		}
+	}
+
+	fun setVibrationScheduleEndTime(endTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setVibrationScheduleEndTime(endTime)
+		}
+	}
+
+	fun setVibrationScheduleDays(days: Set<Int>) {
+		viewModelScope.launch {
+			settingsRepository.setVibrationScheduleDays(days)
 		}
 	}
 

@@ -39,6 +39,20 @@ private const val KEY_ACTIVATION_DELAY = "activation_delay"
 private const val KEY_FLASHLIGHT_DETECTION = "flashlight_detection"
 private const val KEY_MEDIA_PLAYBACK_DETECTION = "media_playback_detection"
 private const val KEY_HEADPHONE_DETECTION = "headphone_detection"
+private const val KEY_DND_SCHEDULE_ENABLED = "schedule_enabled"
+private const val KEY_DND_SCHEDULE_START_TIME = "schedule_start_time"
+private const val KEY_DND_SCHEDULE_END_TIME = "schedule_end_time"
+private const val KEY_DND_SCHEDULE_DAYS = "schedule_days"
+
+private const val KEY_SOUND_SCHEDULE_ENABLED = "sound_schedule_enabled"
+private const val KEY_SOUND_SCHEDULE_START_TIME = "sound_schedule_start_time"
+private const val KEY_SOUND_SCHEDULE_END_TIME = "sound_schedule_end_time"
+private const val KEY_SOUND_SCHEDULE_DAYS = "sound_schedule_days"
+
+private const val KEY_VIBRATION_SCHEDULE_ENABLED = "vibration_schedule_enabled"
+private const val KEY_VIBRATION_SCHEDULE_START_TIME = "vibration_schedule_start_time"
+private const val KEY_VIBRATION_SCHEDULE_END_TIME = "vibration_schedule_end_time"
+private const val KEY_VIBRATION_SCHEDULE_DAYS = "vibration_schedule_days"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -92,6 +106,29 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val flashlightDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_DETECTION, false))
 	private val mediaPlaybackDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_MEDIA_PLAYBACK_DETECTION, false))
 	private val headphoneDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_HEADPHONE_DETECTION, false))
+	private val dndScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_DND_SCHEDULE_ENABLED, false))
+	private val dndScheduleStartTime = MutableStateFlow(prefs.getString(KEY_DND_SCHEDULE_START_TIME, "22:00") ?: "22:00")
+	private val dndScheduleEndTime = MutableStateFlow(prefs.getString(KEY_DND_SCHEDULE_END_TIME, "07:00") ?: "07:00")
+	private val dndScheduleDays = MutableStateFlow(
+		prefs.getStringSet(KEY_DND_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
+			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
+	)
+
+	private val soundScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND_SCHEDULE_ENABLED, false))
+	private val soundScheduleStartTime = MutableStateFlow(prefs.getString(KEY_SOUND_SCHEDULE_START_TIME, "22:00") ?: "22:00")
+	private val soundScheduleEndTime = MutableStateFlow(prefs.getString(KEY_SOUND_SCHEDULE_END_TIME, "07:00") ?: "07:00")
+	private val soundScheduleDays = MutableStateFlow(
+		prefs.getStringSet(KEY_SOUND_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
+			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
+	)
+
+	private val vibrationScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION_SCHEDULE_ENABLED, false))
+	private val vibrationScheduleStartTime = MutableStateFlow(prefs.getString(KEY_VIBRATION_SCHEDULE_START_TIME, "22:00") ?: "22:00")
+	private val vibrationScheduleEndTime = MutableStateFlow(prefs.getString(KEY_VIBRATION_SCHEDULE_END_TIME, "07:00") ?: "07:00")
+	private val vibrationScheduleDays = MutableStateFlow(
+		prefs.getStringSet(KEY_VIBRATION_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
+			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
+	)
 
 	private fun restartFlipDetectorService() {
 		try {
@@ -281,6 +318,102 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_HEADPHONE_DETECTION, enabled).apply()
 		headphoneDetectionEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getDndScheduleEnabled(): Flow<Boolean> = dndScheduleEnabled
+
+	override suspend fun setDndScheduleEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_DND_SCHEDULE_ENABLED, enabled).apply()
+		dndScheduleEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getDndScheduleStartTime(): Flow<String> = dndScheduleStartTime
+
+	override suspend fun setDndScheduleStartTime(startTime: String) {
+		prefs.edit().putString(KEY_DND_SCHEDULE_START_TIME, startTime).apply()
+		dndScheduleStartTime.value = startTime
+		restartFlipDetectorService()
+	}
+
+	override fun getDndScheduleEndTime(): Flow<String> = dndScheduleEndTime
+
+	override suspend fun setDndScheduleEndTime(endTime: String) {
+		prefs.edit().putString(KEY_DND_SCHEDULE_END_TIME, endTime).apply()
+		dndScheduleEndTime.value = endTime
+		restartFlipDetectorService()
+	}
+
+	override fun getDndScheduleDays(): Flow<Set<Int>> = dndScheduleDays
+
+	override suspend fun setDndScheduleDays(days: Set<Int>) {
+		prefs.edit().putStringSet(KEY_DND_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
+		dndScheduleDays.value = days
+		restartFlipDetectorService()
+	}
+
+	override fun getSoundScheduleEnabled(): Flow<Boolean> = soundScheduleEnabled
+
+	override suspend fun setSoundScheduleEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_SOUND_SCHEDULE_ENABLED, enabled).apply()
+		soundScheduleEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getSoundScheduleStartTime(): Flow<String> = soundScheduleStartTime
+
+	override suspend fun setSoundScheduleStartTime(startTime: String) {
+		prefs.edit().putString(KEY_SOUND_SCHEDULE_START_TIME, startTime).apply()
+		soundScheduleStartTime.value = startTime
+		restartFlipDetectorService()
+	}
+
+	override fun getSoundScheduleEndTime(): Flow<String> = soundScheduleEndTime
+
+	override suspend fun setSoundScheduleEndTime(endTime: String) {
+		prefs.edit().putString(KEY_SOUND_SCHEDULE_END_TIME, endTime).apply()
+		soundScheduleEndTime.value = endTime
+		restartFlipDetectorService()
+	}
+
+	override fun getSoundScheduleDays(): Flow<Set<Int>> = soundScheduleDays
+
+	override suspend fun setSoundScheduleDays(days: Set<Int>) {
+		prefs.edit().putStringSet(KEY_SOUND_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
+		soundScheduleDays.value = days
+		restartFlipDetectorService()
+	}
+
+	override fun getVibrationScheduleEnabled(): Flow<Boolean> = vibrationScheduleEnabled
+
+	override suspend fun setVibrationScheduleEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_VIBRATION_SCHEDULE_ENABLED, enabled).apply()
+		vibrationScheduleEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getVibrationScheduleStartTime(): Flow<String> = vibrationScheduleStartTime
+
+	override suspend fun setVibrationScheduleStartTime(startTime: String) {
+		prefs.edit().putString(KEY_VIBRATION_SCHEDULE_START_TIME, startTime).apply()
+		vibrationScheduleStartTime.value = startTime
+		restartFlipDetectorService()
+	}
+
+	override fun getVibrationScheduleEndTime(): Flow<String> = vibrationScheduleEndTime
+
+	override suspend fun setVibrationScheduleEndTime(endTime: String) {
+		prefs.edit().putString(KEY_VIBRATION_SCHEDULE_END_TIME, endTime).apply()
+		vibrationScheduleEndTime.value = endTime
+		restartFlipDetectorService()
+	}
+
+	override fun getVibrationScheduleDays(): Flow<Set<Int>> = vibrationScheduleDays
+
+	override suspend fun setVibrationScheduleDays(days: Set<Int>) {
+		prefs.edit().putStringSet(KEY_VIBRATION_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
+		vibrationScheduleDays.value = days
 		restartFlipDetectorService()
 	}
 }

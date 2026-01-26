@@ -19,6 +19,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          # Get the last two tags
+          TAGS=$(git tag --sort=-v:refname | head -n 2)
+          LATEST_TAG=$(echo "$TAGS" | sed -n '1p')
+          PREVIOUS_TAG=$(echo "$TAGS" | sed -n '2p')
+          
+          if [ -z "$PREVIOUS_TAG" ]; then
+            # If no previous tag, get all commits until latest tag
+            CHANGELOG=$(git log --pretty=format:"• %s" "$LATEST_TAG")
+          else
+            # Get commits between previous and latest tag
+            CHANGELOG=$(git log --pretty=format:"• %s" "$PREVIOUS_TAG..$LATEST_TAG")
+          fi
+          
+          # Clean up and format for Telegram (HTML)
+          # Join lines with literal \n characters for the output variable
+          CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
+          echo "changelog=$CHANGELOG_ESCAPED" >> $GITHUB_OUTPUT
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -119,3 +140,39 @@ jobs:
           name: app-release
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
+
+      - name: Send APK to Telegram
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+        run: |
+          # Construct the caption with actual newlines
+          # Use printf to handle the escaped \n characters correctly
+          REAL_CHANGELOG=$(printf "$CHANGELOG")
+          
+          # Create a temporary file for the caption to avoid shell escaping issues
+          cat <<EOF > caption.txt
+          <b>✨ Flip 2 DND Update: $TAG_NAME</b>
+          
+          <b>📝 What's New:</b>
+          $REAL_CHANGELOG
+          
+          🔗 <a href="https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}">View on GitHub</a>
+          EOF
+
+          # Verify APK exists
+          APK_PATH="app/build/outputs/apk/release/app-release.apk"
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ Error: APK not found at $APK_PATH"
+            exit 1
+          fi
+
+          # Send to Telegram
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
+               -F chat_id="$CHAT_ID" \
+               -F document="@$APK_PATH" \
+               -F caption="<caption.txt" \
+               -F parse_mode="HTML"

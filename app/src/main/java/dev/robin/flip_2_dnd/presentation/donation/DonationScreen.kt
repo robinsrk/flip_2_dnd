@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import copyAddressToClipboard
+import dev.robin.flip_2_dnd.utils.copyAddressToClipboard
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)

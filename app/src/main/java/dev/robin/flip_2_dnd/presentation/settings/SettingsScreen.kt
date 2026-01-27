@@ -73,6 +73,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.Spacer
 import dev.robin.flip_2_dnd.R
+import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -540,9 +541,16 @@ fun SettingsScreen(
                 var dndOffExpanded by remember { mutableStateOf(false) }
                 val soundSheetState = rememberModalBottomSheetState()
 
+                val dndOnCustomSoundUri by viewModel.dndOnCustomSoundUri.collectAsState()
+                val dndOnCustomSoundName = remember(dndOnCustomSoundUri) {
+                    dndOnCustomSoundUri?.let { uriString ->
+                        getFileNameFromUri(context, Uri.parse(uriString))
+                    } ?: "None selected"
+                }
+
                 SettingsClickableItem(
                     title = stringResource(id = R.string.dnd_on_sound),
-                    description = dndOnSound.name,
+                    description = if (dndOnSound == Sound.CUSTOM) "Custom: $dndOnCustomSoundName" else dndOnSound.name,
                     trailingIcon = {
                         Icon(Icons.Default.ArrowDropDown, "Select sound")
                     },
@@ -557,7 +565,7 @@ fun SettingsScreen(
 							Column {
 								viewModel.availableSounds.forEach { sound ->
 									SettingsClickableItem(
-										title = sound.name,
+										title = if (sound == Sound.CUSTOM) "Custom Sound" else sound.name,
 										trailingIcon = {
 											if (sound == dndOnSound) {
 												Icon(
@@ -574,17 +582,7 @@ fun SettingsScreen(
 											}
 										},
 										onClick = {
-											viewModel.setDndOnSound(sound)
-											viewModel.playSelectedSound(sound)
-											dndOnExpanded = false
-										}
-									)
-
-									// Add a button to select custom sound if CUSTOM is selected
-									if (sound == Sound.CUSTOM && dndOnSound == Sound.CUSTOM) {
-										val dndOnCustomSoundUri by viewModel.dndOnCustomSoundUri.collectAsState()
-										Button(
-											onClick = {
+											if (sound == Sound.CUSTOM) {
 												val intent = Intent(context, SoundPickerActivity::class.java).apply {
 													putExtra(
 														SoundPickerActivity.EXTRA_SOUND_TYPE,
@@ -597,31 +595,29 @@ fun SettingsScreen(
 													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
 														.show()
 												}
-											},
-											modifier = Modifier
-												.fillMaxWidth()
-												.padding(horizontal = 16.dp, vertical = 8.dp)
-										) {
-											Text("Select Custom Sound")
+											} else {
+												viewModel.setDndOnSound(sound)
+												viewModel.playSelectedSound(sound)
+											}
+											dndOnExpanded = false
 										}
-
-										if (!dndOnCustomSoundUri.isNullOrEmpty()) {
-											Text(
-												"Custom sound selected",
-												modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-												style = MaterialTheme.typography.bodyMedium
-											)
-										}
-									}
+									)
 								}
 							}
 							Spacer(modifier = Modifier.height(20.dp))
 						}
 					}
 
+					val dndOffCustomSoundUri by viewModel.dndOffCustomSoundUri.collectAsState()
+					val dndOffCustomSoundName = remember(dndOffCustomSoundUri) {
+						dndOffCustomSoundUri?.let { uriString ->
+							getFileNameFromUri(context, Uri.parse(uriString))
+						} ?: "None selected"
+					}
+
 					SettingsClickableItem(
 						title = stringResource(id = R.string.dnd_off_sound),
-						description = dndOffSound.name,
+						description = if (dndOffSound == Sound.CUSTOM) "Custom: $dndOffCustomSoundName" else dndOffSound.name,
 						trailingIcon = {
 							Icon(Icons.Default.ArrowDropDown, "Select sound")
 						},
@@ -636,7 +632,7 @@ fun SettingsScreen(
 							Column {
 								viewModel.availableSounds.forEach { sound ->
 									SettingsClickableItem(
-										title = sound.name,
+										title = if (sound == Sound.CUSTOM) "Custom Sound" else sound.name,
 										trailingIcon = {
 											if (sound == dndOffSound) {
 												Icon(
@@ -653,17 +649,7 @@ fun SettingsScreen(
 											}
 										},
 										onClick = {
-											viewModel.setDndOffSound(sound)
-											viewModel.playSelectedSound(sound)
-											dndOffExpanded = false
-										}
-									)
-
-									// Add a button to select custom sound if CUSTOM is selected
-									if (sound == Sound.CUSTOM && dndOffSound == Sound.CUSTOM) {
-										val dndOffCustomSoundUri by viewModel.dndOffCustomSoundUri.collectAsState()
-										Button(
-											onClick = {
+											if (sound == Sound.CUSTOM) {
 												val intent = Intent(context, SoundPickerActivity::class.java).apply {
 													putExtra(
 														SoundPickerActivity.EXTRA_SOUND_TYPE,
@@ -676,22 +662,13 @@ fun SettingsScreen(
 													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
 														.show()
 												}
-											},
-											modifier = Modifier
-												.fillMaxWidth()
-												.padding(horizontal = 16.dp, vertical = 8.dp)
-										) {
-											Text("Select Custom Sound")
+											} else {
+												viewModel.setDndOffSound(sound)
+												viewModel.playSelectedSound(sound, isForDndOn = false)
+											}
+											dndOffExpanded = false
 										}
-
-										if (!dndOffCustomSoundUri.isNullOrEmpty()) {
-											Text(
-												"Custom sound selected",
-												modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-												style = MaterialTheme.typography.bodyMedium
-											)
-										}
-									}
+									)
 								}
 							}
 							Spacer(modifier = Modifier.height(20.dp))

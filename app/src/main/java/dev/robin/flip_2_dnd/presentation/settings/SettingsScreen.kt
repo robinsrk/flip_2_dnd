@@ -275,7 +275,6 @@ fun SettingsScreen(
 								showAdbDialog = true
 							}
 						},
-						enabled = hasSecureSettingsPermission,
 						alpha = if (hasSecureSettingsPermission) 1f else 0.5f
 					)
 

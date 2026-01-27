@@ -1,0 +1,10 @@
+[v9.0.4-pre2] (BETA)
+• Added about app section
+• Fixed battery permission command dialog
+• Improved donation screen layout and navigation UI
+• Added dynamic changelog support with beta section support
+• Refined top bar animations and font weight handling
+• Enhanced custom sound URI validation and permission recovery
+• Improved MediaPlayer error handling and logging
+• Added new vibration patterns (Heartbeat, Tick Tock)
+• Added file name extraction helper for custom sounds

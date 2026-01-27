@@ -10,8 +10,14 @@ import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.presentation.settings.Sound
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import dev.robin.flip_2_dnd.services.FlipDetectorService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,6 +66,10 @@ class SettingsRepositoryImpl @Inject constructor(
 ) : SettingsRepository {
 	private val prefs: SharedPreferences =
 		appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+	
+	private val repositoryScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+	private var restartJob: Job? = null
+
 	private val screenOffOnlyEnabled = MutableStateFlow(prefs.getBoolean(KEY_SCREEN_OFF_ONLY, true))
 	private val vibrationEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION, true))
 	private val soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND, true))
@@ -131,17 +141,25 @@ class SettingsRepositoryImpl @Inject constructor(
 	)
 
 	private fun restartFlipDetectorService() {
-		try {
-			val serviceIntent = Intent(appContext, FlipDetectorService::class.java)
-			appContext.stopService(serviceIntent)
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				appContext.startForegroundService(serviceIntent)
-			} else {
-				appContext.startService(serviceIntent)
+		restartJob?.cancel()
+		restartJob = repositoryScope.launch {
+			delay(500) // Debounce restarts
+			try {
+				val serviceIntent = Intent(appContext, FlipDetectorService::class.java)
+				
+				// Force a full restart by stopping first
+				appContext.stopService(serviceIntent)
+				delay(200) // Small delay to allow cleanup
+				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					appContext.startForegroundService(serviceIntent)
+				} else {
+					appContext.startService(serviceIntent)
+				}
+				Log.d(TAG, "FlipDetectorService restarted successfully")
+			} catch (e: Exception) {
+				Log.e(TAG, "Error restarting FlipDetectorService: ${e.localizedMessage}", e)
 			}
-			Log.d(TAG, "FlipDetectorService restarted successfully")
-		} catch (e: Exception) {
-			Log.e(TAG, "Error restarting FlipDetectorService: ${e.localizedMessage}", e)
 		}
 	}
 

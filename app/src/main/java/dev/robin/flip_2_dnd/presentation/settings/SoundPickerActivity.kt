@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -110,21 +111,23 @@ class SoundPickerActivity : ComponentActivity() {
             }
         }
         
-        // Launch the audio picker
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "audio/*"
-            // Add flags to request persistable URI permissions
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        }
-        
-        try {
-            pickAudio.launch(intent)
-        } catch (e: ActivityNotFoundException) {
-            android.util.Log.e(TAG, "No activity found to handle audio picker", e)
-            showToast("Could not open sound picker")
-            finish()
+        // Launch the audio picker only if this is the first time
+        if (savedInstanceState == null) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "audio/*"
+                // Add flags to request persistable URI permissions
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            }
+            
+            try {
+                pickAudio.launch(intent)
+            } catch (e: ActivityNotFoundException) {
+                android.util.Log.e(TAG, "No activity found to handle audio picker", e)
+                showToast("Could not open sound picker")
+                finish()
+            }
         }
     }
     
@@ -141,16 +144,20 @@ class SoundPickerActivity : ComponentActivity() {
             try {
                 if (soundType == DND_ON_SOUND) {
                     settingsRepository.setDndOnCustomSoundUri(uriString)
-                    android.util.Log.d(TAG, "Successfully saved DND ON custom sound URI")
+                    settingsRepository.setDndOnSound(Sound.CUSTOM)
+                    android.util.Log.d(TAG, "Successfully saved DND ON custom sound URI and set sound type to CUSTOM")
                     showToast("DND ON custom sound saved")
                 } else {
                     settingsRepository.setDndOffCustomSoundUri(uriString)
-                    android.util.Log.d(TAG, "Successfully saved DND OFF custom sound URI")
+                    settingsRepository.setDndOffSound(Sound.CUSTOM)
+                    android.util.Log.d(TAG, "Successfully saved DND OFF custom sound URI and set sound type to CUSTOM")
                     showToast("DND OFF custom sound saved")
                 }
                 
-                // Verify the sound can be played
-                verifySound(uri)
+                // Verify the sound can be played in a background thread
+                withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    verifySound(uri)
+                }
                 
                 // Finish the activity to return to the previous screen
                 finish()

@@ -507,7 +507,7 @@ class SettingsViewModel @Inject constructor(
 		}
 	}
 
-	fun playSelectedSound(sound: Sound?) {
+	fun playSelectedSound(sound: Sound?, isForDndOn: Boolean = true) {
 		if (sound == null) {
 			android.util.Log.d("SettingsViewModel", "No sound selected")
 			return
@@ -518,8 +518,6 @@ class SettingsViewModel @Inject constructor(
 			
 			if (sound == Sound.CUSTOM) {
 				// For custom sounds, use the URI based on whether it's for DND on or off
-				// Determine which custom sound URI to use based on the context
-				val isForDndOn = sound == _dndOnSound.value
 				val uri = if (isForDndOn) {
 					_dndOnCustomSoundUri.value
 				} else {

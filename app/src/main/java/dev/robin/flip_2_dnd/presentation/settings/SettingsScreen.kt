@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -70,6 +71,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.Spacer
 import dev.robin.flip_2_dnd.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,6 +112,55 @@ fun SettingsScreen(
 	val vibrationScheduleDays by viewModel.vibrationScheduleDays.collectAsState()
 
 	var showAdbDialog by remember { mutableStateOf(false) }
+	var showChangelogSheet by remember { mutableStateOf(false) }
+	val changelogSheetState = rememberModalBottomSheetState()
+
+	val packageInfo = remember {
+		try {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+				context.packageManager.getPackageInfo(
+					context.packageName,
+					android.content.pm.PackageManager.PackageInfoFlags.of(0)
+				)
+			} else {
+				@Suppress("DEPRECATION")
+				context.packageManager.getPackageInfo(context.packageName, 0)
+			}
+		} catch (e: Exception) {
+			null
+		}
+	}
+
+	val versionName = packageInfo?.versionName ?: "Unknown"
+	val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+		packageInfo?.longVersionCode ?: 0L
+	} else {
+		@Suppress("DEPRECATION")
+		packageInfo?.versionCode?.toLong() ?: 0L
+	}
+
+	val isBeta = versionName.contains("pre", ignoreCase = true) || 
+				 versionName.contains("beta", ignoreCase = true)
+
+	val changelogText = remember(versionName) {
+		try {
+			val rawContent = context.resources.openRawResource(R.raw.changelog).bufferedReader().use { it.readText() }
+			val sections = rawContent.split("\n\n").filter { it.isNotBlank() }
+			
+			sections.filter { section ->
+				val firstLine = section.lines().firstOrNull() ?: ""
+				val isSectionBeta = firstLine.contains("(BETA)", ignoreCase = true)
+				
+				if (isSectionBeta) {
+					isBeta // Only include beta sections if current app is beta
+				} else {
+					true // Always include stable sections
+				}
+			}.joinToString("\n\n")
+		} catch (e: Exception) {
+			"Unable to load changelog"
+		}
+	}
 
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -885,8 +936,50 @@ fun SettingsScreen(
 				},
 				onClick = onDonateClick
 			)
+
+			SettingsClickableItem(
+				title = "Version",
+				description = "$versionName ($versionCode)",
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Default.Info,
+						contentDescription = "Version Icon",
+						tint = MaterialTheme.colorScheme.primary
+					)
+				},
+				onClick = { showChangelogSheet = true }
+			)
+
+			if (showChangelogSheet) {
+				ModalBottomSheet(
+					onDismissRequest = { showChangelogSheet = false },
+					sheetState = changelogSheetState,
+					containerColor = MaterialTheme.colorScheme.surface,
+					tonalElevation = 8.dp
+				) {
+					Column(
+						modifier = Modifier
+							.fillMaxWidth()
+							.padding(24.dp)
+					) {
+						Text(
+							text = "Changelog",
+							style = MaterialTheme.typography.headlineSmall,
+							fontWeight = FontWeight.Bold,
+							color = MaterialTheme.colorScheme.primary
+						)
+						Spacer(modifier = Modifier.height(16.dp))
+						Text(
+							text = changelogText,
+							style = MaterialTheme.typography.bodyLarge,
+							lineHeight = 24.sp
+						)
+						Spacer(modifier = Modifier.height(24.dp))
+					}
+				}
+			}
 		}
-}
+	}
 }
 }
 }

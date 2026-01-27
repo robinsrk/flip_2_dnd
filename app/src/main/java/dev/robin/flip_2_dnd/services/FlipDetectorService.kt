@@ -11,13 +11,13 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import dev.robin.flip_2_dnd.MainActivity
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
-import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 private const val TAG = "FlipDetectorService"
 private const val SERVICE_NOTIFICATION_ID = 1
@@ -26,13 +26,17 @@ private const val DND_NOTIFICATION_ID = 3
 private const val SERVICE_CHANNEL_ID = "FlipDetectorChannel"
 private const val FLIP_CHANNEL_ID = "FlipStateChannel"
 
+@AndroidEntryPoint
 class FlipDetectorService : Service() {
     lateinit var sensorService: SensorService
         private set
     private lateinit var dndService: DndService
     private lateinit var powerManager: PowerManager
     private lateinit var wakeLock: PowerManager.WakeLock
-    private lateinit var settingsRepository: SettingsRepository
+    
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+    
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
     private val _isScreenOff = MutableStateFlow(false)
@@ -121,14 +125,21 @@ class FlipDetectorService : Service() {
         }
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand: Starting FlipDetectorService")
+        val notification = createServiceNotification()
+        startForeground(SERVICE_NOTIFICATION_ID, notification)
+        return START_STICKY
+    }
+
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "onCreate: Starting FlipDetectorService")
+        Log.d(TAG, "onCreate: Initializing FlipDetectorService")
         
         try {
-            sensorService = SensorService(this)
-            dndService = DndService(this)
-            settingsRepository = SettingsRepositoryImpl(this)
+            sensorService = SensorService(this, settingsRepository)
+            dndService = DndService(this, settingsRepository)
+            // settingsRepository is now injected by Hilt
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             cameraManager = getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
 
@@ -137,10 +148,6 @@ class FlipDetectorService : Service() {
             // Initialize screen state
             _isScreenOff.value = !powerManager.isInteractive
             Log.d(TAG, "Initial screen state: ${if (_isScreenOff.value) "OFF" else "ON"}")
-            
-            // Make service high priority
-            val notification = createServiceNotification()
-            startForeground(SERVICE_NOTIFICATION_ID, notification)
             
             // Create notification channels
             createNotificationChannels()

@@ -9,9 +9,11 @@ import dev.robin.flip_2_dnd.presentation.settings.Sound
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
-class SoundService(private val context: Context) {
+class SoundService(
+    private val context: Context,
+    private val settingsRepository: SettingsRepository
+) {
     private var mediaPlayer: MediaPlayer? = null
-    private val settingsRepository: SettingsRepository = SettingsRepositoryImpl(context)
     
     companion object {
         private const val TAG = "SoundService"

@@ -22,7 +22,10 @@ import kotlinx.coroutines.runBlocking
 
 private const val TAG = "DndService"
 
-class DndService(private val context: Context) {
+class DndService(
+	private val context: Context,
+	private val settingsRepository: SettingsRepository
+) {
 	private val notificationManager =
 		context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 	private val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -33,8 +36,7 @@ class DndService(private val context: Context) {
 		@Suppress("DEPRECATION")
 		context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 	}
-	private val settingsRepository: SettingsRepository = SettingsRepositoryImpl(context)
-	private val soundService = SoundService(context)
+	private val soundService = SoundService(context, settingsRepository)
 
 	private val _isDndEnabled = MutableStateFlow(false)
 	val isDndEnabled: StateFlow<Boolean> = _isDndEnabled
@@ -179,11 +181,10 @@ class DndService(private val context: Context) {
                 }
                 
                 // Convert the pattern to timing array
-                val timings = when (pattern) {
-                    VibrationPattern.SINGLE_PULSE -> pattern.pattern
-                    VibrationPattern.DOUBLE_PULSE -> pattern.pattern
-                    VibrationPattern.LONG_PULSE -> pattern.pattern
-                    VibrationPattern.NONE -> longArrayOf()
+                val timings = if (pattern == VibrationPattern.NONE) {
+                    longArrayOf()
+                } else {
+                    pattern.pattern
                 }
                 
                 if (timings.isNotEmpty()) {

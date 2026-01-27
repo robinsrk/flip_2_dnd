@@ -17,11 +17,13 @@ import kotlin.math.abs
 
 private const val TAG = "SensorService"
 
-class SensorService(context: Context) {
+class SensorService(
+	context: Context,
+	private val settingsRepository: SettingsRepository
+) {
 	private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 	private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 	private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-	private val settingsRepository: SettingsRepository = SettingsRepositoryImpl(context)
 
 	private val _orientation = MutableStateFlow("Face up")
 	val orientation: StateFlow<String> = _orientation

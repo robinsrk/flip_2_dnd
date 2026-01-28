@@ -376,65 +376,23 @@ fun SettingsScreen(
 							)
 						}
 					)
+
+					Spacer(modifier = Modifier.height(16.dp))
+
+					ScheduleSection(
+						title = stringResource(id = R.string.dnd_activation_schedule),
+						enabled = dndScheduleEnabled,
+						onEnabledChange = { viewModel.setDndScheduleEnabled(it) },
+						description = stringResource(id = R.string.dnd_schedule_description),
+						startTime = dndScheduleStartTime,
+						onStartTimeChange = { viewModel.setDndScheduleStartTime(it) },
+						endTime = dndScheduleEndTime,
+						onEndTimeChange = { viewModel.setDndScheduleEndTime(it) },
+						selectedDays = dndScheduleDays,
+						onDaysChange = { viewModel.setDndScheduleDays(it) }
+					)
 				}
 			}
-
-	item {
-		Column {
-			Spacer(modifier = Modifier.height(16.dp))
-
-			ScheduleSection(
-				title = stringResource(id = R.string.dnd_activation_schedule),
-				enabled = dndScheduleEnabled,
-				onEnabledChange = { viewModel.setDndScheduleEnabled(it) },
-				description = stringResource(id = R.string.dnd_schedule_description),
-				startTime = dndScheduleStartTime,
-				onStartTimeChange = { viewModel.setDndScheduleStartTime(it) },
-				endTime = dndScheduleEndTime,
-				onEndTimeChange = { viewModel.setDndScheduleEndTime(it) },
-				selectedDays = dndScheduleDays,
-				onDaysChange = { viewModel.setDndScheduleDays(it) }
-			)
-		}
-	}
-
-	item {
-		Column {
-			Spacer(modifier = Modifier.height(16.dp))
-
-			ScheduleSection(
-				title = stringResource(id = R.string.sound_schedule),
-				enabled = soundScheduleEnabled,
-				onEnabledChange = { viewModel.setSoundScheduleEnabled(it) },
-				description = stringResource(id = R.string.sound_schedule_description),
-				startTime = soundScheduleStartTime,
-				onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
-				endTime = soundScheduleEndTime,
-				onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
-				selectedDays = soundScheduleDays,
-				onDaysChange = { viewModel.setSoundScheduleDays(it) }
-			)
-		}
-	}
-
-	item {
-		Column {
-			Spacer(modifier = Modifier.height(16.dp))
-
-			ScheduleSection(
-				title = stringResource(id = R.string.vibration_schedule),
-				enabled = vibrationScheduleEnabled,
-				onEnabledChange = { viewModel.setVibrationScheduleEnabled(it) },
-				description = stringResource(id = R.string.vibration_schedule_description),
-				startTime = vibrationScheduleStartTime,
-				onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
-				endTime = vibrationScheduleEndTime,
-				onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
-				selectedDays = vibrationScheduleDays,
-				onDaysChange = { viewModel.setVibrationScheduleDays(it) }
-			)
-		}
-	}
 
     item {
         Column {
@@ -709,6 +667,21 @@ fun SettingsScreen(
 							}
 						)
 					}
+
+					Spacer(modifier = Modifier.height(12.dp))
+
+					ScheduleSection(
+						title = null,
+						enabled = soundScheduleEnabled,
+						onEnabledChange = { viewModel.setSoundScheduleEnabled(it) },
+						description = stringResource(id = R.string.sound_schedule_description),
+						startTime = soundScheduleStartTime,
+						onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
+						endTime = soundScheduleEndTime,
+						onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
+						selectedDays = soundScheduleDays,
+						onDaysChange = { viewModel.setSoundScheduleDays(it) }
+					)
 				}
 			}
 		}
@@ -861,6 +834,21 @@ fun SettingsScreen(
 						}
 					)
 				}
+
+				Spacer(modifier = Modifier.height(12.dp))
+
+				ScheduleSection(
+					title = null,
+					enabled = vibrationScheduleEnabled,
+					onEnabledChange = { viewModel.setVibrationScheduleEnabled(it) },
+					description = stringResource(id = R.string.vibration_schedule_description),
+					startTime = vibrationScheduleStartTime,
+					onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
+					endTime = vibrationScheduleEndTime,
+					onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
+					selectedDays = vibrationScheduleDays,
+					onDaysChange = { viewModel.setVibrationScheduleDays(it) }
+				)
 			}
 		}
 	}
@@ -962,7 +950,7 @@ fun SettingsScreen(
 
 @Composable
 private fun ScheduleSection(
-    title: String,
+    title: String? = null,
     enabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
     description: String,
@@ -976,12 +964,14 @@ private fun ScheduleSection(
     val context = LocalContext.current
 
     Column {
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-        )
+        if (title != null) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            )
+        }
 
         SettingsSwitchItem(
             title = stringResource(id = R.string.schedule_enabled),

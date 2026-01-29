@@ -21,6 +21,24 @@ android {
 		}
 	}
 
+	flavorDimensions += "tier"
+
+	productFlavors {
+		create("free") {
+			dimension = "tier"
+			applicationIdSuffix = ".free"
+			versionNameSuffix = "-free"
+			resValue("string", "app_name", "Flip 2 DND")
+		}
+
+		create("pro") {
+			dimension = "tier"
+			applicationIdSuffix = ".pro"
+			versionNameSuffix = "-pro"
+			resValue("string", "app_name", "Flip 2 DND Pro")
+		}
+	}
+
 	lint {
 		baseline = file("lint-baseline.xml")
 		abortOnError = false

@@ -59,6 +59,7 @@ private const val KEY_VIBRATION_SCHEDULE_ENABLED = "vibration_schedule_enabled"
 private const val KEY_VIBRATION_SCHEDULE_START_TIME = "vibration_schedule_start_time"
 private const val KEY_VIBRATION_SCHEDULE_END_TIME = "vibration_schedule_end_time"
 private const val KEY_VIBRATION_SCHEDULE_DAYS = "vibration_schedule_days"
+private const val KEY_AUTO_START = "auto_start"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -139,6 +140,8 @@ class SettingsRepositoryImpl @Inject constructor(
 		prefs.getStringSet(KEY_VIBRATION_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
 			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
 	)
+
+	private val autoStartEnabled = MutableStateFlow(prefs.getBoolean(KEY_AUTO_START, false))
 
 	private fun restartFlipDetectorService() {
 		restartJob?.cancel()
@@ -427,11 +430,19 @@ class SettingsRepositoryImpl @Inject constructor(
 		restartFlipDetectorService()
 	}
 
-	override fun getVibrationScheduleDays(): Flow<Set<Int>> = vibrationScheduleDays
-
 	override suspend fun setVibrationScheduleDays(days: Set<Int>) {
 		prefs.edit().putStringSet(KEY_VIBRATION_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
 		vibrationScheduleDays.value = days
 		restartFlipDetectorService()
 	}
+
+	override fun getAutoStartEnabled(): Flow<Boolean> = autoStartEnabled
+
+	override suspend fun setAutoStartEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_AUTO_START, enabled).apply()
+		autoStartEnabled.value = enabled
+		// No need to restart service for this, as it's only checked on boot
+	}
+
+	override fun getVibrationScheduleDays(): Flow<Set<Int>> = vibrationScheduleDays
 }

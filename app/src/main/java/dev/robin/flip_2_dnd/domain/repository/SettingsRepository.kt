@@ -76,4 +76,7 @@ interface SettingsRepository {
     suspend fun setVibrationScheduleEndTime(endTime: String)
     fun getVibrationScheduleDays(): Flow<Set<Int>>
     suspend fun setVibrationScheduleDays(days: Set<Int>)
+
+    fun getAutoStartEnabled(): Flow<Boolean>
+    suspend fun setAutoStartEnabled(enabled: Boolean)
 }

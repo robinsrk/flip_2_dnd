@@ -99,6 +99,9 @@ class SettingsViewModel @Inject constructor(
     private val _dndScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
     val dndScheduleDays = _dndScheduleDays.asStateFlow()
 
+	private val _autoStartEnabled = MutableStateFlow(false)
+	val autoStartEnabled = _autoStartEnabled.asStateFlow()
+
     private val _soundScheduleEnabled = MutableStateFlow(false)
     val soundScheduleEnabled = _soundScheduleEnabled.asStateFlow()
 
@@ -293,6 +296,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getVibrationScheduleDays().collect { days ->
 				_vibrationScheduleDays.value = days
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getAutoStartEnabled().collect { enabled ->
+				_autoStartEnabled.value = enabled
 			}
 		}
 	}
@@ -668,6 +676,11 @@ class SettingsViewModel @Inject constructor(
 			}
 		} catch (e: Exception) {
 			android.util.Log.e("SettingsViewModel", "Error during vibration: ${e.message}", e)
+		}
+	}
+	fun setAutoStartEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setAutoStartEnabled(enabled)
 		}
 	}
 }

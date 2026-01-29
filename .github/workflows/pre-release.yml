@@ -72,30 +72,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease
+      - name: Build release APKs
+        run: ./gradlew assembleFreeRelease assembleProRelease
 
-      - name: Align APK
-        run: |
-          if [ ! -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-            echo "Error: Unsigned APK not found"
-            exit 1
-          fi
-          
-          echo "Android SDK location: $ANDROID_HOME"
-          echo "Available build tools:"
-          ls -la ${ANDROID_HOME}/build-tools/
-          
-          ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 \
-            "app/build/outputs/apk/release/app-release-unsigned.apk" \
-            "app/build/outputs/apk/release/app-release-aligned.apk"
-            
-          if [ ! -f "app/build/outputs/apk/release/app-release-aligned.apk" ]; then
-            echo "Error: Failed to create aligned APK"
-            exit 1
-          fi
-
-      - name: Sign and verify APK
+      - name: Align and Sign APKs
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -103,24 +83,39 @@ jobs:
         run: |
           if [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
             echo "Error: One or more signing secrets are not set"
-            echo "Required secrets: KEY_STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD"
             exit 1
           fi
-          
-          echo "Signing APK..."
-          ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
-            --ks release.keystore \
-            --ks-pass pass:"${KEYSTORE_PASSWORD}" \
-            --ks-key-alias "${KEY_ALIAS}" \
-            --key-pass pass:"${KEY_PASSWORD}" \
-            --v2-signing-enabled true \
-            --v3-signing-enabled true \
-            --v4-signing-enabled false \
-            --out "app/build/outputs/apk/release/app-release.apk" \
-            "app/build/outputs/apk/release/app-release-aligned.apk"
-          
-          echo "Verifying signed APK..."
-          ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "app/build/outputs/apk/release/app-release.apk"
+
+          FLAVORS=("free" "pro")
+          for FLAVOR in "${FLAVORS[@]}"; do
+            echo "Processing $FLAVOR flavor..."
+            UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
+            ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
+            SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-${FLAVOR^}-beta.apk"
+
+            if [ ! -f "$UNSIGNED_APK" ]; then
+              echo "Error: Unsigned APK not found for $FLAVOR"
+              exit 1
+            fi
+
+            echo "Aligning $FLAVOR APK..."
+            ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+
+            echo "Signing $FLAVOR APK..."
+            ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
+              --ks release.keystore \
+              --ks-pass pass:"${KEYSTORE_PASSWORD}" \
+              --ks-key-alias "${KEY_ALIAS}" \
+              --key-pass pass:"${KEY_PASSWORD}" \
+              --v2-signing-enabled true \
+              --v3-signing-enabled true \
+              --v4-signing-enabled false \
+              --out "$SIGNED_APK" \
+              "$ALIGNED_APK"
+
+            echo "Verifying $FLAVOR APK..."
+            ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
+          done
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -128,19 +123,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: app/build/outputs/apk/release/app-release.apk
+          files: |
+            app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk
+            app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk
           generate_release_notes: true
           draft: false
           prerelease: true
 
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-pre-release
-          path: app/build/outputs/apk/release/app-release.apk
+          path: |
+            app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk
+            app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk
           if-no-files-found: error
 
-      - name: Send APK to Telegram
+      - name: Send APKs to Telegram
         if: startsWith(github.ref, 'refs/tags/')
         env:
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -148,11 +147,7 @@ jobs:
           TAG_NAME: ${{ github.ref_name }}
           CHANGELOG: ${{ steps.changelog.outputs.changelog }}
         run: |
-          # Construct the caption with actual newlines
-          # Use printf to handle the escaped \n characters correctly
           REAL_CHANGELOG=$(printf "$CHANGELOG")
-          
-          # Create a temporary file for the caption to avoid shell escaping issues
           cat <<EOF > caption.txt
           <b>✨ Flip 2 DND Update: $TAG_NAME</b>
           
@@ -162,16 +157,19 @@ jobs:
           🔗 <a href="https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}">View on GitHub</a>
           EOF
 
-          # Verify APK exists
-          APK_PATH="app/build/outputs/apk/release/app-release.apk"
-          if [ ! -f "$APK_PATH" ]; then
-            echo "❌ Error: APK not found at $APK_PATH"
-            exit 1
-          fi
+          FREE_APK="app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk"
+          PRO_APK="app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk"
 
-          # Send to Telegram
+          # Send Free APK
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
                -F chat_id="$CHAT_ID" \
-               -F document="@$APK_PATH" \
+               -F document="@$FREE_APK" \
                -F caption="<caption.txt" \
+               -F parse_mode="HTML"
+
+          # Send Pro APK (optional, or just another message)
+          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
+               -F chat_id="$CHAT_ID" \
+               -F document="@$PRO_APK" \
+               -F caption="Flip 2 DND Pro $TAG_NAME" \
                -F parse_mode="HTML"

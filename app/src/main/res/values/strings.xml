@@ -82,4 +82,6 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="days">Days</string>
+    <string name="auto_start">Auto Start on Boot</string>
+    <string name="auto_start_description">Automatically start the flip detector service when the device reboots (Requires Pro)</string>
 </resources>

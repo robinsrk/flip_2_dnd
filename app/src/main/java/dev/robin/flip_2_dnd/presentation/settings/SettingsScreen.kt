@@ -113,8 +113,13 @@ fun SettingsScreen(
 	val vibrationScheduleDays by viewModel.vibrationScheduleDays.collectAsState()
 
 	var showAdbDialog by remember { mutableStateOf(false) }
+	var showUpgradeDialog by remember { mutableStateOf(false) }
 	var showChangelogSheet by remember { mutableStateOf(false) }
 	val changelogSheetState = rememberModalBottomSheetState()
+
+	if (showUpgradeDialog) {
+		UpgradeDialog(onDismiss = { showUpgradeDialog = false })
+	}
 
 	val packageInfo = remember {
 		try {
@@ -234,6 +239,21 @@ fun SettingsScreen(
 						modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
 					)
 
+					val autoStartEnabled by viewModel.autoStartEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.auto_start),
+						description = stringResource(id = R.string.auto_start_description),
+						checked = autoStartEnabled,
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) {
+								viewModel.setAutoStartEnabled(it)
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f
+					)
+
 					SettingsSwitchItem(
 						title = stringResource(id = R.string.screen_off_only),
 						description = stringResource(id = R.string.screen_off_only_description),
@@ -261,7 +281,14 @@ fun SettingsScreen(
 						title = stringResource(id = R.string.high_sensitivity_mode),
 						description = stringResource(id = R.string.high_sensitivity_mode_description),
 						checked = highSensitivityModeEnabled,
-						onCheckedChange = { viewModel.setHighSensitivityModeEnabled(it) },
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) {
+								viewModel.setHighSensitivityModeEnabled(it)
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f
 					)
 
 					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
@@ -270,13 +297,17 @@ fun SettingsScreen(
 						description = stringResource(id = R.string.battery_saver_description),
 						checked = batterySaverOnFlipEnabled,
 						onCheckedChange = {
-							if (hasSecureSettingsPermission) {
-								viewModel.setBatterySaverOnFlipEnabled(it)
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled()) {
+								if (hasSecureSettingsPermission) {
+									viewModel.setBatterySaverOnFlipEnabled(it)
+								} else {
+									showAdbDialog = true
+								}
 							} else {
-								showAdbDialog = true
+								showUpgradeDialog = true
 							}
 						},
-						alpha = if (hasSecureSettingsPermission) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled() && hasSecureSettingsPermission) 1f else 0.5f
 					)
 
 					if (showAdbDialog) {
@@ -331,19 +362,30 @@ fun SettingsScreen(
 							Column {
 								Slider(
 									value = sliderPosition,
-									onValueChange = { sliderPosition = it },
+									onValueChange = { 
+										if (dev.robin.flip_2_dnd.PremiumProvider.engine.delayCustomizationEnabled()) {
+											sliderPosition = it 
+										} else {
+											showUpgradeDialog = true
+										}
+									},
 									onValueChangeFinished = {
-										viewModel.setActivationDelay(sliderPosition.toInt())
+										if (dev.robin.flip_2_dnd.PremiumProvider.engine.delayCustomizationEnabled()) {
+											viewModel.setActivationDelay(sliderPosition.toInt())
+										}
 									},
 									valueRange = 0f..10f,
 									steps = 9,
-									modifier = Modifier.width(200.dp)
+									modifier = Modifier.width(200.dp),
+									enabled = dev.robin.flip_2_dnd.PremiumProvider.engine.delayCustomizationEnabled()
 								)
 								Text(
 									text = stringResource(id = R.string.seconds, sliderPosition.toInt()),
 									style = MaterialTheme.typography.bodySmall,
 									color = MaterialTheme.colorScheme.onSurfaceVariant,
-									modifier = Modifier.padding(start = 8.dp)
+									modifier = Modifier
+										.padding(start = 8.dp)
+										.alpha(if (dev.robin.flip_2_dnd.PremiumProvider.engine.delayCustomizationEnabled()) 1f else 0.5f)
 								)
 							}
 						}
@@ -382,14 +424,21 @@ fun SettingsScreen(
 					ScheduleSection(
 						title = stringResource(id = R.string.dnd_activation_schedule),
 						enabled = dndScheduleEnabled,
-						onEnabledChange = { viewModel.setDndScheduleEnabled(it) },
+						onEnabledChange = { 
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+								viewModel.setDndScheduleEnabled(it) 
+							} else {
+								showUpgradeDialog = true
+							}
+						},
 						description = stringResource(id = R.string.dnd_schedule_description),
 						startTime = dndScheduleStartTime,
 						onStartTimeChange = { viewModel.setDndScheduleStartTime(it) },
 						endTime = dndScheduleEndTime,
 						onEndTimeChange = { viewModel.setDndScheduleEndTime(it) },
 						selectedDays = dndScheduleDays,
-						onDaysChange = { viewModel.setDndScheduleDays(it) }
+						onDaysChange = { viewModel.setDndScheduleDays(it) },
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
 					)
 				}
 			}
@@ -412,7 +461,14 @@ fun SettingsScreen(
                 title = stringResource(id = R.string.flashlight_detection),
                 description = stringResource(id = R.string.flashlight_detection_description),
                 checked = flashlightDetectionEnabled,
-                onCheckedChange = { viewModel.setFlashlightDetectionEnabled(it) },
+                onCheckedChange = { 
+                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+                        viewModel.setFlashlightDetectionEnabled(it) 
+                    } else {
+                        showUpgradeDialog = true
+                    }
+                },
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
             )
 
             val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
@@ -420,7 +476,14 @@ fun SettingsScreen(
                 title = stringResource(id = R.string.media_playback_detection),
                 description = stringResource(id = R.string.media_playback_detection_description),
                 checked = mediaPlaybackDetectionEnabled,
-                onCheckedChange = { viewModel.setMediaPlaybackDetectionEnabled(it) },
+                onCheckedChange = { 
+                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+                        viewModel.setMediaPlaybackDetectionEnabled(it) 
+                    } else {
+                        showUpgradeDialog = true
+                    }
+                },
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
             )
 
             val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
@@ -428,7 +491,14 @@ fun SettingsScreen(
                 title = stringResource(id = R.string.headphone_detection),
                 description = stringResource(id = R.string.headphone_detection_description),
                 checked = headphoneDetectionEnabled,
-                onCheckedChange = { viewModel.setHeadphoneDetectionEnabled(it) },
+                onCheckedChange = { 
+                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+                        viewModel.setHeadphoneDetectionEnabled(it) 
+                    } else {
+                        showUpgradeDialog = true
+                    }
+                },
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
             )
         }
     }
@@ -541,17 +611,21 @@ fun SettingsScreen(
 										},
 										onClick = {
 											if (sound == Sound.CUSTOM) {
-												val intent = Intent(context, SoundPickerActivity::class.java).apply {
-													putExtra(
-														SoundPickerActivity.EXTRA_SOUND_TYPE,
-														SoundPickerActivity.DND_ON_SOUND
-													)
-												}
-												try {
-													context.startActivity(intent)
-												} catch (e: ActivityNotFoundException) {
-													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
-														.show()
+												if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
+													val intent = Intent(context, SoundPickerActivity::class.java).apply {
+														putExtra(
+															SoundPickerActivity.EXTRA_SOUND_TYPE,
+															SoundPickerActivity.DND_ON_SOUND
+														)
+													}
+													try {
+														context.startActivity(intent)
+													} catch (e: ActivityNotFoundException) {
+														Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
+															.show()
+													}
+												} else {
+													showUpgradeDialog = true
 												}
 											} else {
 												viewModel.setDndOnSound(sound)
@@ -608,17 +682,21 @@ fun SettingsScreen(
 										},
 										onClick = {
 											if (sound == Sound.CUSTOM) {
-												val intent = Intent(context, SoundPickerActivity::class.java).apply {
-													putExtra(
-														SoundPickerActivity.EXTRA_SOUND_TYPE,
-														SoundPickerActivity.DND_OFF_SOUND
-													)
-												}
-												try {
-													context.startActivity(intent)
-												} catch (e: ActivityNotFoundException) {
-													Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
-														.show()
+												if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
+													val intent = Intent(context, SoundPickerActivity::class.java).apply {
+														putExtra(
+															SoundPickerActivity.EXTRA_SOUND_TYPE,
+															SoundPickerActivity.DND_OFF_SOUND
+														)
+													}
+													try {
+														context.startActivity(intent)
+													} catch (e: ActivityNotFoundException) {
+														Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
+															.show()
+													}
+												} else {
+													showUpgradeDialog = true
 												}
 											} else {
 												viewModel.setDndOffSound(sound)
@@ -673,14 +751,21 @@ fun SettingsScreen(
 					ScheduleSection(
 						title = null,
 						enabled = soundScheduleEnabled,
-						onEnabledChange = { viewModel.setSoundScheduleEnabled(it) },
+						onEnabledChange = { 
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+								viewModel.setSoundScheduleEnabled(it) 
+							} else {
+								showUpgradeDialog = true
+							}
+						},
 						description = stringResource(id = R.string.sound_schedule_description),
 						startTime = soundScheduleStartTime,
 						onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
 						endTime = soundScheduleEndTime,
 						onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
 						selectedDays = soundScheduleDays,
-						onDaysChange = { viewModel.setSoundScheduleDays(it) }
+						onDaysChange = { viewModel.setSoundScheduleDays(it) },
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
 					)
 				}
 			}
@@ -840,14 +925,21 @@ fun SettingsScreen(
 				ScheduleSection(
 					title = null,
 					enabled = vibrationScheduleEnabled,
-					onEnabledChange = { viewModel.setVibrationScheduleEnabled(it) },
+					onEnabledChange = { 
+						if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+							viewModel.setVibrationScheduleEnabled(it) 
+						} else {
+							showUpgradeDialog = true
+						}
+					},
 					description = stringResource(id = R.string.vibration_schedule_description),
 					startTime = vibrationScheduleStartTime,
 					onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
 					endTime = vibrationScheduleEndTime,
 					onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
 					selectedDays = vibrationScheduleDays,
-					onDaysChange = { viewModel.setVibrationScheduleDays(it) }
+					onDaysChange = { viewModel.setVibrationScheduleDays(it) },
+					alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
 				)
 			}
 		}
@@ -959,11 +1051,12 @@ private fun ScheduleSection(
     endTime: String,
     onEndTimeChange: (String) -> Unit,
     selectedDays: Set<Int>,
-    onDaysChange: (Set<Int>) -> Unit
+    onDaysChange: (Set<Int>) -> Unit,
+    alpha: Float = 1f
 ) {
     val context = LocalContext.current
 
-    Column {
+    Column(modifier = Modifier.alpha(alpha)) {
         if (title != null) {
             Text(
                 text = title,

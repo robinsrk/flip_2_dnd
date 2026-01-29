@@ -16,7 +16,7 @@
 
 ## 📖 Overview
 
-**Flip 2 DND** is a minimalist and intelligent Android application designed to enhance your productivity and peace of mind. By leveraging your device's orientation sensors, it automatically toggles **Do Not Disturb (DND)** mode based on physical movement. 
+**Flip 2 DND** is a minimalist and intelligent Android application designed to enhance your productivity and peace of mind. By leveraging your device's orientation sensors, it automatically toggles **Do Not Disturb (DND)** mode based on physical movement.
 
 Simply **flip your phone face down** to silence notifications and stay focused. **Flip it back up** to return to your normal state. It's seamless, intuitive, and respects your privacy.
 
@@ -25,13 +25,44 @@ Simply **flip your phone face down** to silence notifications and stay focused. 
 ## 🚀 Key Features
 
 - 🔄 **Intelligent Flip Detection**: Automatically toggles DND mode based on phone orientation.
-- ⏱️ **Customizable Activation Delay**: Fine-tune the timing (0-10 seconds) to prevent accidental triggers.
+- ⏱️ **Activation Delay**: Configure timing (2 seconds in Free, 0-10 seconds in Pro).
 - 🔋 **Battery Saver Integration**: Automatically enable Battery Saver when flipped (Requires ADB permission).
 - 🎨 **Modern Material 3 UI**: Built with Jetpack Compose, featuring a clean interface and dynamic "Material You" theming.
 - 🔔 **Custom Feedback**: Personalize your experience with custom vibration patterns and sound notifications.
+- 📅 **Advanced Scheduling (Pro)**: Set DND, Sound, and Vibration schedules for different times and days.
+- 📁 **Custom Sound (Pro)**: Use any sound file from your device for DND notifications.
+- 🚀 **Auto Start (Pro)**: Service starts automatically after device reboot.
+- 🔋 **Battery Saver Sync (Pro)**: Automatically enable Battery Saver when flipped (Requires ADB permission).
+- 🔍 **DND Cancellation Filters (Pro)**: Prevent DND activation when flashlight is on, media is playing, or headphones are connected.
 - 🌑 **Dark Mode Support**: Fully optimized for both light and dark themes.
 - 🛠️ **Quick Settings Tile**: Control the service directly from your notification shade.
 - 🔒 **Privacy Focused**: No tracking, no ads, and minimal permissions.
+
+---
+
+## 💎 Flip 2 DND Pro
+
+Get the most out of Flip 2 DND by upgrading to Pro!
+
+- **Auto Start on Boot**: Never manualy start the service again.
+- **Advanced Sensitivity**: High sensitivity mode for better detection.
+- **Full Delay Customization**: Set your preferred activation delay precisely.
+- **Custom Sound Support**: Choose your own notification sounds from your file system.
+- **Full Automation Schedules**: Automate DND, Sound, and Vibration states based on your daily routine.
+- **Battery Saver Integration**: Automatically enable Battery Saver when flipped.
+- **DND Cancellation Filters**: Flashlight, Media, and Headphone detection.
+
+[**Buy Flip 2 DND Pro on Gumroad**](https://robinsrk.gumroad.com/l/flip2dndpro)
+
+---
+
+## ⚖️ Free vs Pro Comparison
+
+| Feature                | Free | Pro |
+| :--------------------- | :--: | :-: |
+| **Advanced Schedules** |  ❌  | ✅  |
+| **Battery Saver Sync** |  ❌  | ✅  |
+| **Detection Filters**  |  ❌  | ✅  |
 
 ---
 
@@ -89,6 +120,6 @@ adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE). 
+This project is licensed under the [MIT License](LICENSE).
 
 Built with ❤️ using **Kotlin** and **Jetpack Compose**.

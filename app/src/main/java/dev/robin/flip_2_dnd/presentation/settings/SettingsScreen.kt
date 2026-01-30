@@ -22,14 +22,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -175,16 +175,15 @@ fun SettingsScreen(
 			LargeTopAppBar(
 				title = {
 					val expandedTextStyle =
-						MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold)
+						MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold)
 					val collapsedTextStyle =
-						MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+						MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
 
 
 					val fraction = scrollBehavior.state.collapsedFraction
 					val currentFontSize =
 						lerp(expandedTextStyle.fontSize.value, collapsedTextStyle.fontSize.value, fraction).sp
-					val currentFontWeight =
-						if (fraction < 0.5f) FontWeight.Bold else FontWeight.Bold // Changed to FontWeight.Bold
+					val currentFontWeight = FontWeight.ExtraBold
 
 					Text(
 						text = stringResource(id = R.string.settings),
@@ -197,14 +196,7 @@ fun SettingsScreen(
 					)
 				},
 				navigationIcon = {
-					FilledIconButton(
-						modifier = Modifier.padding(8.dp),
-						onClick = { navController?.popBackStack() },
-						colors = IconButtonDefaults.filledIconButtonColors(
-							containerColor = MaterialTheme.colorScheme.primary,
-							contentColor = MaterialTheme.colorScheme.onPrimary
-						)
-					) {
+					IconButton(onClick = { navController?.popBackStack() }) {
 						Icon(
 							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
 							contentDescription = "Back"
@@ -212,11 +204,10 @@ fun SettingsScreen(
 					}
 				},
 				colors = TopAppBarDefaults.topAppBarColors(
-					containerColor = Color.Transparent,
-					scrolledContainerColor = Color.Transparent
+					containerColor = MaterialTheme.colorScheme.background,
+					scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
 				),
-				scrollBehavior = scrollBehavior,
-				modifier = Modifier.padding(horizontal = 8.dp) // Added padding
+				scrollBehavior = scrollBehavior
 			)
 		},
 	) { paddingValues ->
@@ -233,10 +224,9 @@ fun SettingsScreen(
 					Text(
 						text = stringResource(id = R.string.behavior),
 						color = MaterialTheme.colorScheme.primary,
-						style = MaterialTheme.typography.titleLarge.copy(
-							fontWeight = FontWeight.Bold
-						),
-						modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+						style = MaterialTheme.typography.headlineSmall,
+						fontWeight = FontWeight.ExtraBold,
+						modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
 					)
 
 					val autoStartEnabled by viewModel.autoStartEnabled.collectAsState()
@@ -251,7 +241,8 @@ fun SettingsScreen(
 								showUpgradeDialog = true
 							}
 						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f,
+						isPro = true
 					)
 
 					SettingsSwitchItem(
@@ -288,7 +279,8 @@ fun SettingsScreen(
 								showUpgradeDialog = true
 							}
 						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f,
+						isPro = true
 					)
 
 					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
@@ -307,7 +299,8 @@ fun SettingsScreen(
 								showUpgradeDialog = true
 							}
 						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled() && hasSecureSettingsPermission) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled() && hasSecureSettingsPermission) 1f else 0.5f,
+						isPro = true
 					)
 
 					if (showAdbDialog) {
@@ -354,6 +347,7 @@ fun SettingsScreen(
 					SettingsSliderItem(
 						title = stringResource(id = R.string.activation_delay),
 						description = stringResource(id = R.string.activation_delay_description),
+						isPro = true,
 						sliderContent = {
 							var sliderPosition by remember { mutableStateOf(activationDelay.toFloat()) }
 							LaunchedEffect(activationDelay) {
@@ -438,7 +432,8 @@ fun SettingsScreen(
 						onEndTimeChange = { viewModel.setDndScheduleEndTime(it) },
 						selectedDays = dndScheduleDays,
 						onDaysChange = { viewModel.setDndScheduleDays(it) },
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f,
+						isPro = true
 					)
 				}
 			}
@@ -450,10 +445,9 @@ fun SettingsScreen(
             Text(
                 text = stringResource(id = R.string.detection),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
             )
 
             val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
@@ -468,7 +462,8 @@ fun SettingsScreen(
                         showUpgradeDialog = true
                     }
                 },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+                isPro = true
             )
 
             val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
@@ -483,7 +478,8 @@ fun SettingsScreen(
                         showUpgradeDialog = true
                     }
                 },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+                isPro = true
             )
 
             val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
@@ -498,7 +494,8 @@ fun SettingsScreen(
                         showUpgradeDialog = true
                     }
                 },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+                isPro = true
             )
         }
     }
@@ -510,10 +507,9 @@ fun SettingsScreen(
             Text(
                 text = stringResource(id = R.string.general),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
             )
 
             SettingsClickableItem(
@@ -547,10 +543,9 @@ fun SettingsScreen(
             Text(
                 text = stringResource(id = R.string.sound),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
             )
 
             SettingsSwitchItem(
@@ -777,10 +772,9 @@ fun SettingsScreen(
 			Text(
 				text = stringResource(id = R.string.vibration),
 				color = MaterialTheme.colorScheme.primary,
-				style = MaterialTheme.typography.titleLarge.copy(
-					fontWeight = FontWeight.Bold
-				),
-				modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+				style = MaterialTheme.typography.headlineSmall,
+				fontWeight = FontWeight.ExtraBold,
+				modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
 			)
 
 			SettingsSwitchItem(
@@ -950,10 +944,9 @@ fun SettingsScreen(
 			Text(
 				text = stringResource(id = R.string.extras),
 				color = MaterialTheme.colorScheme.primary,
-				style = MaterialTheme.typography.titleLarge.copy(
-					fontWeight = FontWeight.Bold
-				),
-				modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+				style = MaterialTheme.typography.headlineSmall,
+				fontWeight = FontWeight.ExtraBold,
+				modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
 			)
 
 			SettingsClickableItem(
@@ -1052,18 +1045,29 @@ private fun ScheduleSection(
     onEndTimeChange: (String) -> Unit,
     selectedDays: Set<Int>,
     onDaysChange: (Set<Int>) -> Unit,
-    alpha: Float = 1f
+    alpha: Float = 1f,
+    isPro: Boolean = false
 ) {
     val context = LocalContext.current
 
     Column(modifier = Modifier.alpha(alpha)) {
         if (title != null) {
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                if (isPro) {
+                    ProBadge(modifier = Modifier.padding(start = 8.dp))
+                }
+            }
         }
 
         SettingsSwitchItem(
@@ -1177,40 +1181,46 @@ fun SettingsSwitchItem(
 	checked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
 	enabled: Boolean = true,
-	alpha: Float = 1f
+	alpha: Float = 1f,
+	isPro: Boolean = false
 ) {
 	Card(
-		shape = RoundedCornerShape(16.dp),
+		shape = RoundedCornerShape(28.dp),
 		colors = CardDefaults.cardColors(
-			containerColor = MaterialTheme.colorScheme.surfaceContainer
+			containerColor = if (checked) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else MaterialTheme.colorScheme.surfaceContainerHigh
 		),
 		elevation = CardDefaults.cardElevation(
-			defaultElevation = 1.dp
+			defaultElevation = 0.dp
 		),
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(vertical = 6.dp)
-			.clip(RoundedCornerShape(16.dp))
+			.padding(vertical = 4.dp)
+			.clip(RoundedCornerShape(28.dp))
 			.clickable(enabled = enabled) { onCheckedChange(!checked) }
 			.alpha(alpha)
 	) {
-		Column(
+		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 16.dp, vertical = 12.dp)
+				.padding(horizontal = 20.dp, vertical = 20.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
 		) {
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
+			Column(
+				modifier = Modifier.weight(1f)
 			) {
-				Column(
-					modifier = Modifier.weight(1f)
-				) {
+				Row(verticalAlignment = Alignment.CenterVertically) {
 					Text(
 						text = title,
-						style = MaterialTheme.typography.titleMedium,
+						style = MaterialTheme.typography.titleLarge,
+						fontWeight = FontWeight.Bold,
+						modifier = Modifier.weight(1f, fill = false)
 					)
+					if (isPro) {
+						ProBadge(modifier = Modifier.padding(start = 8.dp))
+					}
+				}
+				if (description.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(4.dp))
 					Text(
 						text = description,
@@ -1218,12 +1228,12 @@ fun SettingsSwitchItem(
 						color = MaterialTheme.colorScheme.onSurfaceVariant,
 					)
 				}
-				Switch(
-					checked = checked,
-					onCheckedChange = onCheckedChange,
-					enabled = enabled
-				)
 			}
+			Switch(
+				checked = checked,
+				onCheckedChange = onCheckedChange,
+				enabled = enabled
+			)
 		}
 	}
 }
@@ -1232,49 +1242,48 @@ fun SettingsSwitchItem(
 fun SettingsSliderItem(
 	title: String,
 	description: String? = null,
+	isPro: Boolean = false,
 	sliderContent: @Composable () -> Unit
 ) {
 	Card(
-		shape = RoundedCornerShape(16.dp),
+		shape = RoundedCornerShape(28.dp),
 		colors = CardDefaults.cardColors(
-			containerColor = MaterialTheme.colorScheme.surfaceContainer
+			containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 		),
 		elevation = CardDefaults.cardElevation(
-			defaultElevation = 1.dp
+			defaultElevation = 0.dp
 		),
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(vertical = 6.dp)
-			.clip(RoundedCornerShape(16.dp))
+			.padding(vertical = 4.dp)
+			.clip(RoundedCornerShape(28.dp))
 	) {
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 16.dp, vertical = 12.dp)
+				.padding(horizontal = 20.dp, vertical = 20.dp)
 		) {
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = Arrangement.SpaceBetween
-			) {
-				Column(
-					modifier = Modifier.weight(1f)
-				) {
-					Text(
-						text = title,
-						style = MaterialTheme.typography.titleMedium,
-					)
-					if (description != null) {
-						Spacer(modifier = Modifier.height(4.dp))
-						Text(
-							text = description,
-							style = MaterialTheme.typography.bodyMedium,
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-						)
-					}
+			Row(verticalAlignment = Alignment.CenterVertically) {
+				Text(
+					text = title,
+					style = MaterialTheme.typography.titleLarge,
+					fontWeight = FontWeight.Bold,
+					modifier = Modifier.weight(1f, fill = false)
+				)
+				if (isPro) {
+					ProBadge(modifier = Modifier.padding(start = 8.dp))
 				}
-				sliderContent()
 			}
+			if (description != null) {
+				Spacer(modifier = Modifier.height(4.dp))
+				Text(
+					text = description,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+				)
+			}
+			Spacer(modifier = Modifier.height(12.dp))
+			sliderContent()
 		}
 	}
 }
@@ -1283,57 +1292,83 @@ fun SettingsSliderItem(
 fun SettingsClickableItem(
 	title: String,
 	description: String? = null,
-	leadingIcon: @Composable (() -> Unit)? = null,
-	trailingIcon: @Composable (() -> Unit)? = null,
-	onClick: () -> Unit
+	onClick: () -> Unit,
+	leadingIcon: (@Composable () -> Unit)? = null,
+	trailingIcon: (@Composable () -> Unit)? = null,
+	enabled: Boolean = true,
+	alpha: Float = 1f,
+	isPro: Boolean = false
 ) {
 	Card(
-		shape = RoundedCornerShape(16.dp),
+		shape = RoundedCornerShape(28.dp),
 		colors = CardDefaults.cardColors(
-			containerColor = MaterialTheme.colorScheme.surfaceContainer
+			containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
 		),
 		elevation = CardDefaults.cardElevation(
-			defaultElevation = 1.dp
+			defaultElevation = 0.dp
 		),
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(vertical = 6.dp)
-			.clip(RoundedCornerShape(16.dp))
-			.clickable(onClick = onClick)
+			.padding(vertical = 4.dp)
+			.clip(RoundedCornerShape(28.dp))
+			.clickable(enabled = enabled, onClick = onClick)
+			.alpha(alpha)
 	) {
-		Column(
+		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 16.dp, vertical = 12.dp)
+				.padding(horizontal = 20.dp, vertical = 20.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
 		) {
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				verticalAlignment = Alignment.CenterVertically,
-			) {
-				if (leadingIcon != null) {
+			if (leadingIcon != null) {
+				Box(modifier = Modifier.size(24.dp)) {
 					leadingIcon()
-					Spacer(modifier = Modifier.width(16.dp))
-				}
-				Column(
-					modifier = Modifier.weight(1f)
-				) {
-					Text(
-						text = title,
-						style = MaterialTheme.typography.titleMedium,
-					)
-					if (description != null) {
-						Spacer(modifier = Modifier.height(4.dp))
-						Text(
-							text = description,
-							style = MaterialTheme.typography.bodyMedium,
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-						)
-					}
-				}
-				if (trailingIcon != null) {
-					trailingIcon()
 				}
 			}
+			Column(
+				modifier = Modifier.weight(1f)
+			) {
+				Row(verticalAlignment = Alignment.CenterVertically) {
+					Text(
+						text = title,
+						style = MaterialTheme.typography.titleLarge,
+						fontWeight = FontWeight.Bold,
+						modifier = Modifier.weight(1f, fill = false)
+					)
+					if (isPro) {
+						ProBadge(modifier = Modifier.padding(start = 8.dp))
+					}
+				}
+				if (description != null) {
+					Spacer(modifier = Modifier.height(4.dp))
+					Text(
+						text = description,
+						style = MaterialTheme.typography.bodyMedium,
+						color = MaterialTheme.colorScheme.onSurfaceVariant,
+					)
+				}
+			}
+			if (trailingIcon != null) {
+				trailingIcon()
+			}
 		}
+	}
+}
+
+@Composable
+fun ProBadge(modifier: Modifier = Modifier) {
+	Surface(
+		modifier = modifier,
+		shape = RoundedCornerShape(8.dp),
+		color = MaterialTheme.colorScheme.primaryContainer,
+		contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+	) {
+		Text(
+			text = "PRO",
+			style = MaterialTheme.typography.labelSmall,
+			fontWeight = FontWeight.ExtraBold,
+			modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+		)
 	}
 }

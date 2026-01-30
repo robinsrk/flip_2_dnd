@@ -182,17 +182,17 @@ fun BottomNavigationSection(
     ) {
         // Page Indicators
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             repeat(4) { index ->
                 val isSelected = pagerState.currentPage == index
-                val width = if (isSelected) 24.dp else 8.dp
-                val color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                val width = if (isSelected) 32.dp else 12.dp
+                val color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh
 
                 Box(
                     modifier = Modifier
-                        .height(8.dp)
+                        .height(12.dp)
                         .width(width)
                         .clip(CircleShape)
                         .background(color)
@@ -213,17 +213,19 @@ fun BottomNavigationSection(
                 if (isLastPage) onComplete() else onNext()
             },
             enabled = if (isLastPage) true else canProceed,
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
-            modifier = Modifier.height(50.dp)
+            shape = RoundedCornerShape(28.dp),
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+            modifier = Modifier.height(56.dp)
         ) {
             Text(
                 text = if (isLastPage) "Get Started" else "Next",
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
             )
             if (!isLastPage) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
-                    imageVector = Icons.Default.NavigateNext,
+                    imageVector = Icons.Default.ArrowForward,
                     contentDescription = null
                 )
             }
@@ -244,50 +246,60 @@ fun OnboardingContentPage(
             .fillMaxSize()
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
-        Box(
+        Card(
             modifier = Modifier
-                .size(160.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
-            contentAlignment = Alignment.Center
+                .size(240.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(64.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-            if (iconVector != null) {
-                Icon(
-                    imageVector = iconVector,
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                    tint = iconTint
-                )
-            } else if (iconRes != null) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                    tint = iconTint
-                )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (iconRes != null) {
+                    Image(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = null,
+                        modifier = Modifier.size(120.dp),
+                        colorFilter = if (iconTint != Color.Unspecified) ColorFilter.tint(iconTint) else null
+                    )
+                } else if (iconVector != null) {
+                    Icon(
+                        imageVector = iconVector,
+                        contentDescription = null,
+                        modifier = Modifier.size(120.dp),
+                        tint = iconTint
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
     }
 }
 
@@ -300,37 +312,34 @@ fun UnifiedPermissionsPage(
 ) {
     val context = LocalContext.current
     
-    // We rely on parent passed state now
-    
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        Text(
-            text = "Setup Permissions",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-             text = "Grant the following permissions to ensure Flip 2 DND works correctly.",
-             style = MaterialTheme.typography.bodyMedium,
-             textAlign = TextAlign.Center,
-             color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Setup Permissions",
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center
+            )
+            
+            Text(
+                 text = "Grant the following permissions to ensure Flip 2 DND works correctly.",
+                 style = MaterialTheme.typography.bodyLarge,
+                 textAlign = TextAlign.Center,
+                 color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
         // Permission List
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            
             PermissionItem(
                 title = "Do Not Disturb Access",
                 description = "Required to toggle DND mode.",
@@ -366,7 +375,7 @@ fun UnifiedPermissionsPage(
                 title = "Notifications",
                 description = "Optional. Shows service status.",
                 icon = Icons.Default.Notifications,
-                isGranted = false, // Polling this is complex without permission helper, keep simple
+                isGranted = false,
                 isRequired = false,
                 onClick = {
                     notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -385,80 +394,75 @@ fun PermissionItem(
     isRequired: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isGranted) 
-        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) 
-    else 
-        MaterialTheme.colorScheme.surface
-
-    val borderColor = if (isGranted) Color.Transparent else MaterialTheme.colorScheme.outlineVariant
-
     Card(
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isGranted) 
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) 
+            else 
+                MaterialTheme.colorScheme.surfaceContainerHigh
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(enabled = !isGranted, onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        border = if (!isGranted) androidx.compose.foundation.BorderStroke(1.dp, borderColor) else null
+            .clip(RoundedCornerShape(28.dp))
+            .clickable(enabled = !isGranted, onClick = onClick)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
-            
-            Spacer(modifier = Modifier.width(16.dp))
             
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
                     )
-                    if (isRequired) {
-                        Spacer(modifier = Modifier.width(6.dp))
+                    if (isRequired && !isGranted) {
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "*",
                             color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleLarge
                         )
                     }
                 }
                 Text(
                     text = description,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
-            Spacer(modifier = Modifier.width(8.dp))
             
             if (isGranted) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Granted",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
                 )
             } else {
-                Button(
-                    onClick = onClick,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    modifier = Modifier.height(32.dp)
-                ) {
-                    Text("Grant", style = MaterialTheme.typography.labelSmall)
-                }
+                Icon(
+                    imageVector = Icons.Default.NavigateNext,
+                    contentDescription = "Grant",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

@@ -11,31 +11,44 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
 import dev.robin.flip_2_dnd.utils.copyAddressToClipboard
 import dev.robin.flip_2_dnd.R
+import androidx.compose.foundation.background
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,181 +58,169 @@ fun DonationScreen(navController: NavController? = null) {
 	val usdtAddress = "0x9fC1AcF713A474e5317473A7fbcd7774E2fCF7C5"
 	val btcAddress = "12jF3RASnsPMzvDYVKavGrmNZkMUPHJrgq"
 
+	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
 	Scaffold(
+		modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 		topBar = {
 			LargeTopAppBar(
 				title = {
+					val expandedTextStyle =
+						MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold)
+					val collapsedTextStyle =
+						MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
+
+					val fraction = scrollBehavior.state.collapsedFraction
+					val currentFontSize =
+						lerp(expandedTextStyle.fontSize.value, collapsedTextStyle.fontSize.value, fraction).sp
+					val currentFontWeight = FontWeight.ExtraBold
+
 					Text(
-						stringResource(id = R.string.support_developer),
-						style = MaterialTheme.typography.headlineLarge.copy(
-							fontWeight = FontWeight.Bold
-						)
+						text = stringResource(id = R.string.support_developer),
+						style = MaterialTheme.typography.headlineSmall.copy(
+							fontSize = currentFontSize,
+							fontWeight = currentFontWeight
+						),
+						maxLines = 2,
+						overflow = TextOverflow.Ellipsis,
 					)
 				},
 				navigationIcon = {
-					FilledIconButton(
-						onClick = { navController?.popBackStack() },
-						colors = IconButtonDefaults.filledIconButtonColors(
-							containerColor = MaterialTheme.colorScheme.primary,
-							contentColor = MaterialTheme.colorScheme.onPrimary
-						)
-					) {
+					IconButton(onClick = { navController?.popBackStack() }) {
 						Icon(
 							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
 							contentDescription = "Back"
 						)
 					}
 				},
-				modifier = Modifier.padding(horizontal = 8.dp) // Added padding
+				colors = TopAppBarDefaults.topAppBarColors(
+					containerColor = MaterialTheme.colorScheme.background,
+					scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+				),
+				scrollBehavior = scrollBehavior
 			)
 		}
 	) { paddingValues ->
-		Column(
+		LazyColumn(
 			modifier = Modifier
           .fillMaxSize()
           .padding(paddingValues)
-          .padding(16.dp),
-			verticalArrangement = Arrangement.spacedBy(16.dp),
-			horizontalAlignment = Alignment.CenterHorizontally
+          .padding(horizontal = 24.dp),
+			verticalArrangement = Arrangement.spacedBy(16.dp)
 		) {
-			Text(
-				text = stringResource(id = R.string.your_support_helps),
-				style = MaterialTheme.typography.bodyLarge,
-				textAlign = TextAlign.Center,
-				modifier = Modifier.padding(bottom = 8.dp)
-			)
+			item {
+				Text(
+					text = stringResource(id = R.string.your_support_helps),
+					style = MaterialTheme.typography.bodyLarge,
+					textAlign = TextAlign.Center,
+					modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(),
+					color = MaterialTheme.colorScheme.onSurfaceVariant
+				)
+			}
 
-			ElevatedCard(
-				modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable { copyAddressToClipboard(context, redotpayID) }
-			) {
-				DonationItem(
+			item {
+				DonationCard(
 					title = "Pay with RedotPay",
 					description = redotpayID,
 					trailingText = "RedotPay ID",
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "RedotPay Icon",
-							tint = MaterialTheme.colorScheme.primary
-						)
-					}
+					onClick = { copyAddressToClipboard(context, redotpayID) },
+					icon = R.drawable.ic_coin
 				)
 			}
 
-			ElevatedCard(
-				modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable { copyAddressToClipboard(context, usdtAddress) }
-			) {
-				DonationItem(
+			item {
+				DonationCard(
 					title = "Pay with USDT",
 					description = usdtAddress,
 					trailingText = "BNB Smart Chain (BEP20)",
-					trailingTextStyle = MaterialTheme.typography.bodySmall,
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "USDT Icon",
-							tint = MaterialTheme.colorScheme.primary
-						)
-					}
+					onClick = { copyAddressToClipboard(context, usdtAddress) },
+					icon = R.drawable.ic_coin
 				)
 			}
 
-			ElevatedCard(
-				modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable { copyAddressToClipboard(context, usdtAddress) }
-			) {
-				DonationItem(
-					title = "Pay with ETH",
-					description = usdtAddress,
-					trailingText = "BNB Smart Chain (BEP20)",
-					trailingTextStyle = MaterialTheme.typography.bodySmall,
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "ETH Icon",
-							tint = MaterialTheme.colorScheme.primary
-						)
-					}
-				)
-			}
-
-			ElevatedCard(
-				modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable { copyAddressToClipboard(context, btcAddress) }
-			) {
-				DonationItem(
-					title = "Pay with BTC",
+			item {
+				DonationCard(
+					title = "Pay with Bitcoin",
 					description = btcAddress,
-					trailingText = "Bitcoin",
-					trailingTextStyle = MaterialTheme.typography.bodySmall,
-					leadingIcon = {
-						Icon(
-							painter = painterResource(id = R.drawable.ic_coin),
-							contentDescription = "BTC Icon",
-							tint = MaterialTheme.colorScheme.primary
-						)
-					}
+					trailingText = "Bitcoin Network",
+					onClick = { copyAddressToClipboard(context, btcAddress) },
+					icon = R.drawable.ic_coin
 				)
 			}
 
-			Text(
-				text = stringResource(id = R.string.thanks_for_support),
-				style = MaterialTheme.typography.titleMedium,
-				textAlign = TextAlign.Center,
-				modifier = Modifier.padding(top = 16.dp)
-			)
+			item {
+				Text(
+					text = stringResource(id = R.string.thanks_for_support),
+					style = MaterialTheme.typography.titleLarge,
+					fontWeight = FontWeight.Bold,
+					textAlign = TextAlign.Center,
+					modifier = Modifier.padding(top = 24.dp, bottom = 32.dp).fillMaxWidth(),
+					color = MaterialTheme.colorScheme.primary
+				)
+			}
 		}
 	}
 }
 
 @Composable
-fun DonationItem(
+fun DonationCard(
 	title: String,
 	description: String,
-	trailingText: String? = null,
-	trailingTextStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-	leadingIcon: @Composable (() -> Unit)? = null
+	trailingText: String,
+	onClick: () -> Unit,
+	icon: Int
 ) {
-	Row(
+	Card(
 		modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-		verticalAlignment = Alignment.CenterVertically
+			.fillMaxWidth()
+			.clickable { onClick() },
+		shape = RoundedCornerShape(28.dp),
+		colors = CardDefaults.cardColors(
+			containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+		),
+		elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
 	) {
-		if (leadingIcon != null) {
-			Box(modifier = Modifier.padding(end = 16.dp)) {
-				leadingIcon()
+		Row(
+			modifier = Modifier.padding(20.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(16.dp)
+		) {
+			Box(
+				modifier = Modifier
+					.size(48.dp)
+					.clip(RoundedCornerShape(16.dp))
+					.background(MaterialTheme.colorScheme.primaryContainer),
+				contentAlignment = Alignment.Center
+			) {
+				Icon(
+					painter = painterResource(id = icon),
+					contentDescription = null,
+					tint = MaterialTheme.colorScheme.onPrimaryContainer,
+					modifier = Modifier.size(24.dp)
+				)
 			}
-		}
 
-		Column(modifier = Modifier.weight(1f)) {
-			Text(
-				text = title,
-				style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-			)
-			Spacer(modifier = Modifier.height(4.dp))
-			Text(
-				text = description,
-				style = MaterialTheme.typography.bodyMedium
-			)
-		}
-
-		if (trailingText != null) {
-			Spacer(modifier = Modifier.width(16.dp))
-			Text(
-				text = trailingText,
-				style = trailingTextStyle
-			)
+			Column(modifier = Modifier.weight(1f)) {
+				Text(
+					text = title,
+					style = MaterialTheme.typography.titleLarge,
+					fontWeight = FontWeight.Bold
+				)
+				Text(
+					text = description,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSurfaceVariant,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
+				Spacer(modifier = Modifier.height(4.dp))
+				Text(
+					text = trailingText,
+					style = MaterialTheme.typography.labelMedium,
+					color = MaterialTheme.colorScheme.primary,
+					fontWeight = FontWeight.SemiBold
+				)
+			}
 		}
 	}
 }

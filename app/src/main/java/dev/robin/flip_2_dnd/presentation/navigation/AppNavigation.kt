@@ -1,18 +1,26 @@
 package dev.robin.flip_2_dnd.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -43,8 +51,15 @@ fun AppNavigation() {
 
 	Scaffold(
 		bottomBar = {
-			NavigationBar {
+			NavigationBar(
+				modifier = Modifier
+					.height(96.dp)
+					.navigationBarsPadding(),
+				containerColor = MaterialTheme.colorScheme.surface,
+				tonalElevation = 0.dp
+			) {
 				items.forEach { screen ->
+					val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 					NavigationBarItem(
 						icon = {
 							Icon(
@@ -54,16 +69,25 @@ fun AppNavigation() {
 						},
 						label = {
 							Text(
-								stringResource(
+								text = stringResource(
 									id = when (screen) {
 										Screen.Home -> R.string.home
 										Screen.Settings -> R.string.settings
 										Screen.Donation -> R.string.support
 									}
-								)
+								),
+								style = MaterialTheme.typography.labelLarge,
+								fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
 							)
 						},
-						selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+						selected = selected,
+						colors = NavigationBarItemDefaults.colors(
+							selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+							unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+							selectedTextColor = MaterialTheme.colorScheme.onSurface,
+							unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+							indicatorColor = MaterialTheme.colorScheme.primaryContainer
+						),
 						onClick = {
 							navController.navigate(screen.route) {
 								popUpTo(navController.graph.findStartDestination().id) {

@@ -13,9 +13,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.collectAsState
@@ -71,8 +74,7 @@ class MainActivity : ComponentActivity() {
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
-
+    
     // Load onboarding state from SharedPreferences
     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     showOnboarding = !prefs.getBoolean(ONBOARDING_COMPLETED, false)
@@ -80,6 +82,23 @@ class MainActivity : ComponentActivity() {
     setContent {
       var showOnboardingState by remember { mutableStateOf(showOnboarding) }
       Flip_2_DNDTheme {
+        val isDarkTheme = isSystemInDarkTheme()
+        val surfaceColor = MaterialTheme.colorScheme.surface.toArgb()
+        
+        remember(isDarkTheme) {
+          enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(
+              android.graphics.Color.TRANSPARENT,
+              android.graphics.Color.TRANSPARENT,
+            ) { isDarkTheme },
+            navigationBarStyle = SystemBarStyle.auto(
+              surfaceColor,
+              surfaceColor,
+            ) { isDarkTheme }
+          )
+          null
+        }
+
         if (showOnboardingState) {
           OnboardingScreen(
             onComplete = {

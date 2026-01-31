@@ -1,6 +1,7 @@
 package dev.robin.flip_2_dnd.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,9 +54,9 @@ fun AppNavigation() {
 		bottomBar = {
 			NavigationBar(
 				modifier = Modifier
-					.height(96.dp)
+					.height(105.dp)
 					.navigationBarsPadding(),
-				containerColor = MaterialTheme.colorScheme.surface,
+				containerColor = MaterialTheme.colorScheme.surfaceContainer,
 				tonalElevation = 0.dp
 			) {
 				items.forEach { screen ->
@@ -64,7 +65,8 @@ fun AppNavigation() {
 						icon = {
 							Icon(
 								painter = painterResource(screen.icon),
-								contentDescription = screen.label
+								contentDescription = screen.label,
+								modifier = Modifier.size(28.dp)
 							)
 						},
 						label = {
@@ -77,7 +79,7 @@ fun AppNavigation() {
 									}
 								),
 								style = MaterialTheme.typography.labelLarge,
-								fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+								fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold
 							)
 						},
 						selected = selected,

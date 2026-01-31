@@ -73,10 +73,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build release APKs
-        run: ./gradlew assembleFreeRelease assembleProRelease
+      - name: Build release APK
+        run: ./gradlew assembleFreeRelease
 
-      - name: Align and Sign APKs
+      - name: Align and Sign APK
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -87,36 +87,34 @@ jobs:
             exit 1
           fi
 
-          FLAVORS=("free" "pro")
-          for FLAVOR in "${FLAVORS[@]}"; do
-            echo "Processing $FLAVOR flavor..."
-            UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
-            ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
-            SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-${FLAVOR^}.apk"
+          FLAVOR="free"
+          echo "Processing $FLAVOR flavor..."
+          UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
+          ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
+          SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-Free.apk"
 
-            if [ ! -f "$UNSIGNED_APK" ]; then
-              echo "Error: Unsigned APK not found for $FLAVOR"
-              exit 1
-            fi
+          if [ ! -f "$UNSIGNED_APK" ]; then
+            echo "Error: Unsigned APK not found for $FLAVOR"
+            exit 1
+          fi
 
-            echo "Aligning $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+          echo "Aligning $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
 
-            echo "Signing $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
-              --ks release.keystore \
-              --ks-pass pass:"${KEYSTORE_PASSWORD}" \
-              --ks-key-alias "${KEY_ALIAS}" \
-              --key-pass pass:"${KEY_PASSWORD}" \
-              --v2-signing-enabled true \
-              --v3-signing-enabled true \
-              --v4-signing-enabled false \
-              --out "$SIGNED_APK" \
-              "$ALIGNED_APK"
+          echo "Signing $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
+            --ks release.keystore \
+            --ks-pass pass:"${KEYSTORE_PASSWORD}" \
+            --ks-key-alias "${KEY_ALIAS}" \
+            --key-pass pass:"${KEY_PASSWORD}" \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            --v4-signing-enabled false \
+            --out "$SIGNED_APK" \
+            "$ALIGNED_APK"
 
-            echo "Verifying $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
-          done
+          echo "Verifying $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -126,7 +124,6 @@ jobs:
         with:
           files: |
             app/build/outputs/apk/free/release/Flip2DND-Free.apk
-            app/build/outputs/apk/pro/release/Flip2DND-Pro.apk
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -137,10 +134,9 @@ jobs:
           name: app-release
           path: |
             app/build/outputs/apk/free/release/Flip2DND-Free.apk
-            app/build/outputs/apk/pro/release/Flip2DND-Pro.apk
           if-no-files-found: error
 
-      - name: Send APKs to Telegram
+      - name: Send APK to Telegram
         if: startsWith(github.ref, 'refs/tags/')
         env:
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -159,18 +155,10 @@ jobs:
           EOF
 
           FREE_APK="app/build/outputs/apk/free/release/Flip2DND-Free.apk"
-          PRO_APK="app/build/outputs/apk/pro/release/Flip2DND-Pro.apk"
 
           # Send Free APK
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
                -F chat_id="$CHAT_ID" \
                -F document="@$FREE_APK" \
                -F caption="<caption.txt" \
-               -F parse_mode="HTML"
-
-          # Send Pro APK (optional, or just another message)
-          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-               -F chat_id="$CHAT_ID" \
-               -F document="@$PRO_APK" \
-               -F caption="Flip 2 DND Pro $TAG_NAME" \
                -F parse_mode="HTML"

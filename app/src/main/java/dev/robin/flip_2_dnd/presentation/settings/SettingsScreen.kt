@@ -961,16 +961,20 @@ fun SettingsScreen(
 					)
 				},
 				onClick = {
-					val telegramUsername = "flip_2_dnd"
-					val telegramUri = "tg://resolve?domain=$telegramUsername"
-					val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUri))
-					try {
-						context.startActivity(intent)
-					} catch (e: ActivityNotFoundException) {
-						Toast.makeText(context, "Telegram app not found", Toast.LENGTH_SHORT).show()
-						println("No activity found to handle the intent: $e")
+					if (dev.robin.flip_2_dnd.PremiumProvider.engine.telegramSupportEnabled()) {
+						val telegramUrl = "https://t.me/robins_dev_hub"
+						val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
+						try {
+							context.startActivity(intent)
+						} catch (e: ActivityNotFoundException) {
+							Toast.makeText(context, "No app found to open link", Toast.LENGTH_SHORT).show()
+						}
+					} else {
+						showUpgradeDialog = true
 					}
-				}
+				},
+				alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.telegramSupportEnabled()) 1f else 0.5f,
+				isPro = true
 			)
 
 			SettingsClickableItem(

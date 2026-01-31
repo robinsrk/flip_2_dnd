@@ -8,4 +8,5 @@ interface PremiumEngine {
 	fun customSoundEnabled(): Boolean
 	fun batterySaverSyncEnabled(): Boolean
 	fun detectionFiltersEnabled(): Boolean
+	fun telegramSupportEnabled(): Boolean
 }

@@ -1,0 +1,14 @@
+- 🎨 Brand new Material 3 UI with Material You dynamic theming support.
+- 💎 Introduced Flip 2 DND Pro with exclusive features.
+- 🚀 Added Auto Start on Boot for seamless service activation (Pro).
+- 📅 Advanced Scheduling for DND, Sound, and Vibration (Pro).
+- 📁 Custom Sound support from local file system (Pro).
+- 🔍 New DND Cancellation Filters: Flashlight, Media, and Headphone detection (Pro).
+- 🔋 Battery Saver Sync integration (Pro).
+- ⏱️ Full activation delay customization (Pro).
+- 🎯 High sensitivity mode for more precise flip detection (Pro).
+- 📱 Redesigned Settings screen with better categorization.
+- 💬 Added Pro-exclusive Telegram Support Group access.
+- 🛠️ Improved Quick Settings tile behavior.
+- 🌍 Added multiple language support and localizations.
+- 🐛 Performance improvements and bug fixes.

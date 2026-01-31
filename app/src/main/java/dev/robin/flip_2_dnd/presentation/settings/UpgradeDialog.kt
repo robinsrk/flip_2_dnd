@@ -21,7 +21,7 @@ fun UpgradeDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val gumroadUrl = "https://robinsrk.gumroad.com/l/flip2dndpro"
+    val gumroadUrl = "https://robinsrk.gumroad.com/l/flip_2_dnd"
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -70,6 +70,7 @@ fun UpgradeDialog(
                         FeatureItem("Custom activation delay")
                         FeatureItem("DND, Sound, & Vibration schedules")
                         FeatureItem("Custom sounds from files")
+                        FeatureItem("Telegram Support Group")
                     }
                 }
             }

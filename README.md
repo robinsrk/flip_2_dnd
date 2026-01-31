@@ -52,7 +52,7 @@ Get the most out of Flip 2 DND by upgrading to Pro!
 - **Battery Saver Integration**: Automatically enable Battery Saver when flipped.
 - **DND Cancellation Filters**: Flashlight, Media, and Headphone detection.
 
-[**Buy Flip 2 DND Pro on Gumroad**](https://robinsrk.gumroad.com/l/flip2dndpro)
+[**Buy Flip 2 DND Pro on Gumroad**](https://robinsrk.gumroad.com/l/flip_2_dnd)
 
 ---
 

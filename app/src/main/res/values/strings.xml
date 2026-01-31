@@ -55,7 +55,7 @@
 	<string name="use_custom_vibration_strength">Use custom vibration strength</string>
 	<string name="extras">Extras</string>
 	<string name="join_telegram">Join Telegram</string>
-	<string name="join_telegram_description">Join our Telegram Community</string>
+	<string name="join_telegram_description">Join our Telegram Community (Requires Pro)</string>
 	<string name="support_developer">Support Developer</string>
 	<string name="support_developer_description">Help keep the app free and improving</string>
 	<string name="your_support_helps">Your support helps keep this app free and continously improving!</string>

@@ -14,6 +14,7 @@
 .cxx
 local.properties
 key.properties
+robin_dev.jks
 build.sh
 play_store_sign.keystore
 app/release/app-release.aab

@@ -8,4 +8,5 @@ class FreePremiumEngine : PremiumEngine {
 	override fun customSoundEnabled() = false
 	override fun batterySaverSyncEnabled() = false
 	override fun detectionFiltersEnabled() = false
+	override fun telegramSupportEnabled() = false
 }

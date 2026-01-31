@@ -26,7 +26,6 @@ android {
 	productFlavors {
 		create("free") {
 			dimension = "tier"
-			applicationIdSuffix = ".free"
 			versionNameSuffix = "-free"
 			resValue("string", "app_name", "Flip 2 DND")
 		}

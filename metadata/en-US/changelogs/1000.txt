@@ -1,3 +1,4 @@
+- ⚠️ Clean installation is mandatory due to signature changes.
 - 🎨 Brand new Material 3 UI with Material You dynamic theming support.
 - 💎 Introduced Flip 2 DND Pro with exclusive features.
 - 🚀 Added Auto Start on Boot for seamless service activation (Pro).

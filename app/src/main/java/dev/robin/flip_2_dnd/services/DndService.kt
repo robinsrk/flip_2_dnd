@@ -3,6 +3,7 @@ package dev.robin.flip_2_dnd.services
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.hardware.camera2.CameraManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.VibrationEffect
@@ -13,6 +14,7 @@ import android.util.Log
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +39,16 @@ class DndService(
 		context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 	}
 	private val soundService = SoundService(context, settingsRepository)
+
+	private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+	private val cameraId = try {
+		cameraManager.cameraIdList.firstOrNull { id ->
+			val characteristics = cameraManager.getCameraCharacteristics(id)
+			characteristics.get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+		}
+	} catch (e: Exception) {
+		null
+	}
 
 	private val _isDndEnabled = MutableStateFlow(false)
 	val isDndEnabled: StateFlow<Boolean> = _isDndEnabled
@@ -192,6 +204,16 @@ class DndService(
                 }
             }
 
+            // Get the appropriate flashlight pattern from settings
+            runBlocking {
+                val flashlightPattern = if (willBeDndEnabled) {
+                    settingsRepository.getDndOnFlashlightPattern().first()
+                } else {
+                    settingsRepository.getDndOffFlashlightPattern().first()
+                }
+                flashFlashlight(flashlightPattern)
+            }
+
             // Add 2-second delay only when turning on Total Silence DND
             if (willBeDndEnabled && newFilter == NotificationManager.INTERRUPTION_FILTER_NONE) {
                 runBlocking {
@@ -245,7 +267,35 @@ class DndService(
         }
     }
 
-    private fun isWithinSchedule(startTime: String, endTime: String, days: Set<Int>): Boolean {
+    private fun flashFlashlight(pattern: FlashlightPattern) {
+		if (cameraId == null || pattern == FlashlightPattern.NONE) return
+
+		runBlocking {
+			val isFlashlightEnabled = settingsRepository.getFlashlightFeedbackEnabled().first()
+			if (!isFlashlightEnabled) return@runBlocking
+
+			// Check if Pro feature
+			if (!dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) return@runBlocking
+
+			try {
+				pattern.pattern.forEachIndexed { index, duration ->
+					if (index == 0) {
+						if (duration > 0) delay(duration)
+					} else {
+						val isOn = index % 2 != 0
+						cameraManager.setTorchMode(cameraId, isOn)
+						delay(duration)
+					}
+				}
+				// Ensure it's off at the end
+				cameraManager.setTorchMode(cameraId, false)
+			} catch (e: Exception) {
+				Log.e(TAG, "Error flashing flashlight: ${e.message}")
+			}
+		}
+	}
+
+	private fun isWithinSchedule(startTime: String, endTime: String, days: Set<Int>): Boolean {
         try {
             val now = java.util.Calendar.getInstance()
             val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)

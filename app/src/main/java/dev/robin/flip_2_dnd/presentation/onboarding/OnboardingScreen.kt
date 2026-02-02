@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.BatteryAlert
@@ -42,10 +42,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import dev.robin.flip_2_dnd.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,12 +59,12 @@ fun isBatteryOptimizationDisabled(context: Context): Boolean {
     return powerManager.isIgnoringBatteryOptimizations(context.packageName)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -109,7 +108,6 @@ fun OnboardingScreen(
 
             // Middle section: Pager
             HorizontalPager(
-                count = 4,
                 state = pagerState,
                 userScrollEnabled = false,
                 modifier = Modifier
@@ -164,7 +162,6 @@ fun OnboardingScreen(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun BottomNavigationSection(
     pagerState: PagerState,
@@ -225,7 +222,7 @@ fun BottomNavigationSection(
             if (!isLastPage) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
-                    imageVector = Icons.Default.ArrowForward,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null
                 )
             }
@@ -459,7 +456,7 @@ fun PermissionItem(
                 )
             } else {
                 Icon(
-                    imageVector = Icons.Default.NavigateNext,
+                    imageVector = Icons.AutoMirrored.Filled.NavigateNext,
                     contentDescription = "Grant",
                     tint = MaterialTheme.colorScheme.primary
                 )

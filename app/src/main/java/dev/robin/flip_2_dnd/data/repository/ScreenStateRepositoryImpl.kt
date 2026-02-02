@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ScreenStateRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ScreenStateRepository {
     private val _isScreenOff = MutableStateFlow(false)
     private var isMonitoring = false

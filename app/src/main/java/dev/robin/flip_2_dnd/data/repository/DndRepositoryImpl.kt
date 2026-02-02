@@ -21,7 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DndRepositoryImpl @Inject constructor(
-	@ApplicationContext private val context: Context,
+	@param:ApplicationContext private val context: Context,
 	private val settingsRepository: SettingsRepository
 ) : DndRepository {
 	private val notificationManager =

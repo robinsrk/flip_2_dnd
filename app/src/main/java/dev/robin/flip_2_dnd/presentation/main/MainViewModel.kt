@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor(
     private val dndRepository: DndRepository,
     private val feedbackRepository: FeedbackRepository,
     private val screenStateRepository: ScreenStateRepository,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())

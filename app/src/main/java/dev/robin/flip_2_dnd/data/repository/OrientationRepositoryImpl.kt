@@ -16,7 +16,7 @@ import kotlin.math.abs
 
 @Singleton
 class OrientationRepositoryImpl @Inject constructor(
-	@ApplicationContext private val context: Context
+	@param:ApplicationContext private val context: Context
 ) : OrientationRepository, SensorEventListener {
 
 	private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager

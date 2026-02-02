@@ -19,3 +19,4 @@ build.sh
 play_store_sign.keystore
 app/release/app-release.aab
 .java-version
+.kotlin/errors

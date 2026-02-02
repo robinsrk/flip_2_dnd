@@ -1,5 +1,6 @@
 package dev.robin.flip_2_dnd.domain.repository
 
+import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
 import dev.robin.flip_2_dnd.presentation.settings.Sound
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,13 @@ interface SettingsRepository {
     suspend fun setMediaPlaybackDetectionEnabled(enabled: Boolean)
     fun getHeadphoneDetectionEnabled(): Flow<Boolean>
     suspend fun setHeadphoneDetectionEnabled(enabled: Boolean)
+
+    fun getFlashlightFeedbackEnabled(): Flow<Boolean>
+    suspend fun setFlashlightFeedbackEnabled(enabled: Boolean)
+    fun getDndOnFlashlightPattern(): Flow<FlashlightPattern>
+    suspend fun setDndOnFlashlightPattern(pattern: FlashlightPattern)
+    fun getDndOffFlashlightPattern(): Flow<FlashlightPattern>
+    suspend fun setDndOffFlashlightPattern(pattern: FlashlightPattern)
 
     fun getDndScheduleEnabled(): Flow<Boolean>
     suspend fun setDndScheduleEnabled(enabled: Boolean)

@@ -9,4 +9,5 @@ interface PremiumEngine {
 	fun batterySaverSyncEnabled(): Boolean
 	fun detectionFiltersEnabled(): Boolean
 	fun telegramSupportEnabled(): Boolean
+	fun flashlightFeedbackEnabled(): Boolean
 }

@@ -84,4 +84,9 @@
     <string name="days">Days</string>
     <string name="auto_start">Auto Start on Boot</string>
     <string name="auto_start_description">Automatically start the flip detector service when the device reboots (Requires Pro)</string>
+    <string name="flashlight">Flashlight</string>
+    <string name="flashlight_enabled">Flashlight Feedback</string>
+    <string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
+    <string name="dnd_on_flashlight_pattern">DND On Flashlight Pattern</string>
+    <string name="dnd_off_flashlight_pattern">DND Off Flashlight Pattern</string>
 </resources>

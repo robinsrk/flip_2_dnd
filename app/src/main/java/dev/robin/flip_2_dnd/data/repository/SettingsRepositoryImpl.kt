@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
 import dev.robin.flip_2_dnd.presentation.settings.Sound
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import dev.robin.flip_2_dnd.services.FlipDetectorService
@@ -45,6 +46,9 @@ private const val KEY_ACTIVATION_DELAY = "activation_delay"
 private const val KEY_FLASHLIGHT_DETECTION = "flashlight_detection"
 private const val KEY_MEDIA_PLAYBACK_DETECTION = "media_playback_detection"
 private const val KEY_HEADPHONE_DETECTION = "headphone_detection"
+private const val KEY_FLASHLIGHT_FEEDBACK_ENABLED = "flashlight_feedback_enabled"
+private const val KEY_DND_ON_FLASHLIGHT_PATTERN = "dnd_on_flashlight_pattern"
+private const val KEY_DND_OFF_FLASHLIGHT_PATTERN = "dnd_off_flashlight_pattern"
 private const val KEY_DND_SCHEDULE_ENABLED = "schedule_enabled"
 private const val KEY_DND_SCHEDULE_START_TIME = "schedule_start_time"
 private const val KEY_DND_SCHEDULE_END_TIME = "schedule_end_time"
@@ -63,7 +67,7 @@ private const val KEY_AUTO_START = "auto_start"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
-	@ApplicationContext private val appContext: Context
+	@param:ApplicationContext private val appContext: Context
 ) : SettingsRepository {
 	private val prefs: SharedPreferences =
 		appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -117,6 +121,19 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val flashlightDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_DETECTION, false))
 	private val mediaPlaybackDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_MEDIA_PLAYBACK_DETECTION, false))
 	private val headphoneDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_HEADPHONE_DETECTION, false))
+	private val flashlightFeedbackEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_FEEDBACK_ENABLED, false))
+	private val dndOnFlashlightPattern = MutableStateFlow(
+		FlashlightPattern.valueOf(
+			prefs.getString(KEY_DND_ON_FLASHLIGHT_PATTERN, FlashlightPattern.DOUBLE_BLINK.name)
+				?: FlashlightPattern.DOUBLE_BLINK.name
+		)
+	)
+	private val dndOffFlashlightPattern = MutableStateFlow(
+		FlashlightPattern.valueOf(
+			prefs.getString(KEY_DND_OFF_FLASHLIGHT_PATTERN, FlashlightPattern.SINGLE_BLINK.name)
+				?: FlashlightPattern.SINGLE_BLINK.name
+		)
+	)
 	private val dndScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_DND_SCHEDULE_ENABLED, false))
 	private val dndScheduleStartTime = MutableStateFlow(prefs.getString(KEY_DND_SCHEDULE_START_TIME, "22:00") ?: "22:00")
 	private val dndScheduleEndTime = MutableStateFlow(prefs.getString(KEY_DND_SCHEDULE_END_TIME, "07:00") ?: "07:00")
@@ -339,6 +356,30 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_HEADPHONE_DETECTION, enabled).apply()
 		headphoneDetectionEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightFeedbackEnabled(): Flow<Boolean> = flashlightFeedbackEnabled
+
+	override suspend fun setFlashlightFeedbackEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_FLASHLIGHT_FEEDBACK_ENABLED, enabled).apply()
+		flashlightFeedbackEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getDndOnFlashlightPattern(): Flow<FlashlightPattern> = dndOnFlashlightPattern
+
+	override suspend fun setDndOnFlashlightPattern(pattern: FlashlightPattern) {
+		prefs.edit().putString(KEY_DND_ON_FLASHLIGHT_PATTERN, pattern.name).apply()
+		dndOnFlashlightPattern.value = pattern
+		restartFlipDetectorService()
+	}
+
+	override fun getDndOffFlashlightPattern(): Flow<FlashlightPattern> = dndOffFlashlightPattern
+
+	override suspend fun setDndOffFlashlightPattern(pattern: FlashlightPattern) {
+		prefs.edit().putString(KEY_DND_OFF_FLASHLIGHT_PATTERN, pattern.name).apply()
+		dndOffFlashlightPattern.value = pattern
 		restartFlipDetectorService()
 	}
 

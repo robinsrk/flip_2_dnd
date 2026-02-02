@@ -9,4 +9,5 @@ class ProPremiumEngine : PremiumEngine {
 	override fun batterySaverSyncEnabled() = true
 	override fun detectionFiltersEnabled() = true
 	override fun telegramSupportEnabled() = true
+	override fun flashlightFeedbackEnabled() = true
 }

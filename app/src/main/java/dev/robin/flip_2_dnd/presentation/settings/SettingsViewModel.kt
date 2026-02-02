@@ -1,10 +1,13 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
 import android.app.Application
+import android.content.Context
+import android.hardware.camera2.CameraManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -54,6 +57,7 @@ class SettingsViewModel @Inject constructor(
 
 	val availableSounds = Sound.entries
 	val availableVibrationPatterns = VibrationPattern.entries
+	val availableFlashlightPatterns = FlashlightPattern.entries
 	private val _useCustomVibration = MutableStateFlow(false)
 	val useCustomVibration = _useCustomVibration.asStateFlow()
 
@@ -86,6 +90,15 @@ class SettingsViewModel @Inject constructor(
 
 	private val _headphoneDetectionEnabled = MutableStateFlow(false)
 	val headphoneDetectionEnabled = _headphoneDetectionEnabled.asStateFlow()
+
+	private val _flashlightFeedbackEnabled = MutableStateFlow(false)
+	val flashlightFeedbackEnabled = _flashlightFeedbackEnabled.asStateFlow()
+
+	private val _dndOnFlashlightPattern = MutableStateFlow(FlashlightPattern.DOUBLE_BLINK)
+	val dndOnFlashlightPattern = _dndOnFlashlightPattern.asStateFlow()
+
+	private val _dndOffFlashlightPattern = MutableStateFlow(FlashlightPattern.SINGLE_BLINK)
+	val dndOffFlashlightPattern = _dndOffFlashlightPattern.asStateFlow()
 
 	private val _dndScheduleEnabled = MutableStateFlow(false)
     val dndScheduleEnabled = _dndScheduleEnabled.asStateFlow()
@@ -236,6 +249,21 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getHeadphoneDetectionEnabled().collect { enabled ->
 				_headphoneDetectionEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightFeedbackEnabled().collect { enabled ->
+				_flashlightFeedbackEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndOnFlashlightPattern().collect { pattern ->
+				_dndOnFlashlightPattern.value = pattern
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndOffFlashlightPattern().collect { pattern ->
+				_dndOffFlashlightPattern.value = pattern
 			}
 		}
 		viewModelScope.launch {
@@ -422,6 +450,24 @@ class SettingsViewModel @Inject constructor(
 	fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setHeadphoneDetectionEnabled(enabled)
+		}
+	}
+
+	fun setFlashlightFeedbackEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightFeedbackEnabled(enabled)
+		}
+	}
+
+	fun setDndOnFlashlightPattern(pattern: FlashlightPattern) {
+		viewModelScope.launch {
+			settingsRepository.setDndOnFlashlightPattern(pattern)
+		}
+	}
+
+	fun setDndOffFlashlightPattern(pattern: FlashlightPattern) {
+		viewModelScope.launch {
+			settingsRepository.setDndOffFlashlightPattern(pattern)
 		}
 	}
 
@@ -638,6 +684,41 @@ class SettingsViewModel @Inject constructor(
 			mediaPlayer.start()
 		} catch (e: Exception) {
 			android.util.Log.e("SettingsViewModel", "Error playing sound: ${e.message}", e)
+		}
+	}
+
+	fun playSelectedFlashlightPattern(pattern: FlashlightPattern) {
+		val cameraManager = getApplication<Application>().getSystemService(Context.CAMERA_SERVICE) as CameraManager
+		val cameraId = try {
+			cameraManager.cameraIdList.firstOrNull { id ->
+				val characteristics = cameraManager.getCameraCharacteristics(id)
+				characteristics.get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+			}
+		} catch (e: Exception) {
+			null
+		}
+
+		if (cameraId != null) {
+			viewModelScope.launch {
+				try {
+					pattern.pattern.forEachIndexed { index, duration ->
+						val state = index % 2 != 0 // Odd indices are ON (if we follow 0, on, off, on...)
+						// Wait, FlashlightPattern uses (delay, on, off, on...)
+						// Pattern: 0, 200, 200 means 0 delay, 200ms ON, 200ms OFF
+						if (index == 0) {
+							if (duration > 0) delay(duration)
+						} else {
+							val isOn = index % 2 != 0
+							cameraManager.setTorchMode(cameraId, isOn)
+							delay(duration)
+						}
+					}
+					// Ensure it's off at the end
+					cameraManager.setTorchMode(cameraId, false)
+				} catch (e: Exception) {
+					android.util.Log.e("SettingsViewModel", "Error playing flashlight pattern: ${e.message}")
+				}
+			}
 		}
 	}
 

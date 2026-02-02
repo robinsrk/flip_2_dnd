@@ -55,7 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import android.os.Build
 import android.provider.Settings
@@ -68,7 +68,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import android.content.ClipData
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.Spacer
@@ -83,7 +87,8 @@ fun SettingsScreen(
 	onDonateClick: () -> Unit,
 ) {
 	val context = LocalContext.current
-	val clipboardManager = LocalClipboardManager.current
+	val clipboard = LocalClipboard.current
+	val scope = rememberCoroutineScope()
 	val soundEnabled by viewModel.soundEnabled.collectAsState()
 	val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
 	val screenOffOnly by viewModel.screenOffOnly.collectAsState()
@@ -111,6 +116,10 @@ fun SettingsScreen(
 	val vibrationScheduleStartTime by viewModel.vibrationScheduleStartTime.collectAsState()
 	val vibrationScheduleEndTime by viewModel.vibrationScheduleEndTime.collectAsState()
 	val vibrationScheduleDays by viewModel.vibrationScheduleDays.collectAsState()
+
+	val flashlightFeedbackEnabled by viewModel.flashlightFeedbackEnabled.collectAsState()
+	val dndOnFlashlightPattern by viewModel.dndOnFlashlightPattern.collectAsState()
+	val dndOffFlashlightPattern by viewModel.dndOffFlashlightPattern.collectAsState()
 
 	var showAdbDialog by remember { mutableStateOf(false) }
 	var showUpgradeDialog by remember { mutableStateOf(false) }
@@ -328,7 +337,11 @@ fun SettingsScreen(
 							},
 							confirmButton = {
 								TextButton(onClick = {
-									clipboardManager.setText(AnnotatedString(context.getString(R.string.adb_command_text)))
+									val adbCommand = context.getString(R.string.adb_command_text)
+									val clipData = ClipData.newPlainText("ADB Command", adbCommand)
+									scope.launch {
+										clipboard.setClipEntry(ClipEntry(clipData))
+									}
 									Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
 									showAdbDialog = false
 								}) {
@@ -935,6 +948,130 @@ fun SettingsScreen(
 					onDaysChange = { viewModel.setVibrationScheduleDays(it) },
 					alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
 				)
+			}
+		}
+	}
+
+	item {
+		Column {
+			// Flashlight Section
+			Text(
+				text = stringResource(id = R.string.flashlight),
+				color = MaterialTheme.colorScheme.primary,
+				style = MaterialTheme.typography.headlineSmall,
+				fontWeight = FontWeight.ExtraBold,
+				modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
+			)
+
+			SettingsSwitchItem(
+				title = stringResource(id = R.string.flashlight_enabled),
+				description = stringResource(id = R.string.flashlight_enabled_description),
+				checked = flashlightFeedbackEnabled,
+				onCheckedChange = {
+					if (dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) {
+						viewModel.setFlashlightFeedbackEnabled(it)
+					} else {
+						showUpgradeDialog = true
+					}
+				},
+				alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) 1f else 0.5f,
+				isPro = true
+			)
+
+			if (flashlightFeedbackEnabled) {
+				var dndOnFlashlightExpanded by remember { mutableStateOf(false) }
+				var dndOffFlashlightExpanded by remember { mutableStateOf(false) }
+				val flashlightSheetState = rememberModalBottomSheetState()
+
+				SettingsClickableItem(
+					title = stringResource(id = R.string.dnd_on_flashlight_pattern),
+					description = dndOnFlashlightPattern.displayName,
+					trailingIcon = {
+						Icon(Icons.Default.ArrowDropDown, "Select flashlight pattern")
+					},
+					onClick = { dndOnFlashlightExpanded = true }
+				)
+
+				if (dndOnFlashlightExpanded) {
+					ModalBottomSheet(
+						onDismissRequest = { dndOnFlashlightExpanded = false },
+						sheetState = flashlightSheetState
+					) {
+						Column {
+							viewModel.availableFlashlightPatterns.forEach { pattern ->
+								SettingsClickableItem(
+									title = pattern.displayName,
+									trailingIcon = {
+										if (pattern == dndOnFlashlightPattern) {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_checked),
+												contentDescription = "Selected",
+												tint = MaterialTheme.colorScheme.primary
+											)
+										} else {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+												contentDescription = "Not Selected",
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									},
+									onClick = {
+										viewModel.setDndOnFlashlightPattern(pattern)
+										viewModel.playSelectedFlashlightPattern(pattern)
+										dndOnFlashlightExpanded = false
+									}
+								)
+							}
+						}
+						Spacer(modifier = Modifier.height(20.dp))
+					}
+				}
+
+				SettingsClickableItem(
+					title = stringResource(id = R.string.dnd_off_flashlight_pattern),
+					description = dndOffFlashlightPattern.displayName,
+					trailingIcon = {
+						Icon(Icons.Default.ArrowDropDown, "Select flashlight pattern")
+					},
+					onClick = { dndOffFlashlightExpanded = true }
+				)
+
+				if (dndOffFlashlightExpanded) {
+					ModalBottomSheet(
+						onDismissRequest = { dndOffFlashlightExpanded = false },
+						sheetState = flashlightSheetState
+					) {
+						Column {
+							viewModel.availableFlashlightPatterns.forEach { pattern ->
+								SettingsClickableItem(
+									title = pattern.displayName,
+									trailingIcon = {
+										if (pattern == dndOffFlashlightPattern) {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_checked),
+												contentDescription = "Selected",
+												tint = MaterialTheme.colorScheme.primary
+											)
+										} else {
+											Icon(
+												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+												contentDescription = "Not Selected",
+												tint = MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									},
+									onClick = {
+										viewModel.setDndOffFlashlightPattern(pattern)
+										viewModel.playSelectedFlashlightPattern(pattern)
+										dndOffFlashlightExpanded = false
+									}
+								)
+							}
+						}
+						Spacer(modifier = Modifier.height(20.dp))
+					}
+				}
 			}
 		}
 	}

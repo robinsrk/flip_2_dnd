@@ -1,0 +1,5 @@
+- Added Pro-exclusive flashlight feedback patterns for DND toggles.
+- Modernized the onboarding experience with a smoother pager and RTL icon support.
+- Updated to the latest Android Clipboard APIs for improved security and performance.
+- Improved device compatibility for vibration feedback on Android 12+.
+- Internal modernization and performance improvements.

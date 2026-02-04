@@ -20,12 +20,11 @@
 	<string name="notifications_enabled">सूचनाएँ सक्षम हैं</string>
 	<string name="high_sensitivity_mode">उच्च संवेदनशीलता मोड</string>
 	<string name="battery_saver">बैटरी सेवर</string>
+	<string name="activation_delay">सक्रियण विलंब</string>
+	<string name="activation_delay_description">फोन पलटने के बाद DND सक्रिय होने से पहले की देरी</string>
+	<string name="seconds">%1$d सेकंड</string>
 	<string name="dnd_on_sound">DND चालू ध्वनि</string>
 	<string name="dnd_off_sound">DND बंद ध्वनि</string>
-	<string name="use_custom_volume">कस्टम वॉल्यूम का उपयोग करें</string>
-	<string name="custom_volume">कस्टम वॉल्यूम</string>
-	<string name="use_custom_vibration">कस्टम कंपन का उपयोग करें</string>
-	<string name="custom_vibration_strength">कस्टम कंपन की ताकत</string>
 	<string name="sound_enabled">ध्वनि सक्षम है</string>
 	<string name="vibration_enabled">कंपन सक्षम है</string>
 	<string name="dnd_on_vibration_pattern">DND चालू कंपन पैटर्न</string>
@@ -35,11 +34,20 @@
 	<string name="priority_dnd_description">कुल मौन की बजाय प्राथमिक मोड DND सक्षम करें</string>
 	<string name="notifications_enabled_description">जब फ्लिप डिटेक्ट हो या DND स्थिति बदल जाए तो सूचनाएँ दिखाएं</string>
 	<string name="high_sensitivity_mode_description">जब सक्षम हो, तो कोई भी स्थिति जो नीचे की तरफ नहीं है, उसे ऊपर की तरफ माना जाएगा</string>
-	<string name="battery_saver_description">जब फोन बैटरी सेवर मोड में हो तो सेंसर डिटेक्शन और DND सेवाओं को निष्क्रिय करें</string>
+	<string name="battery_saver_description">स्वचालित बैटरी सेवर टॉगलिंग के साथ DND (स्वचालित टॉगल के लिए ADB अनुमति आवश्यक है)</string>
+	<string name="adb_permission_required">ADB अनुमति आवश्यक है</string>
+	<string name="adb_command_description">स्वचालित बैटरी सेवर टॉगलिंग सक्षम करने के लिए, कृपया निम्नलिखित ADB कमांड का उपयोग करके WRITE_SECURE_SETTINGS अनुमति प्रदान करें:</string>
+	<string name="copy_command">कमांड कॉपी करें</string>
+	<string name="close">बंद करें</string>
+	<string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
 	<string name="dnd_on_sound_description">DND सक्षम होने पर बजने वाली ध्वनि</string>
 	<string name="dnd_off_sound_description">DND बंद होने पर बजने वाली ध्वनि</string>
+	<string name="use_custom_volume">कस्टम वॉल्यूम का उपयोग करें</string>
+	<string name="custom_volume">कस्टम वॉल्यूम</string>
 	<string name="use_custom_volume_description">DND ध्वनियों के लिए कस्टम वॉल्यूम का उपयोग करें</string>
 	<string name="custom_volume_description">DND ध्वनियों के लिए वॉल्यूम</string>
+	<string name="use_custom_vibration">कस्टम कंपन का उपयोग करें</string>
+	<string name="custom_vibration_strength">कस्टम कंपन की ताकत</string>
 	<string name="use_custom_vibration_description">DND के लिए कस्टम कंपन का उपयोग करें</string>
 	<string name="custom_vibration_strength_description">DND के लिए कंपन की ताकत</string>
 	<string name="sound_enabled_description">DND के लिए ध्वनि सक्षम करें</string>
@@ -47,7 +55,7 @@
 	<string name="use_custom_vibration_strength">कस्टम कंपन ताकत का उपयोग करें</string>
 	<string name="extras">एक्स्ट्रा</string>
 	<string name="join_telegram">टेलीग्राम से जुड़ें</string>
-	<string name="join_telegram_description">हमारे टेलीग्राम समुदाय से जुड़ें</string>
+	<string name="join_telegram_description">हमारे टेलीग्राम समुदाय से जुड़ें (Pro आवश्यक)</string>
 	<string name="support_developer">डेवलपर का समर्थन करें</string>
 	<string name="support_developer_description">ऐप को मुफ्त और बेहतर बनाने में मदद करें</string>
 	<string name="your_support_helps">आपका समर्थन इस ऐप को मुफ्त और निरंतर सुधारने में मदद करता है!</string>
@@ -56,4 +64,160 @@
 	<string name="language">भाषा</string>
 	<string name="language_description">ऐप की भाषा बदलें</string>
 	<string name="error_opening_language_settings">भाषा सेटिंग्स नहीं खुल सकीं</string>
+	<string name="qs_tile_label">फ्लिप DND सेवा</string>
+	<string name="detection">डिटेक्शन</string>
+	<string name="flashlight_detection">फ्लैशलाइट डिटेक्शन</string>
+	<string name="flashlight_detection_description">फ्लैशलाइट चालू होने पर सेवा रोकें</string>
+	<string name="media_playback_detection">मीडिया प्लेबैक डिटेक्शन</string>
+	<string name="media_playback_detection_description">मीडिया चलने पर सेवा रोकें</string>
+	<string name="headphone_detection">हेडफोन डिटेक्शन</string>
+	<string name="headphone_detection_description">हेडफोन कनेक्ट होने पर सेवा रोकें</string>
+	<string name="dnd_activation_schedule">DND सक्रियण शेड्यूल</string>
+	<string name="sound_schedule">ध्वनि शेड्यूल</string>
+	<string name="vibration_schedule">कंपन शेड्यूल</string>
+	<string name="schedule_enabled">शेड्यूल सक्षम करें</string>
+	<string name="dnd_schedule_description">केवल इन समयों के दौरान DND सक्रिय करें।</string>
+	<string name="sound_schedule_description">केवल इन समयों के दौरान ध्वनि फीडबैक दें।</string>
+	<string name="vibration_schedule_description">केवल इन समयों के दौरान कंपन करें।</string>
+	<string name="start_time">प्रारंभ समय</string>
+	<string name="end_time">समाप्ति समय</string>
+	<string name="days">दिन</string>
+	<string name="auto_start">बूट पर स्वतः प्रारंभ</string>
+	<string name="auto_start_description">डिवाइस रीबूट होने पर फ्लिप डिटेक्टर सेवा को स्वचालित रूप से शुरू करें (Pro आवश्यक)</string>
+	<string name="flashlight">फ्लैशलाइट</string>
+	<string name="flashlight_enabled">फ्लैशलाइट फीडबैक</string>
+	<string name="flashlight_enabled_description">DND के लिए फ्लैशलाइट फीडबैक सक्षम करें</string>
+	<string name="dnd_on_flashlight_pattern">DND चालू फ्लैशलाइट पैटर्न</string>
+	<string name="dnd_off_flashlight_pattern">DND बंद फ्लैशलाइट पैटर्न</string>
+
+	<!-- Missing Strings -->
+	<string name="back">पीछे</string>
+	<string name="selected">चयनित</string>
+	<string name="not_selected">चयनित नहीं</string>
+	<string name="none">कोई नहीं</string>
+	<string name="none_selected">कोई चयनित नहीं</string>
+	<string name="version">वर्जन</string>
+	<string name="changelog">चेंजलॉग</string>
+	<string name="unable_to_load_changelog">चेंजलॉग लोड करने में असमर्थ</string>
+	<string name="error_no_app_found">लिंक खोलने के लिए कोई ऐप नहीं मिला</string>
+	<string name="adb_command">ADB कमांड</string>
+	<string name="command_copied">कमांड क्लिपबोर्ड पर कॉपी किया गया</string>
+	<string name="select_sound">ध्वनि चुनें</string>
+	<string name="custom_sound">कस्टम ध्वनि</string>
+	<string name="custom_sound_format">कस्टम: %1$s</string>
+	<string name="error_opening_sound_picker">साउंड पिकर नहीं खुल सका</string>
+	<string name="select_vibration_pattern">कंपन पैटर्न चुनें</string>
+	<string name="select_flashlight_pattern">फ्लैशलाइट पैटर्न चुनें</string>
+	<string name="telegram_icon">टेलीग्राम आइकन</string>
+	<string name="support_icon">समर्थन आइकन</string>
+	<string name="version_icon">वर्जन आइकन</string>
+	<string name="stop_service">सेवा रोकें</string>
+	<string name="start_service">सेवा शुरू करें</string>
+	<string name="dnd_icon">डू नॉट डिस्टर्ब आइकन</string>
+
+	<!-- DND Modes -->
+	<string name="dnd_mode_total_silence">पूर्ण मौन</string>
+	<string name="dnd_mode_priority">प्राथमिक मोड</string>
+	<string name="dnd_mode_alarms_only">केवल अलार्म</string>
+	<string name="dnd_mode_all">सभी सूचनाएं</string>
+	<string name="dnd_mode_unknown">अज्ञात मोड</string>
+
+	<!-- Onboarding -->
+	<string name="onboarding_welcome_title">Flip 2 DND में आपका स्वागत है</string>
+	<string name="onboarding_welcome_desc">बस अपने फोन को नीचे की ओर पलटकर डू नॉट डिस्टर्ब मोड को नियंत्रित करें।</string>
+	<string name="onboarding_simple_title">सरल और प्रभावी</string>
+	<string name="onboarding_simple_desc">महत्वपूर्ण बातों पर ध्यान दें। व्यवधानों को तुरंत शांत करने के लिए अपना फोन पलटें।</string>
+	<string name="onboarding_all_set_title">आप पूरी तरह तैयार हैं!</string>
+	<string name="onboarding_all_set_desc">इसे आज़माने के लिए अपने फोन को नीचे की ओर पलटें।</string>
+	<string name="onboarding_get_started">शुरू करें</string>
+	<string name="onboarding_next">अगला</string>
+	<string name="onboarding_setup_permissions_title">अनुमतियाँ सेटअप करें</string>
+	<string name="onboarding_setup_permissions_desc">यह सुनिश्चित करने के लिए कि Flip 2 DND सही ढंग से काम करे, निम्नलिखित अनुमतियाँ प्रदान करें।</string>
+	<string name="permission_dnd_title">डू नॉट डिस्टर्ब एक्सेस</string>
+	<string name="permission_dnd_desc">DND मोड टॉगल करने के लिए आवश्यक है।</string>
+	<string name="permission_battery_title">बैटरी ऑप्टिमाइजेशन</string>
+	<string name="permission_battery_desc">पृष्ठभूमि विश्वसनीयता के लिए आवश्यक है।</string>
+	<string name="permission_notifications_title">सूचनाएं</string>
+	<string name="permission_notifications_desc">वैकल्पिक। सेवा स्थिति दिखाता है।</string>
+	<string name="permission_granted">अनुमति प्राप्त</string>
+	<string name="permission_grant">अनुमति दें</string>
+
+	<!-- Donation -->
+	<string name="pay_with_redotpay">RedotPay से भुगतान करें</string>
+	<string name="redotpay_id">RedotPay ID</string>
+	<string name="pay_with_usdt">USDT से भुगतान करें</string>
+	<string name="usdt_network">BNB Smart Chain (BEP20)</string>
+	<string name="pay_with_bitcoin">Bitcoin से भुगतान करें</string>
+	<string name="bitcoin_network">Bitcoin Network</string>
+	<string name="address_copied">पता क्लिपबोर्ड पर कॉपी किया गया</string>
+
+	<!-- Patterns and Sounds -->
+	<string name="sound_slush">स्लश</string>
+	<string name="sound_hiss">हिस</string>
+	<string name="sound_shh">शश</string>
+	<string name="sound_whistle">सीटी</string>
+	<string name="vibration_single_pulse">एकल पल्स</string>
+	<string name="vibration_double_pulse">दोहरा पल्स</string>
+	<string name="vibration_triple_pulse">तिहरा पल्स</string>
+	<string name="vibration_long_pulse">लंबा पल्स</string>
+	<string name="vibration_rapid_pulse">तेज पल्स</string>
+	<string name="vibration_heartbeat">धड़कन</string>
+	<string name="vibration_tick_tock">टिक टॉक</string>
+	<string name="flashlight_single_blink">एकल ब्लिंक</string>
+	<string name="flashlight_double_blink">दोहरा ब्लिंक</string>
+	<string name="flashlight_triple_blink">तिहरा ब्लिंक</string>
+	<string name="flashlight_long_blink">लंबा ब्लिंक</string>
+	<string name="flashlight_rapid_blink">तेज ब्लिंक</string>
+
+	<!-- Upgrade Dialog -->
+	<string name="upgrade_to_pro">Pro में अपग्रेड करें</string>
+	<string name="upgrade_to_pro_description">सभी प्रीमियम सुविधाओं को अनलॉक करें और डेवलपर का समर्थन करें।</string>
+	<string name="feature_auto_start">बूट पर स्वतः प्रारंभ</string>
+	<string name="feature_sensitivity">उन्नत संवेदनशीलता सेटिंग्स</string>
+	<string name="feature_delay">कस्टम सक्रियण विलंब</string>
+	<string name="feature_schedules">DND, ध्वनि और कंपन शेड्यूल</string>
+	<string name="feature_custom_sounds">फ़ाइलों से कस्टम ध्वनियाँ</string>
+	<string name="feature_telegram">टेलीग्राम सपोर्ट ग्रुप</string>
+	<string name="get_pro">Flip 2 DND Pro प्राप्त करें</string>
+	<string name="maybe_later">बाद में</string>
+	<string name="pro">PRO</string>
+	<string name="day_sunday_short">र</string>
+	<string name="day_monday_short">सो</string>
+	<string name="day_tuesday_short">मं</string>
+	<string name="day_wednesday_short">बु</string>
+	<string name="day_thursday_short">गु</string>
+	<string name="day_friday_short">शु</string>
+	<string name="day_saturday_short">श</string>
+
+	<!-- Sound Picker -->
+	<string name="error_sound_not_accessible">चयनित ध्वनि फ़ाइल सुलभ नहीं है</string>
+	<string name="error_permission">अनुमति त्रुटि: %1$s</string>
+	<string name="error_could_not_get_permission">ध्वनि फ़ाइल के लिए अनुमति नहीं मिल सकी</string>
+	<string name="error_failed_to_get_permission">चयनित ध्वनि के लिए अनुमति प्राप्त करने में विफल</string>
+	<string name="error_processing_sound">चयनित ध्वनि को संसाधित करने में त्रुटि: %1$s</string>
+	<string name="error_no_sound_selected">कोई ध्वनि फ़ाइल नहीं चुनी गई</string>
+	<string name="dnd_on_sound_saved">DND चालू कस्टम ध्वनि सहेजी गई</string>
+	<string name="dnd_off_sound_saved">DND बंद कस्टम ध्वनि सहेजी गई</string>
+	<string name="error_saving_sound">कस्टम ध्वनि सहेजने में त्रुटि</string>
+
+	<!-- Notifications -->
+	<string name="notification_service_channel_name">Flip 2 DND सेवा</string>
+	<string name="notification_service_channel_desc">DND मोड टॉगल करने के लिए फोन की स्थिति की निगरानी करता है</string>
+	<string name="notification_flip_channel_name">फ्लिप स्थिति सूचनाएं</string>
+	<string name="notification_flip_channel_desc">फोन की फ्लिप स्थिति और DND परिवर्तनों के बारे में सूचनाएं</string>
+	<string name="notification_flip_detected_title">फ्लिप का पता चला</string>
+	<string name="notification_dnd_activate_now">DND अभी सक्रिय होगा</string>
+	<string name="notification_dnd_activate_delay">DND %1$s में सक्रिय होगा</string>
+	<string name="notification_dnd_state_changed_title">DND स्थिति बदली</string>
+	<string name="notification_dnd_activated">DND मोड सक्रिय</string>
+	<string name="notification_dnd_deactivated">DND मोड निष्क्रिय</string>
+	<string name="notification_battery_saver_suggested_title">बैटरी सेवर का सुझाव दिया गया</string>
+	<string name="notification_battery_saver_suggested_text">बैटरी सेवर सक्षम करने के लिए टैप करें</string>
+	<string name="notification_monitoring_text">फोन की स्थिति की निगरानी की जा रही है</string>
+
+	<string name="error_notification_permission_required">ऐप कार्यक्षमता के लिए अधिसूचना अनुमति आवश्यक है</string>
+	<string name="error_grant_all_permissions">कृपया पूर्ण कार्यक्षमता के लिए सभी अनुमतियाँ प्रदान करें</string>
+	<string name="unknown">अज्ञात</string>
+	<string name="orientation_face_up">ऊपर की ओर</string>
+	<string name="orientation_face_down">नीचे की ओर</string>
 </resources>

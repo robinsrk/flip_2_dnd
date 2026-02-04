@@ -20,6 +20,9 @@
 	<string name="notifications_enabled">নোটিফিকেশন চালু</string>
 	<string name="high_sensitivity_mode">উচ্চ সংবেদনশীলতা মোড</string>
 	<string name="battery_saver">ব্যাটারি সেভার</string>
+	<string name="activation_delay">সক্রিয়করণে বিলম্ব</string>
+	<string name="activation_delay_description">ফোন উল্টানোর পর ডিএনডি চালু হতে কতক্ষণ বিলম্ব হবে</string>
+	<string name="seconds">%1$d সেকেন্ড</string>
 	<string name="dnd_on_sound">ডিএনডি চালুর শব্দ</string>
 	<string name="dnd_off_sound">ডিএনডি বন্ধের শব্দ</string>
 	<string name="use_custom_volume">কাস্টম ভলিউম ব্যবহার করুন</string>
@@ -36,6 +39,11 @@
 	<string name="notifications_enabled_description">ফ্লিপ শনাক্ত হলে বা ডিএনডি অবস্থা পরিবর্তিত হলে নোটিফিকেশন দেখান</string>
 	<string name="high_sensitivity_mode_description">এটি চালু থাকলে, যেকোনো ভিন্ন অরিয়েন্টেশন ফেস আপ হিসাবে বিবেচিত হবে</string>
 	<string name="battery_saver_description">ব্যাটারি সেভার মোডে থাকলে সেন্সর ও ডিএনডি সেবা নিষ্ক্রিয় করুন</string>
+	<string name="adb_permission_required">ADB অনুমতি প্রয়োজন</string>
+	<string name="adb_command_description">স্বয়ংক্রিয় ব্যাটারি সেভার টগল সক্ষম করতে, অনুগ্রহ করে নিচের ADB কমান্ডটি ব্যবহার করে WRITE_SECURE_SETTINGS অনুমতি প্রদান করুন:</string>
+	<string name="copy_command">কমান্ড কপি করুন</string>
+	<string name="close">বন্ধ করুন</string>
+	<string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
 	<string name="dnd_on_sound_description">ডিএনডি চালু হলে যে শব্দ বাজবে</string>
 	<string name="dnd_off_sound_description">ডিএনডি বন্ধ হলে যে শব্দ বাজবে</string>
 	<string name="use_custom_volume_description">ডিএনডি শব্দের জন্য কাস্টম ভলিউম ব্যবহার করুন</string>
@@ -56,4 +64,160 @@
 	<string name="language">ভাষা</string>
 	<string name="language_description">অ্যাপের ভাষা পরিবর্তন করুন</string>
 	<string name="error_opening_language_settings">ভাষা সেটিংস খোলা যায়নি</string>
+	<string name="qs_tile_label">ফ্লিপ ডিএনডি সেবা</string>
+	<string name="detection">শনাক্তকরণ</string>
+	<string name="flashlight_detection">ফ্ল্যাশলাইট শনাক্তকরণ</string>
+	<string name="flashlight_detection_description">ফ্ল্যাশলাইট চালু থাকলে সেবা বন্ধ রাখুন</string>
+	<string name="media_playback_detection">মিডিয়া প্লেব্যাক শনাক্তকরণ</string>
+	<string name="media_playback_detection_description">মিডিয়া প্লেব্যাকের সময় সেবা বন্ধ রাখুন</string>
+	<string name="headphone_detection">হেডফোন শনাক্তকরণ</string>
+	<string name="headphone_detection_description">হেডফোন সংযুক্ত থাকলে সেবা বন্ধ রাখুন</string>
+	<string name="dnd_activation_schedule">ডিএনডি সক্রিয়করণের সময়সূচী</string>
+	<string name="sound_schedule">শব্দের সময়সূচী</string>
+	<string name="vibration_schedule">ভাইব্রেশনের সময়সূচী</string>
+	<string name="schedule_enabled">সময়সূচী চালু করুন</string>
+	<string name="dnd_schedule_description">শুধুমাত্র এই সময়ের মধ্যে ডিএনডি সক্রিয় করুন।</string>
+	<string name="sound_schedule_description">শুধুমাত্র এই সময়ের মধ্যে শব্দের ফিডব্যাক বাজান।</string>
+	<string name="vibration_schedule_description">শুধুমাত্র এই সময়ের মধ্যে ভাইব্রেট করুন।</string>
+	<string name="start_time">শুরুর সময়</string>
+	<string name="end_time">শেষের সময়</string>
+	<string name="days">দিন</string>
+	<string name="auto_start">বুট করার সময় অটো স্টার্ট</string>
+	<string name="auto_start_description">ডিভাইস রিবুট হলে স্বয়ংক্রিয়ভাবে ফ্লিপ ডিটেক্টর সেবা শুরু করুন (প্রো প্রয়োজন)</string>
+	<string name="flashlight">ফ্ল্যাশলাইট</string>
+	<string name="flashlight_enabled">ফ্ল্যাশলাইট ফিডব্যাক</string>
+	<string name="flashlight_enabled_description">ডিএনডির জন্য ফ্ল্যাশলাইট ফিডব্যাক সক্রিয় করুন</string>
+	<string name="dnd_on_flashlight_pattern">ডিএনডি চালুর ফ্ল্যাশলাইট প্যাটার্ন</string>
+	<string name="dnd_off_flashlight_pattern">ডিএনডি বন্ধের ফ্ল্যাশলাইট প্যাটার্ন</string>
+
+	<!-- Missing Strings -->
+	<string name="back">পিছনে</string>
+	<string name="selected">নির্বাচিত</string>
+	<string name="not_selected">নির্বাচিত নয়</string>
+	<string name="none">কিছুই না</string>
+	<string name="none_selected">কিছুই নির্বাচিত হয়নি</string>
+	<string name="version">ভার্সন</string>
+	<string name="changelog">পরিবর্তন তালিকা</string>
+	<string name="unable_to_load_changelog">পরিবর্তন তালিকা লোড করা যায়নি</string>
+	<string name="error_no_app_found">লিঙ্ক খোলার জন্য কোন অ্যাপ পাওয়া যায়নি</string>
+	<string name="adb_command">ADB কমান্ড</string>
+	<string name="command_copied">কমান্ড ক্লিপবোর্ডে কপি করা হয়েছে</string>
+	<string name="select_sound">শব্দ নির্বাচন করুন</string>
+	<string name="custom_sound">কাস্টম শব্দ</string>
+	<string name="custom_sound_format">কাস্টম: %1$s</string>
+	<string name="error_opening_sound_picker">সাউন্ড পিকার খোলা যায়নি</string>
+	<string name="select_vibration_pattern">ভাইব্রেশন প্যাটার্ন নির্বাচন করুন</string>
+	<string name="select_flashlight_pattern">ফ্ল্যাশলাইট প্যাটার্ন নির্বাচন করুন</string>
+	<string name="telegram_icon">টেলিগ্রাম আইকন</string>
+	<string name="support_icon">সাপোর্ট আইকন</string>
+	<string name="version_icon">ভার্সন আইকন</string>
+	<string name="stop_service">সেবা বন্ধ করুন</string>
+	<string name="start_service">সেবা চালু করুন</string>
+	<string name="dnd_icon">ডিএনডি আইকন</string>
+
+	<!-- DND Modes -->
+	<string name="dnd_mode_total_silence">সম্পূর্ণ নীরবতা</string>
+	<string name="dnd_mode_priority">অগ্রাধিকার মোড</string>
+	<string name="dnd_mode_alarms_only">শুধুমাত্র অ্যালার্ম</string>
+	<string name="dnd_mode_all">সব নোটিফিকেশন</string>
+	<string name="dnd_mode_unknown">অজানা মোড</string>
+
+	<!-- Onboarding -->
+	<string name="onboarding_welcome_title">ফ্লিপ 2 ডিএনডি-তে স্বাগতম</string>
+	<string name="onboarding_welcome_desc">আপনার ফোনের ডিএনডি মোড নিয়ন্ত্রণ করুন শুধুমাত্র এটি উল্টে রেখে।</string>
+	<string name="onboarding_simple_title">সহজ ও কার্যকর</string>
+	<string name="onboarding_simple_desc">গুরুত্বপূর্ণ কাজে মনোযোগ দিন। বিরতিহীনভাবে নীরব করতে আপনার ফোন উল্টে দিন।</string>
+	<string name="onboarding_all_set_title">আপনি তৈরি!</string>
+	<string name="onboarding_all_set_desc">চেষ্টা করতে আপনার ফোনটি উল্টে রাখুন।</string>
+	<string name="onboarding_get_started">শুরু করুন</string>
+	<string name="onboarding_next">পরবর্তী</string>
+	<string name="onboarding_setup_permissions_title">অনুমতি সেটআপ করুন</string>
+	<string name="onboarding_setup_permissions_desc">ফ্লিপ 2 ডিএনডি সঠিকভাবে কাজ করার জন্য নিচের অনুমতিগুলো প্রদান করুন।</string>
+	<string name="permission_dnd_title">ডিএনডি অ্যাক্সেস</string>
+	<string name="permission_dnd_desc">ডিএনডি মোড টগল করার জন্য প্রয়োজন।</string>
+	<string name="permission_battery_title">ব্যাটারি অপ্টিমাইজেশন</string>
+	<string name="permission_battery_desc">ব্যাকগ্রাউন্ডে নির্ভরযোগ্যতার জন্য প্রয়োজন।</string>
+	<string name="permission_notifications_title">নোটিফিকেশন</string>
+	<string name="permission_notifications_desc">ঐচ্ছিক। সেবার অবস্থা দেখায়।</string>
+	<string name="permission_granted">অনুমতি দেওয়া হয়েছে</string>
+	<string name="permission_grant">অনুমতি দিন</string>
+
+	<!-- Donation -->
+	<string name="pay_with_redotpay">RedotPay দিয়ে পেমেন্ট করুন</string>
+	<string name="redotpay_id">RedotPay আইডি</string>
+	<string name="pay_with_usdt">USDT দিয়ে পেমেন্ট করুন</string>
+	<string name="usdt_network">BNB Smart Chain (BEP20)</string>
+	<string name="pay_with_bitcoin">Bitcoin দিয়ে পেমেন্ট করুন</string>
+	<string name="bitcoin_network">Bitcoin নেটওয়ার্ক</string>
+
+	<!-- Patterns and Sounds -->
+	<string name="sound_slush">স্ল্যাশ</string>
+	<string name="sound_hiss">হিসহিস</string>
+	<string name="sound_shh">শশশ</string>
+	<string name="sound_whistle">শিস</string>
+	<string name="vibration_single_pulse">একক পালস</string>
+	<string name="vibration_double_pulse">দ্বৈত পালস</string>
+	<string name="vibration_triple_pulse">ত্রয়ী পালস</string>
+	<string name="vibration_long_pulse">দীর্ঘ পালস</string>
+	<string name="vibration_rapid_pulse">দ্রুত পালস</string>
+	<string name="vibration_heartbeat">হার্টবিট</string>
+	<string name="vibration_tick_tock">টিক টক</string>
+	<string name="flashlight_single_blink">একক ব্লিংক</string>
+	<string name="flashlight_double_blink">দ্বৈত ব্লিংক</string>
+	<string name="flashlight_triple_blink">ত্রয়ী ব্লিংক</string>
+	<string name="flashlight_long_blink">দীর্ঘ ব্লিংক</string>
+	<string name="flashlight_rapid_blink">দ্রুত ব্লিংক</string>
+
+	<!-- Upgrade Dialog -->
+	<string name="upgrade_to_pro">প্রো-তে আপগ্রেড করুন</string>
+	<string name="upgrade_to_pro_description">সব প্রিমিয়াম ফিচার আনলক করুন এবং ডেভেলপারকে সাপোর্ট করুন।</string>
+	<string name="feature_auto_start">বুট করার সময় অটো স্টার্ট</string>
+	<string name="feature_sensitivity">উন্নত সংবেদনশীলতা সেটিংস</string>
+	<string name="feature_delay">কাস্টম সক্রিয়করণ বিলম্ব</string>
+	<string name="feature_schedules">ডিএনডি, শব্দ ও ভাইব্রেশন সময়সূচী</string>
+	<string name="feature_custom_sounds">ফাইল থেকে কাস্টম শব্দ</string>
+	<string name="feature_telegram">টেলিগ্রাম সাপোর্ট গ্রুপ</string>
+	<string name="get_pro">Flip 2 DND Pro নিন</string>
+	<string name="maybe_later">পরে হবে</string>
+	<string name="pro">প্রো</string>
+	<string name="day_sunday_short">র</string>
+	<string name="day_monday_short">সো</string>
+	<string name="day_tuesday_short">ম</string>
+	<string name="day_wednesday_short">বু</string>
+	<string name="day_thursday_short">বৃ</string>
+	<string name="day_friday_short">শু</string>
+	<string name="day_saturday_short">শ</string>
+
+	<!-- Sound Picker -->
+	<string name="error_sound_not_accessible">নির্বাচিত সাউন্ড ফাইলটি অ্যাক্সেসযোগ্য নয়</string>
+	<string name="error_permission">অনুমতি ত্রুটি: %1$s</string>
+	<string name="error_could_not_get_permission">সাউন্ড ফাইলের জন্য অনুমতি পাওয়া যায়নি</string>
+	<string name="error_failed_to_get_permission">নির্বাচিত শব্দের জন্য অনুমতি পেতে ব্যর্থ হয়েছে</string>
+	<string name="error_processing_sound">শব্দ প্রসেস করতে ত্রুটি: %1$s</string>
+	<string name="error_no_sound_selected">কোন সাউন্ড ফাইল নির্বাচন করা হয়নি</string>
+	<string name="dnd_on_sound_saved">ডিএনডি চালু করার কাস্টম শব্দ সেভ করা হয়েছে</string>
+	<string name="dnd_off_sound_saved">ডিএনডি বন্ধ করার কাস্টম শব্দ সেভ করা হয়েছে</string>
+	<string name="error_saving_sound">কাস্টম শব্দ সেভ করতে ত্রুটি</string>
+
+	<!-- Notifications -->
+	<string name="notification_service_channel_name">ফ্লিপ 2 ডিএনডি সেবা</string>
+	<string name="notification_service_channel_desc">ডিএনডি মোড টগল করতে ফোনের অরিয়েন্টেশন পর্যবেক্ষণ করে</string>
+	<string name="notification_flip_channel_name">ফ্লিপ অবস্থার নোটিফিকেশন</string>
+	<string name="notification_flip_channel_desc">ফোনের ফ্লিপ অবস্থা এবং ডিএনডি পরিবর্তনের নোটিফিকেশন</string>
+	<string name="notification_flip_detected_title">ফ্লিপ শনাক্ত করা হয়েছে</string>
+	<string name="notification_dnd_activate_now">ডিএনডি এখনই সক্রিয় হবে</string>
+	<string name="notification_dnd_activate_delay">ডিএনডি %1$s এর মধ্যে সক্রিয় হবে</string>
+	<string name="notification_dnd_state_changed_title">ডিএনডি অবস্থা পরিবর্তিত হয়েছে</string>
+	<string name="notification_dnd_activated">ডিএনডি মোড সক্রিয় করা হয়েছে</string>
+	<string name="notification_dnd_deactivated">ডিএনডি মোড নিষ্ক্রিয় করা হয়েছে</string>
+	<string name="notification_battery_saver_suggested_title">ব্যাটারি সেভার সাজেস্ট করা হয়েছে</string>
+	<string name="notification_battery_saver_suggested_text">ব্যাটারি সেভার চালু করতে ট্যাপ করুন</string>
+	<string name="notification_monitoring_text">ফোনের অরিয়েন্টেশন পর্যবেক্ষণ করা হচ্ছে</string>
+	<string name="address_copied">ঠিকানা ক্লিপবোর্ডে কপি করা হয়েছে</string>
+
+	<string name="error_notification_permission_required">অ্যাপের কার্যকারিতার জন্য নোটিফিকেশন অনুমতি প্রয়োজন</string>
+	<string name="error_grant_all_permissions">সম্পূর্ণ কার্যকারিতার জন্য অনুগ্রহ করে সব অনুমতি প্রদান করুন</string>
+	<string name="unknown">অজানা</string>
+	<string name="orientation_face_up">ফেস আপ</string>
+	<string name="orientation_face_down">ফেস ডাউন</string>
 </resources>

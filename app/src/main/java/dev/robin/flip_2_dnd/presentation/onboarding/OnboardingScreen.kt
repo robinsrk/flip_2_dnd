@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
@@ -116,14 +117,14 @@ fun OnboardingScreen(
             ) { page ->
                 when (page) {
                     0 -> OnboardingContentPage(
-                        title = "Welcome to Flip 2 DND",
-                        description = "Control your phone's Do Not Disturb mode by simply flipping it face down.",
+                        title = stringResource(id = R.string.onboarding_welcome_title),
+                        description = stringResource(id = R.string.onboarding_welcome_desc),
                         iconRes = R.drawable.ic_launcher,
                         iconTint = Color.Unspecified
                     )
                     1 -> OnboardingContentPage(
-                        title = "Simple & Effective",
-                        description = "Focus on what matters. Flip your phone to silence interruptions instantly.",
+                        title = stringResource(id = R.string.onboarding_simple_title),
+                        description = stringResource(id = R.string.onboarding_simple_desc),
                         iconRes = R.drawable.ic_dnd_on,
                         iconTint = MaterialTheme.colorScheme.secondary
                     )
@@ -134,8 +135,8 @@ fun OnboardingScreen(
                         batteryGranted = batteryGranted
                     )
                     3 -> OnboardingContentPage(
-                        title = "You're All Set!",
-                        description = "Flip your phone face down to try it out.",
+                        title = stringResource(id = R.string.onboarding_all_set_title),
+                        description = stringResource(id = R.string.onboarding_all_set_desc),
                         iconVector = Icons.Default.Check,
                         iconTint = MaterialTheme.colorScheme.primary
                     )
@@ -215,7 +216,7 @@ fun BottomNavigationSection(
             modifier = Modifier.height(56.dp)
         ) {
             Text(
-                text = if (isLastPage) "Get Started" else "Next",
+                text = if (isLastPage) stringResource(id = R.string.onboarding_get_started) else stringResource(id = R.string.onboarding_next),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -321,14 +322,14 @@ fun UnifiedPermissionsPage(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Setup Permissions",
+                text = stringResource(id = R.string.onboarding_setup_permissions_title),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center
             )
             
             Text(
-                 text = "Grant the following permissions to ensure Flip 2 DND works correctly.",
+                 text = stringResource(id = R.string.onboarding_setup_permissions_desc),
                  style = MaterialTheme.typography.bodyLarge,
                  textAlign = TextAlign.Center,
                  color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -338,8 +339,8 @@ fun UnifiedPermissionsPage(
         // Permission List
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             PermissionItem(
-                title = "Do Not Disturb Access",
-                description = "Required to toggle DND mode.",
+                title = stringResource(id = R.string.permission_dnd_title),
+                description = stringResource(id = R.string.permission_dnd_desc),
                 icon = Icons.Default.Settings,
                 isGranted = dndGranted,
                 isRequired = true,
@@ -352,8 +353,8 @@ fun UnifiedPermissionsPage(
             )
 
             PermissionItem(
-                title = "Battery Optimization",
-                description = "Required for background reliability.",
+                title = stringResource(id = R.string.permission_battery_title),
+                description = stringResource(id = R.string.permission_battery_desc),
                 icon = Icons.Default.BatteryAlert,
                 isGranted = batteryGranted,
                 isRequired = true,
@@ -369,8 +370,8 @@ fun UnifiedPermissionsPage(
             )
 
             PermissionItem(
-                title = "Notifications",
-                description = "Optional. Shows service status.",
+                title = stringResource(id = R.string.permission_notifications_title),
+                description = stringResource(id = R.string.permission_notifications_desc),
                 icon = Icons.Default.Notifications,
                 isGranted = false,
                 isRequired = false,
@@ -450,14 +451,14 @@ fun PermissionItem(
             if (isGranted) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Granted",
+                    contentDescription = stringResource(id = R.string.permission_granted),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             } else {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.NavigateNext,
-                    contentDescription = "Grant",
+                    contentDescription = stringResource(id = R.string.permission_grant),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

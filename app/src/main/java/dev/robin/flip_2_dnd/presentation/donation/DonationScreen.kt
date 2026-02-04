@@ -89,7 +89,7 @@ fun DonationScreen(navController: NavController? = null) {
 					IconButton(onClick = { navController?.popBackStack() }) {
 						Icon(
 							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-							contentDescription = "Back"
+							contentDescription = stringResource(id = R.string.back)
 						)
 					}
 				},
@@ -120,9 +120,9 @@ fun DonationScreen(navController: NavController? = null) {
 
 			item {
 				DonationCard(
-					title = "Pay with RedotPay",
+					title = stringResource(id = R.string.pay_with_redotpay),
 					description = redotpayID,
-					trailingText = "RedotPay ID",
+					trailingText = stringResource(id = R.string.redotpay_id),
 					onClick = { copyAddressToClipboard(context, redotpayID) },
 					icon = R.drawable.ic_coin
 				)
@@ -130,9 +130,9 @@ fun DonationScreen(navController: NavController? = null) {
 
 			item {
 				DonationCard(
-					title = "Pay with USDT",
+					title = stringResource(id = R.string.pay_with_usdt),
 					description = usdtAddress,
-					trailingText = "BNB Smart Chain (BEP20)",
+					trailingText = stringResource(id = R.string.usdt_network),
 					onClick = { copyAddressToClipboard(context, usdtAddress) },
 					icon = R.drawable.ic_coin
 				)
@@ -140,9 +140,9 @@ fun DonationScreen(navController: NavController? = null) {
 
 			item {
 				DonationCard(
-					title = "Pay with Bitcoin",
+					title = stringResource(id = R.string.pay_with_bitcoin),
 					description = btcAddress,
-					trailingText = "Bitcoin Network",
+					trailingText = stringResource(id = R.string.bitcoin_network),
 					onClick = { copyAddressToClipboard(context, btcAddress) },
 					icon = R.drawable.ic_coin
 				)

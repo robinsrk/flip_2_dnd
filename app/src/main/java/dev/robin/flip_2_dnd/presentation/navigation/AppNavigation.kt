@@ -35,10 +35,10 @@ import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
 import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
 
-sealed class Screen(val route: String, val icon: Int, val label: String) {
-	object Home : Screen("home", R.drawable.ic_home, "home")
-	object Settings : Screen("settings", R.drawable.ic_settings, "Settings")
-	object Donation : Screen("donation", R.drawable.ic_coin, "Support")
+sealed class Screen(val route: String, val icon: Int, val labelResId: Int) {
+	object Home : Screen("home", R.drawable.ic_home, R.string.home)
+	object Settings : Screen("settings", R.drawable.ic_settings, R.string.settings)
+	object Donation : Screen("donation", R.drawable.ic_coin, R.string.support)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,19 +65,13 @@ fun AppNavigation() {
 						icon = {
 							Icon(
 								painter = painterResource(screen.icon),
-								contentDescription = screen.label,
+								contentDescription = stringResource(id = screen.labelResId),
 								modifier = Modifier.size(28.dp)
 							)
 						},
 						label = {
 							Text(
-								text = stringResource(
-									id = when (screen) {
-										Screen.Home -> R.string.home
-										Screen.Settings -> R.string.settings
-										Screen.Donation -> R.string.support
-									}
-								),
+								text = stringResource(id = screen.labelResId),
 								style = MaterialTheme.typography.labelLarge,
 								fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold
 							)

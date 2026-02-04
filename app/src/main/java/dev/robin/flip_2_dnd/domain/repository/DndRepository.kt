@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface DndRepository {
     fun isDndEnabled(): Flow<Boolean>
-    fun getDndMode(): Flow<String>
+    fun getDndMode(): Flow<Int>
     suspend fun setDndEnabled(enabled: Boolean)
     suspend fun toggleDnd()
     fun onCleared()

@@ -1,9 +1,11 @@
 package dev.robin.flip_2_dnd.domain.model
 
-enum class PhoneOrientation {
-    FACE_UP,
-    FACE_DOWN,
-    UNKNOWN;
+import dev.robin.flip_2_dnd.R
+
+enum class PhoneOrientation(val stringResId: Int) {
+    FACE_UP(R.string.orientation_face_up),
+    FACE_DOWN(R.string.orientation_face_down),
+    UNKNOWN(R.string.unknown);
 
     companion object {
         fun fromString(value: String): PhoneOrientation = when (value.lowercase()) {
@@ -13,9 +15,5 @@ enum class PhoneOrientation {
         }
     }
 
-    override fun toString(): String = when (this) {
-        FACE_UP -> "Face up"
-        FACE_DOWN -> "Face down"
-        UNKNOWN -> "Unknown"
-    }
+    override fun toString(): String = name
 }

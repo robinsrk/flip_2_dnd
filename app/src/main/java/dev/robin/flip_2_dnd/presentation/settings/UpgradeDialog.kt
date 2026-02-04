@@ -12,9 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.robin.flip_2_dnd.R
 
 @Composable
 fun UpgradeDialog(
@@ -37,7 +39,7 @@ fun UpgradeDialog(
         },
         title = {
             Text(
-                text = "Upgrade to Pro",
+                text = stringResource(id = R.string.upgrade_to_pro),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
@@ -50,7 +52,7 @@ fun UpgradeDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Unlock all premium features and support the developer.",
+                    text = stringResource(id = R.string.upgrade_to_pro_description),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -65,12 +67,12 @@ fun UpgradeDialog(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        FeatureItem("Auto start on boot")
-                        FeatureItem("Advanced sensitivity settings")
-                        FeatureItem("Custom activation delay")
-                        FeatureItem("DND, Sound, & Vibration schedules")
-                        FeatureItem("Custom sounds from files")
-                        FeatureItem("Telegram Support Group")
+                        FeatureItem(stringResource(id = R.string.feature_auto_start))
+                        FeatureItem(stringResource(id = R.string.feature_sensitivity))
+                        FeatureItem(stringResource(id = R.string.feature_delay))
+                        FeatureItem(stringResource(id = R.string.feature_schedules))
+                        FeatureItem(stringResource(id = R.string.feature_custom_sounds))
+                        FeatureItem(stringResource(id = R.string.feature_telegram))
                     }
                 }
             }
@@ -86,7 +88,7 @@ fun UpgradeDialog(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             ) {
                 Text(
-                    "Get Flip 2 DND Pro",
+                    stringResource(id = R.string.get_pro),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
@@ -98,7 +100,7 @@ fun UpgradeDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Maybe Later",
+                    stringResource(id = R.string.maybe_later),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

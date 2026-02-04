@@ -21,6 +21,9 @@
     <string name="notifications_enabled">알림 활성화됨</string>
     <string name="high_sensitivity_mode">고감도 모드</string>
     <string name="battery_saver">배터리 절약</string>
+    <string name="activation_delay">활성화 지연</string>
+    <string name="activation_delay_description">휴대폰을 뒤집은 후 방해 금지 모드가 활성화되기까지의 지연 시간</string>
+    <string name="seconds">%1$d 초</string>
     <string name="dnd_on_sound">방해 금지 켜짐 사운드</string>
     <string name="dnd_off_sound">방해 금지 꺼짐 사운드</string>
     <string name="use_custom_volume">사용자 지정 볼륨 사용</string>
@@ -34,21 +37,26 @@
     <string name="flip_sensitivity_description">휴대폰을 뒤집을 때의 감도를 설정합니다</string>
     <string name="screen_off_only_description">화면이 꺼졌을 때만 방해 금지 모드를 활성화합니다</string>
     <string name="priority_dnd_description">중요한 알림만 허용하는 우선순위 방해 금지 모드를 사용합니다</string>
-    <string name="notifications_enabled_description">서비스가 실행 중일 때 알림을 표시합니다</string>
-    <string name="high_sensitivity_mode_description">뒤집기 인식 속도를 높이기 위해 감도를 증가시킵니다</string>
-    <string name="battery_saver_description">센서 사용을 최적화하여 배터리 소모를 줄입니다</string>
-    <string name="dnd_on_sound_description">방해 금지 모드가 켜질 때 소리를 재생합니다</string>
-    <string name="dnd_off_sound_description">방해 금지 모드가 꺼질 때 소리를 재생합니다</string>
-    <string name="use_custom_volume_description">방해 금지 사운드에 사용자 지정 볼륨을 설정합니다</string>
-    <string name="custom_volume_description">알림 사운드의 사용자 지정 볼륨을 설정합니다</string>
-    <string name="use_custom_vibration_description">사용자 지정 진동 설정을 활성화합니다</string>
-    <string name="custom_vibration_strength_description">진동 세기를 조정합니다</string>
-    <string name="sound_enabled_description">방해 금지 이벤트에 대해 소리 알림을 활성화합니다</string>
-    <string name="vibration_enabled_description">방해 금지 이벤트에 대해 진동 알림을 활성화합니다</string>
+    <string name="notifications_enabled_description">뒤집기가 감지되거나 방해 금지 상태가 변경될 때 알림을 표시합니다</string>
+    <string name="high_sensitivity_mode_description">활성화하면 화면이 아래로 향한 상태를 제외한 모든 방향을 화면이 위로 향한 상태로 간주합니다</string>
+    <string name="battery_saver_description">방해 금지 모드와 함께 배터리 절약 모드를 자동으로 전환합니다 (ADB 권한 필요)</string>
+    <string name="adb_permission_required">ADB 권한 필요</string>
+    <string name="adb_command_description">배터리 절약 모드 자동 전환을 활성화하려면 다음 ADB 명령어를 사용하여 WRITE_SECURE_SETTINGS 권한을 부여하세요:</string>
+    <string name="copy_command">명령어 복사</string>
+    <string name="close">닫기</string>
+    <string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="dnd_on_sound_description">방해 금지 모드가 활성화될 때 재생할 사운드</string>
+    <string name="dnd_off_sound_description">방해 금지 모드가 비활성화될 때 재생할 사운드</string>
+    <string name="use_custom_volume_description">방해 금지 사운드에 사용자 지정 볼륨을 사용합니다</string>
+    <string name="custom_volume_description">방해 금지 사운드에 사용할 볼륨</string>
+    <string name="use_custom_vibration_description">방해 금지 모드에 사용자 지정 진동을 사용합니다</string>
+    <string name="custom_vibration_strength_description">방해 금지 모드에 사용할 진동 세기</string>
+    <string name="sound_enabled_description">방해 금지 모드 사운드를 활성화합니다</string>
+    <string name="vibration_enabled_description">방해 금지 모드 진동을 활성화합니다</string>
     <string name="use_custom_vibration_strength">사용자 지정 진동 세기 사용</string>
-    <string name="extras">추가 기능</string>
+    <string name="extras">기타</string>
     <string name="join_telegram">텔레그램 참여</string>
-    <string name="join_telegram_description">우리의 텔레그램 커뮤니티에 참여하세요</string>
+    <string name="join_telegram_description">텔레그램 커뮤니티에 참여하세요 (Pro 필요)</string>
     <string name="support_developer">개발자 지원</string>
     <string name="support_developer_description">앱을 무료로 유지하고 지속적으로 개선할 수 있도록 도와주세요</string>
     <string name="your_support_helps">여러분의 지원은 이 앱을 무료로 유지하고 지속적인 개선에 큰 도움이 됩니다!</string>
@@ -57,4 +65,160 @@
     <string name="language">언어</string>
     <string name="language_description">앱 언어 변경</string>
     <string name="error_opening_language_settings">언어 설정을 열 수 없습니다</string>
+    <string name="qs_tile_label">Flip DND 서비스</string>
+    <string name="detection">감지</string>
+    <string name="flashlight_detection">손전등 감지</string>
+    <string name="flashlight_detection_description">손전등이 켜져 있을 때 서비스를 일시 중지합니다</string>
+    <string name="media_playback_detection">미디어 재생 감지</string>
+    <string name="media_playback_detection_description">미디어가 재생 중일 때 서비스를 일시 중지합니다</string>
+    <string name="headphone_detection">헤드폰 감지</string>
+    <string name="headphone_detection_description">헤드폰이 연결되어 있을 때 서비스를 일시 중지합니다</string>
+    <string name="dnd_activation_schedule">방해 금지 활성화 일정</string>
+    <string name="sound_schedule">사운드 일정</string>
+    <string name="vibration_schedule">진동 일정</string>
+    <string name="schedule_enabled">일정 활성화</string>
+    <string name="dnd_schedule_description">이 시간 동안에만 방해 금지 모드를 활성화합니다.</string>
+    <string name="sound_schedule_description">이 시간 동안에만 사운드 피드백을 재생합니다.</string>
+    <string name="vibration_schedule_description">이 시간 동안에만 진동을 울립니다.</string>
+    <string name="start_time">시작 시간</string>
+    <string name="end_time">종료 시간</string>
+    <string name="days">요일</string>
+    <string name="auto_start">부팅 시 자동 시작</string>
+    <string name="auto_start_description">기기가 재부팅될 때 자동으로 서비스를 시작합니다 (Pro 필요)</string>
+    <string name="flashlight">손전등</string>
+    <string name="flashlight_enabled">손전등 피드백</string>
+    <string name="flashlight_enabled_description">방해 금지 모드에 손전등 피드백을 활성화합니다</string>
+    <string name="dnd_on_flashlight_pattern">활성화 시 손전등 패턴</string>
+    <string name="dnd_off_flashlight_pattern">비활성화 시 손전등 패턴</string>
+
+    <!-- Missing Strings -->
+    <string name="back">뒤로</string>
+    <string name="selected">선택됨</string>
+    <string name="not_selected">선택 안 됨</string>
+    <string name="none">없음</string>
+    <string name="none_selected">선택된 항목 없음</string>
+    <string name="version">버전</string>
+    <string name="changelog">변경 사항</string>
+    <string name="unable_to_load_changelog">변경 사항을 불러올 수 없습니다</string>
+    <string name="error_no_app_found">링크를 열 수 있는 앱을 찾을 수 없습니다</string>
+    <string name="adb_command">ADB 명령어</string>
+    <string name="command_copied">명령어가 클립보드에 복사되었습니다</string>
+    <string name="select_sound">사운드 선택</string>
+    <string name="custom_sound">사용자 지정 사운드</string>
+    <string name="custom_sound_format">사용자 지정: %1$s</string>
+    <string name="error_opening_sound_picker">사운드 선택기를 열 수 없습니다</string>
+    <string name="select_vibration_pattern">진동 패턴 선택</string>
+    <string name="select_flashlight_pattern">손전등 패턴 선택</string>
+    <string name="telegram_icon">텔레그램 아이콘</string>
+    <string name="support_icon">지원 아이콘</string>
+    <string name="version_icon">버전 아이콘</string>
+    <string name="stop_service">서비스 중지</string>
+    <string name="start_service">서비스 시작</string>
+    <string name="dnd_icon">방해 금지 아이콘</string>
+
+    <!-- DND Modes -->
+    <string name="dnd_mode_total_silence">전체 무음</string>
+    <string name="dnd_mode_priority">우선순위 모드</string>
+    <string name="dnd_mode_alarms_only">알람만 허용</string>
+    <string name="dnd_mode_all">모든 알림</string>
+    <string name="dnd_mode_unknown">알 수 없는 모드</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Flip 2 DND에 오신 것을 환영합니다</string>
+    <string name="onboarding_welcome_desc">휴대폰을 뒤집기만 하면 방해 금지 모드를 간편하게 제어할 수 있습니다.</string>
+    <string name="onboarding_simple_title">심플하고 효과적인 기능</string>
+    <string name="onboarding_simple_desc">중요한 것에 집중하세요. 휴대폰을 뒤집어 즉시 알림을 무음으로 전환하세요.</string>
+    <string name="onboarding_all_set_title">모든 준비가 완료되었습니다!</string>
+    <string name="onboarding_all_set_desc">휴대폰을 뒤집어 기능을 확인해 보세요.</string>
+    <string name="onboarding_get_started">시작하기</string>
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_setup_permissions_title">권한 설정</string>
+    <string name="onboarding_setup_permissions_desc">Flip 2 DND가 정상적으로 작동하도록 다음 권한을 허용해 주세요.</string>
+    <string name="permission_dnd_title">방해 금지 모드 액세스</string>
+    <string name="permission_dnd_desc">방해 금지 모드 전환에 필요합니다.</string>
+    <string name="permission_battery_title">배터리 최적화</string>
+    <string name="permission_battery_desc">백그라운드에서 안정적인 실행을 위해 필요합니다.</string>
+    <string name="permission_notifications_title">알림</string>
+    <string name="permission_notifications_desc">선택 사항. 서비스 상태를 표시합니다.</string>
+    <string name="permission_granted">허용됨</string>
+    <string name="permission_grant">허용</string>
+
+    <!-- Donation -->
+    <string name="pay_with_redotpay">RedotPay로 결제</string>
+    <string name="redotpay_id">RedotPay ID</string>
+    <string name="pay_with_usdt">USDT로 결제</string>
+    <string name="usdt_network">BNB Smart Chain (BEP20)</string>
+    <string name="pay_with_bitcoin">Bitcoin으로 결제</string>
+    <string name="bitcoin_network">Bitcoin 네트워크</string>
+
+    <!-- Patterns and Sounds -->
+    <string name="sound_slush">Slush</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_whistle">휘슬</string>
+    <string name="vibration_single_pulse">단일 펄스</string>
+    <string name="vibration_double_pulse">이중 펄스</string>
+    <string name="vibration_triple_pulse">삼중 펄스</string>
+    <string name="vibration_long_pulse">긴 펄스</string>
+    <string name="vibration_rapid_pulse">빠른 펄스</string>
+    <string name="vibration_heartbeat">심장 박동</string>
+    <string name="vibration_tick_tock">틱톡</string>
+    <string name="flashlight_single_blink">한 번 깜박임</string>
+    <string name="flashlight_double_blink">두 번 깜박임</string>
+    <string name="flashlight_triple_blink">세 번 깜박임</string>
+    <string name="flashlight_long_blink">길게 깜박임</string>
+    <string name="flashlight_rapid_blink">빠르게 깜박임</string>
+
+    <!-- Upgrade Dialog -->
+    <string name="upgrade_to_pro">Pro로 업그레이드</string>
+    <string name="upgrade_to_pro_description">모든 프리미엄 기능을 잠금 해제하고 개발자를 지원하세요.</string>
+    <string name="feature_auto_start">부팅 시 자동 시작</string>
+    <string name="feature_sensitivity">고급 감도 설정</string>
+    <string name="feature_delay">사용자 지정 활성화 지연</string>
+    <string name="feature_schedules">방해 금지, 사운드, 진동 일정 설정</string>
+    <string name="feature_custom_sounds">파일에서 사용자 지정 사운드 설정</string>
+    <string name="feature_telegram">텔레그램 지원 그룹</string>
+    <string name="get_pro">Flip 2 DND Pro 구매</string>
+    <string name="maybe_later">나중에</string>
+    <string name="pro">PRO</string>
+    <string name="day_sunday_short">일</string>
+    <string name="day_monday_short">월</string>
+    <string name="day_tuesday_short">화</string>
+    <string name="day_wednesday_short">수</string>
+    <string name="day_thursday_short">목</string>
+    <string name="day_friday_short">금</string>
+    <string name="day_saturday_short">토</string>
+
+    <!-- Sound Picker -->
+    <string name="error_sound_not_accessible">선택한 사운드 파일에 접근할 수 없습니다</string>
+    <string name="error_permission">권한 오류: %1$s</string>
+    <string name="error_could_not_get_permission">사운드 파일에 대한 권한을 얻을 수 없습니다</string>
+    <string name="error_failed_to_get_permission">선택한 사운드에 대한 권한 획득에 실패했습니다</string>
+    <string name="error_processing_sound">사운드 처리 중 오류 발생: %1$s</string>
+    <string name="error_no_sound_selected">사운드 파일이 선택되지 않았습니다</string>
+    <string name="dnd_on_sound_saved">활성화 시 사용자 지정 사운드가 저장되었습니다</string>
+    <string name="dnd_off_sound_saved">비활성화 시 사용자 지정 사운드가 저장되었습니다</string>
+    <string name="error_saving_sound">사용자 지정 사운드 저장 중 오류 발생</string>
+
+    <!-- Notifications -->
+    <string name="notification_service_channel_name">Flip 2 DND 서비스</string>
+    <string name="notification_service_channel_desc">휴대폰 방향을 모니터링하여 방해 금지 모드를 전환합니다</string>
+    <string name="notification_flip_channel_name">뒤집기 상태 알림</string>
+    <string name="notification_flip_channel_desc">휴대폰 뒤집기 상태 및 방해 금지 모드 변경에 대한 알림</string>
+    <string name="notification_flip_detected_title">뒤집기 감지됨</string>
+    <string name="notification_dnd_activate_now">방해 금지 모드가 지금 활성화됩니다</string>
+    <string name="notification_dnd_activate_delay">%1$s 후에 방해 금지 모드가 활성화됩니다</string>
+    <string name="notification_dnd_state_changed_title">방해 금지 상태 변경됨</string>
+    <string name="notification_dnd_activated">방해 금지 모드가 활성화되었습니다</string>
+    <string name="notification_dnd_deactivated">방해 금지 모드가 비활성화되었습니다</string>
+    <string name="notification_battery_saver_suggested_title">배터리 절약 모드 권장</string>
+    <string name="notification_battery_saver_suggested_text">탭하여 배터리 절약 모드 활성화</string>
+    <string name="notification_monitoring_text">휴대폰 방향 모니터링 중</string>
+    <string name="address_copied">주소가 클립보드에 복사되었습니다</string>
+
+    <string name="error_notification_permission_required">앱 기능을 위해 알림 권한이 필요합니다</string>
+    <string name="error_grant_all_permissions">모든 기능을 사용하려면 모든 권한을 허용해 주세요</string>
+    <string name="unknown">알 수 없음</string>
+    <string name="orientation_face_up">화면이 위로 향함</string>
+    <string name="orientation_face_down">화면이 아래로 향함</string>
 </resources>

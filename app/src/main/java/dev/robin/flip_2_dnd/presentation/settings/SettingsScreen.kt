@@ -146,7 +146,7 @@ fun SettingsScreen(
 		}
 	}
 
-	val versionName = packageInfo?.versionName ?: "Unknown"
+	val versionName = packageInfo?.versionName ?: stringResource(id = R.string.unknown)
 	val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 		packageInfo?.longVersionCode ?: 0L
 	} else {
@@ -173,7 +173,7 @@ fun SettingsScreen(
 				}
 			}.joinToString("\n\n")
 		} catch (e: Exception) {
-			"Unable to load changelog"
+			context.getString(R.string.unable_to_load_changelog)
 		}
 	}
 
@@ -208,7 +208,7 @@ fun SettingsScreen(
 					IconButton(onClick = { navController?.popBackStack() }) {
 						Icon(
 							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-							contentDescription = "Back"
+							contentDescription = stringResource(R.string.back)
 						)
 					}
 				},
@@ -338,11 +338,11 @@ fun SettingsScreen(
 							confirmButton = {
 								TextButton(onClick = {
 									val adbCommand = context.getString(R.string.adb_command_text)
-									val clipData = ClipData.newPlainText("ADB Command", adbCommand)
+									val clipData = ClipData.newPlainText(context.getString(R.string.adb_command), adbCommand)
 									scope.launch {
 										clipboard.setClipEntry(ClipEntry(clipData))
 									}
-									Toast.makeText(context, "Command copied to clipboard", Toast.LENGTH_SHORT).show()
+									Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
 									showAdbDialog = false
 								}) {
 									Text(stringResource(R.string.copy_command))
@@ -581,14 +581,14 @@ fun SettingsScreen(
                 val dndOnCustomSoundName = remember(dndOnCustomSoundUri) {
                     dndOnCustomSoundUri?.let { uriString ->
                         getFileNameFromUri(context, Uri.parse(uriString))
-                    } ?: "None selected"
+                    } ?: context.getString(R.string.none_selected)
                 }
 
                 SettingsClickableItem(
                     title = stringResource(id = R.string.dnd_on_sound),
-                    description = if (dndOnSound == Sound.CUSTOM) "Custom: $dndOnCustomSoundName" else dndOnSound.name,
+                    description = if (dndOnSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOnCustomSoundName) else stringResource(dndOnSound.stringResId),
                     trailingIcon = {
-                        Icon(Icons.Default.ArrowDropDown, "Select sound")
+                        Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
                     },
                     onClick = { dndOnExpanded = true }
                 )
@@ -601,18 +601,18 @@ fun SettingsScreen(
 							Column {
 								viewModel.availableSounds.forEach { sound ->
 									SettingsClickableItem(
-										title = if (sound == Sound.CUSTOM) "Custom Sound" else sound.name,
+										title = stringResource(sound.stringResId),
 										trailingIcon = {
 											if (sound == dndOnSound) {
 												Icon(
 													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = "Selected",
+													contentDescription = stringResource(R.string.selected),
 													tint = MaterialTheme.colorScheme.primary
 												)
 											} else {
 												Icon(
 													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = "Not Selected",
+													contentDescription = stringResource(R.string.not_selected),
 													tint = MaterialTheme.colorScheme.onSurfaceVariant
 												)
 											}
@@ -629,7 +629,7 @@ fun SettingsScreen(
 													try {
 														context.startActivity(intent)
 													} catch (e: ActivityNotFoundException) {
-														Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
+														Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
 															.show()
 													}
 												} else {
@@ -652,14 +652,14 @@ fun SettingsScreen(
 					val dndOffCustomSoundName = remember(dndOffCustomSoundUri) {
 						dndOffCustomSoundUri?.let { uriString ->
 							getFileNameFromUri(context, Uri.parse(uriString))
-						} ?: "None selected"
+						} ?: context.getString(R.string.none_selected)
 					}
 
 					SettingsClickableItem(
 						title = stringResource(id = R.string.dnd_off_sound),
-						description = if (dndOffSound == Sound.CUSTOM) "Custom: $dndOffCustomSoundName" else dndOffSound.name,
+						description = if (dndOffSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOffCustomSoundName) else stringResource(dndOffSound.stringResId),
 						trailingIcon = {
-							Icon(Icons.Default.ArrowDropDown, "Select sound")
+							Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
 						},
 						onClick = { dndOffExpanded = true }
 					)
@@ -672,18 +672,18 @@ fun SettingsScreen(
 							Column {
 								viewModel.availableSounds.forEach { sound ->
 									SettingsClickableItem(
-										title = if (sound == Sound.CUSTOM) "Custom Sound" else sound.name,
+										title = stringResource(sound.stringResId),
 										trailingIcon = {
 											if (sound == dndOffSound) {
 												Icon(
 													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = "Selected",
+													contentDescription = stringResource(R.string.selected),
 													tint = MaterialTheme.colorScheme.primary
 												)
 											} else {
 												Icon(
 													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = "Not Selected",
+													contentDescription = stringResource(R.string.not_selected),
 													tint = MaterialTheme.colorScheme.onSurfaceVariant
 												)
 											}
@@ -700,7 +700,7 @@ fun SettingsScreen(
 													try {
 														context.startActivity(intent)
 													} catch (e: ActivityNotFoundException) {
-														Toast.makeText(context, "Could not open sound picker", Toast.LENGTH_SHORT)
+														Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
 															.show()
 													}
 												} else {
@@ -804,9 +804,9 @@ fun SettingsScreen(
 
 				SettingsClickableItem(
 					title = stringResource(id = R.string.dnd_on_vibration_pattern),
-					description = viewModel.dndOnVibration.collectAsState().value.displayName,
+					description = stringResource(viewModel.dndOnVibration.collectAsState().value.stringResId),
 					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
 					},
 					onClick = { dndOnVibrationExpanded = true }
 				)
@@ -819,18 +819,18 @@ fun SettingsScreen(
 						Column {
 							viewModel.availableVibrationPatterns.forEach { pattern ->
 								SettingsClickableItem(
-									title = pattern.displayName,
+									title = stringResource(pattern.stringResId),
 									trailingIcon = {
 										if (pattern == viewModel.dndOnVibration.collectAsState().value) {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = "Selected",
+												contentDescription = stringResource(R.string.selected),
 												tint = MaterialTheme.colorScheme.primary
 											)
 										} else {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = "Not Selected",
+												contentDescription = stringResource(R.string.not_selected),
 												tint = MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
@@ -849,9 +849,9 @@ fun SettingsScreen(
 
 				SettingsClickableItem(
 					title = stringResource(id = R.string.dnd_off_vibration_pattern),
-					description = viewModel.dndOffVibration.collectAsState().value.displayName,
+					description = stringResource(viewModel.dndOffVibration.collectAsState().value.stringResId),
 					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, "Select vibration pattern")
+						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
 					},
 					onClick = { dndOffVibrationExpanded = true }
 				)
@@ -864,18 +864,18 @@ fun SettingsScreen(
 						Column {
 							viewModel.availableVibrationPatterns.forEach { pattern ->
 								SettingsClickableItem(
-									title = pattern.displayName,
+									title = stringResource(pattern.stringResId),
 									trailingIcon = {
 										if (pattern == viewModel.dndOffVibration.collectAsState().value) {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = "Selected",
+												contentDescription = stringResource(R.string.selected),
 												tint = MaterialTheme.colorScheme.primary
 											)
 										} else {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = "Not Selected",
+												contentDescription = stringResource(R.string.not_selected),
 												tint = MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
@@ -985,9 +985,9 @@ fun SettingsScreen(
 
 				SettingsClickableItem(
 					title = stringResource(id = R.string.dnd_on_flashlight_pattern),
-					description = dndOnFlashlightPattern.displayName,
+					description = stringResource(dndOnFlashlightPattern.stringResId),
 					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, "Select flashlight pattern")
+						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
 					},
 					onClick = { dndOnFlashlightExpanded = true }
 				)
@@ -1000,18 +1000,18 @@ fun SettingsScreen(
 						Column {
 							viewModel.availableFlashlightPatterns.forEach { pattern ->
 								SettingsClickableItem(
-									title = pattern.displayName,
+									title = stringResource(pattern.stringResId),
 									trailingIcon = {
 										if (pattern == dndOnFlashlightPattern) {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = "Selected",
+												contentDescription = stringResource(R.string.selected),
 												tint = MaterialTheme.colorScheme.primary
 											)
 										} else {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = "Not Selected",
+												contentDescription = stringResource(R.string.not_selected),
 												tint = MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
@@ -1030,9 +1030,9 @@ fun SettingsScreen(
 
 				SettingsClickableItem(
 					title = stringResource(id = R.string.dnd_off_flashlight_pattern),
-					description = dndOffFlashlightPattern.displayName,
+					description = stringResource(dndOffFlashlightPattern.stringResId),
 					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, "Select flashlight pattern")
+						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
 					},
 					onClick = { dndOffFlashlightExpanded = true }
 				)
@@ -1045,18 +1045,18 @@ fun SettingsScreen(
 						Column {
 							viewModel.availableFlashlightPatterns.forEach { pattern ->
 								SettingsClickableItem(
-									title = pattern.displayName,
+									title = stringResource(pattern.stringResId),
 									trailingIcon = {
 										if (pattern == dndOffFlashlightPattern) {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = "Selected",
+												contentDescription = stringResource(R.string.selected),
 												tint = MaterialTheme.colorScheme.primary
 											)
 										} else {
 											Icon(
 												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = "Not Selected",
+												contentDescription = stringResource(R.string.not_selected),
 												tint = MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
@@ -1092,7 +1092,7 @@ fun SettingsScreen(
 				leadingIcon = {
 					Icon(
 						painter = painterResource(id = R.drawable.telegram),
-						contentDescription = "Telegram Icon",
+						contentDescription = stringResource(R.string.telegram_icon),
 						tint = MaterialTheme.colorScheme.primary,
 						modifier = Modifier.width(24.dp)
 					)
@@ -1104,7 +1104,7 @@ fun SettingsScreen(
 						try {
 							context.startActivity(intent)
 						} catch (e: ActivityNotFoundException) {
-							Toast.makeText(context, "No app found to open link", Toast.LENGTH_SHORT).show()
+							Toast.makeText(context, context.getString(R.string.error_no_app_found), Toast.LENGTH_SHORT).show()
 						}
 					} else {
 						showUpgradeDialog = true
@@ -1120,7 +1120,7 @@ fun SettingsScreen(
 				leadingIcon = {
 					Icon(
 						painter = painterResource(id = R.drawable.ic_coin),
-						contentDescription = "Support Icon",
+						contentDescription = stringResource(R.string.support_icon),
 						tint = MaterialTheme.colorScheme.primary
 					)
 				},
@@ -1128,12 +1128,12 @@ fun SettingsScreen(
 			)
 
 			SettingsClickableItem(
-				title = "Version",
+				title = stringResource(R.string.version),
 				description = "$versionName ($versionCode)",
 				leadingIcon = {
 					Icon(
 						imageVector = Icons.Default.Info,
-						contentDescription = "Version Icon",
+						contentDescription = stringResource(R.string.version_icon),
 						tint = MaterialTheme.colorScheme.primary
 					)
 				},
@@ -1153,7 +1153,7 @@ fun SettingsScreen(
 							.padding(24.dp)
 					) {
 						Text(
-							text = "Changelog",
+							text = stringResource(R.string.changelog),
 							style = MaterialTheme.typography.headlineSmall,
 							fontWeight = FontWeight.Bold,
 							color = MaterialTheme.colorScheme.primary
@@ -1282,8 +1282,16 @@ private fun DayPicker(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val daysOfWeek = listOf("S", "M", "T", "W", "T", "F", "S")
-        daysOfWeek.forEachIndexed { index, day ->
+        val daysOfWeek = listOf(
+            R.string.day_sunday_short,
+            R.string.day_monday_short,
+            R.string.day_tuesday_short,
+            R.string.day_wednesday_short,
+            R.string.day_thursday_short,
+            R.string.day_friday_short,
+            R.string.day_saturday_short
+        )
+        daysOfWeek.forEachIndexed { index, dayResId ->
             val dayValue = index + 1
             val isSelected = selectedDays.contains(dayValue)
             Box(
@@ -1305,7 +1313,7 @@ private fun DayPicker(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = day,
+                    text = stringResource(dayResId),
                     color = if (isSelected) MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -1506,7 +1514,7 @@ fun ProBadge(modifier: Modifier = Modifier) {
 		contentColor = MaterialTheme.colorScheme.onPrimaryContainer
 	) {
 		Text(
-			text = "PRO",
+			text = stringResource(R.string.pro),
 			style = MaterialTheme.typography.labelSmall,
 			fontWeight = FontWeight.ExtraBold,
 			modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)

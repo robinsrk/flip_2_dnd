@@ -94,7 +94,7 @@ fun MainScreen(
 					painter = painterResource(
 						id = if (state.isServiceRunning) R.drawable.ic_pause else R.drawable.ic_play
 					),
-					contentDescription = if (state.isServiceRunning) "Stop Service" else "Start Service",
+					contentDescription = if (state.isServiceRunning) stringResource(id = R.string.stop_service) else stringResource(id = R.string.start_service),
 					modifier = Modifier.size(36.dp)
 				)
 			}
@@ -127,7 +127,7 @@ fun MainScreen(
 						painter = painterResource(
 							id = if (state.isDndEnabled) R.drawable.ic_dnd_on else R.drawable.ic_dnd_off
 						),
-						contentDescription = "Do Not Disturb Icon",
+						contentDescription = stringResource(id = R.string.dnd_icon),
 						modifier = Modifier.fillMaxSize(0.6f),
 						colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
 					)
@@ -139,7 +139,7 @@ fun MainScreen(
 				verticalArrangement = Arrangement.spacedBy(8.dp)
 			) {
 				Text(
-					text = if (state.isDndEnabled) state.dndMode.uppercase() else stringResource(id = R.string.dnd_off).uppercase(),
+					text = if (state.isDndEnabled) stringResource(id = state.dndMode).uppercase() else stringResource(id = R.string.dnd_off).uppercase(),
 					style = MaterialTheme.typography.displayMedium,
 					fontWeight = FontWeight.ExtraBold,
 					color = MaterialTheme.colorScheme.primary,

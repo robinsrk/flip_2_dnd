@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -25,8 +26,8 @@ class SensorService(
 	private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 	private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
-	private val _orientation = MutableStateFlow("Face up")
-	val orientation: StateFlow<String> = _orientation
+	private val _orientation = MutableStateFlow(PhoneOrientation.FACE_UP)
+	val orientation: StateFlow<PhoneOrientation> = _orientation
 
 	private val _accelerometerData = MutableStateFlow(FloatArray(3) { 0f })
 	val accelerometerData: StateFlow<FloatArray> = _accelerometerData
@@ -163,15 +164,15 @@ class SensorService(
 			abs(z) >= accelThreshold && z < 0 -> {
 				// Only check stability for face down
 				Log.d(TAG, "z value: ${abs(z)} $z (threshold: $accelThreshold, stable: $isStable)")
-				if (isStable) "Face down" else _orientation.value
+				if (isStable) PhoneOrientation.FACE_DOWN else _orientation.value
 			}
 
 			// When high sensitivity mode is enabled, any orientation that's not face down is considered face up
 			else -> {
 				if (highSensitivityMode) {
-					"Face up"
+					PhoneOrientation.FACE_UP
 				} else if (abs(z) >= accelThreshold && z > 0) {
-					"Face up"
+					PhoneOrientation.FACE_UP
 				} else {
 					_orientation.value
 				}

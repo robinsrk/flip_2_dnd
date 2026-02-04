@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
               } else {
                   Toast.makeText(
                           this,
-                          "Notification permission is required for app functionality",
+                          getString(R.string.error_notification_permission_required),
                           Toast.LENGTH_LONG
                   ).show()
               }
@@ -139,7 +139,7 @@ class MainActivity : ComponentActivity() {
     if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
         Toast.makeText(
             this,
-            "Please grant all permissions for full functionality",
+            getString(R.string.error_grant_all_permissions),
             Toast.LENGTH_LONG
         ).show()
 

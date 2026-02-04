@@ -21,6 +21,9 @@
     <string name="notifications_enabled">通知が有効</string>
     <string name="high_sensitivity_mode">高感度モード</string>
     <string name="battery_saver">バッテリー節約</string>
+    <string name="activation_delay">有効化の遅延</string>
+    <string name="activation_delay_description">スマートフォンを裏返してからDNDを有効にするまでの遅延時間</string>
+    <string name="seconds">%1$d 秒</string>
     <string name="dnd_on_sound">おやすみモードONの音</string>
     <string name="dnd_off_sound">おやすみモードOFFの音</string>
     <string name="use_custom_volume">カスタム音量を使用</string>
@@ -34,21 +37,26 @@
     <string name="flip_sensitivity_description">スマートフォンを裏返したときの感度を調整します</string>
     <string name="screen_off_only_description">画面がオフのときのみDNDを有効にします</string>
     <string name="priority_dnd_description">重要な通知のみ許可する優先モードを使用します</string>
-    <string name="notifications_enabled_description">サービスが有効なときに通知を表示します</string>
-    <string name="high_sensitivity_mode_description">裏返しの検知感度を高めます</string>
-    <string name="battery_saver_description">センサー使用を最適化してバッテリーを節約します</string>
-    <string name="dnd_on_sound_description">DNDが有効になったときに音を再生します</string>
-    <string name="dnd_off_sound_description">DNDが無効になったときに音を再生します</string>
-    <string name="use_custom_volume_description">DNDのサウンドにカスタム音量を設定できます</string>
-    <string name="custom_volume_description">通知サウンドのカスタム音量を調整します</string>
-    <string name="use_custom_vibration_description">カスタムバイブレーション設定を有効にします</string>
-    <string name="custom_vibration_strength_description">バイブレーションの強度を調整します</string>
-    <string name="sound_enabled_description">DNDイベントの通知音を有効にします</string>
-    <string name="vibration_enabled_description">DNDイベントのバイブ通知を有効にします</string>
+    <string name="notifications_enabled_description">スマートフォンが裏返されたときやDNDの状態が変わったときに通知を表示します</string>
+    <string name="high_sensitivity_mode_description">有効にすると、画面が下向き以外のすべての向きが上向きとみなされます</string>
+    <string name="battery_saver_description">DNDに合わせて自動的にバッテリーセーバーを切り替えます（自動切り替えにはADB権限が必要です）</string>
+    <string name="adb_permission_required">ADB権限が必要です</string>
+    <string name="adb_command_description">自動バッテリーセーバー切り替えを有効にするには、以下のADBコマンドを使用してWRITE_SECURE_SETTINGS権限を付与してください：</string>
+    <string name="copy_command">コマンドをコピー</string>
+    <string name="close">閉じる</string>
+    <string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="dnd_on_sound_description">DNDが有効になったときに再生する音</string>
+    <string name="dnd_off_sound_description">DNDが無効になったときに再生する音</string>
+    <string name="use_custom_volume_description">DNDのサウンドにカスタム音量を使用します</string>
+    <string name="custom_volume_description">DNDのサウンドに使用する音量</string>
+    <string name="use_custom_vibration_description">DNDにカスタムバイブレーションを使用します</string>
+    <string name="custom_vibration_strength_description">DNDに使用するバイブレーションの強度</string>
+    <string name="sound_enabled_description">DNDのサウンドを有効にします</string>
+    <string name="vibration_enabled_description">DNDのバイブレーションを有効にします</string>
     <string name="use_custom_vibration_strength">カスタムバイブレーション強度を使用</string>
-    <string name="extras">その他</string>
+    <string name="extras">エキストラ</string>
     <string name="join_telegram">Telegramに参加</string>
-    <string name="join_telegram_description">Telegramコミュニティに参加しよう</string>
+    <string name="join_telegram_description">Telegramコミュニティに参加しよう（Pro版が必要）</string>
     <string name="support_developer">開発者を支援</string>
     <string name="support_developer_description">アプリを無料かつ改善し続けられるよう支援してください</string>
     <string name="your_support_helps">あなたの支援により、このアプリを無料で改善し続けることができます！</string>
@@ -57,4 +65,160 @@
     <string name="language">言語</string>
     <string name="language_description">アプリの言語を変更</string>
     <string name="error_opening_language_settings">言語設定を開けませんでした</string>
+    <string name="qs_tile_label">Flip DND サービス</string>
+    <string name="detection">検知</string>
+    <string name="flashlight_detection">懐中電灯検知</string>
+    <string name="flashlight_detection_description">懐中電灯が点灯している間、サービスを一時停止します</string>
+    <string name="media_playback_detection">メディア再生検知</string>
+    <string name="media_playback_detection_description">メディアが再生されている間、サービスを一時停止します</string>
+    <string name="headphone_detection">ヘッドフォン検知</string>
+    <string name="headphone_detection_description">ヘッドフォンが接続されている間、サービスを一時停止します</string>
+    <string name="dnd_activation_schedule">DND有効化スケジュール</string>
+    <string name="sound_schedule">サウンドスケジュール</string>
+    <string name="vibration_schedule">バイブレーションスケジュール</string>
+    <string name="schedule_enabled">スケジュールを有効にする</string>
+    <string name="dnd_schedule_description">指定した時間帯のみDNDを有効にします。</string>
+    <string name="sound_schedule_description">指定した時間帯のみサウンドフィードバックを再生します。</string>
+    <string name="vibration_schedule_description">指定した時間帯のみバイブレーションを作動させます。</string>
+    <string name="start_time">開始時間</string>
+    <string name="end_time">終了時間</string>
+    <string name="days">曜日</string>
+    <string name="auto_start">起動時に自動実行</string>
+    <string name="auto_start_description">デバイスの再起動時に自動的にサービスを開始します（Pro版が必要）</string>
+    <string name="flashlight">懐中電灯</string>
+    <string name="flashlight_enabled">懐中電灯フィードバック</string>
+    <string name="flashlight_enabled_description">DNDの懐中電灯フィードバックを有効にします</string>
+    <string name="dnd_on_flashlight_pattern">DND ONの点滅パターン</string>
+    <string name="dnd_off_flashlight_pattern">DND OFFの点滅パターン</string>
+
+    <!-- Missing Strings -->
+    <string name="back">戻る</string>
+    <string name="selected">選択済み</string>
+    <string name="not_selected">未選択</string>
+    <string name="none">なし</string>
+    <string name="none_selected">選択なし</string>
+    <string name="version">バージョン</string>
+    <string name="changelog">変更履歴</string>
+    <string name="unable_to_load_changelog">変更履歴を読み込めませんでした</string>
+    <string name="error_no_app_found">リンクを開くためのアプリが見つかりません</string>
+    <string name="adb_command">ADBコマンド</string>
+    <string name="command_copied">コマンドをクリップボードにコピーしました</string>
+    <string name="select_sound">サウンドを選択</string>
+    <string name="custom_sound">カスタムサウンド</string>
+    <string name="custom_sound_format">カスタム: %1$s</string>
+    <string name="error_opening_sound_picker">サウンドピッカーを開けませんでした</string>
+    <string name="select_vibration_pattern">バイブレーションパターンを選択</string>
+    <string name="select_flashlight_pattern">点滅パターンを選択</string>
+    <string name="telegram_icon">Telegramアイコン</string>
+    <string name="support_icon">サポートアイコン</string>
+    <string name="version_icon">バージョンアイコン</string>
+    <string name="stop_service">サービスを停止</string>
+    <string name="start_service">サービスを開始</string>
+    <string name="dnd_icon">おやすみモードアイコン</string>
+
+    <!-- DND Modes -->
+    <string name="dnd_mode_total_silence">サイレント</string>
+    <string name="dnd_mode_priority">優先モード</string>
+    <string name="dnd_mode_alarms_only">アラームのみ</string>
+    <string name="dnd_mode_all">すべての通知</string>
+    <string name="dnd_mode_unknown">不明なモード</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Flip 2 DND へようこそ</string>
+    <string name="onboarding_welcome_desc">スマートフォンを裏返すだけで、おやすみモードを簡単にコントロールできます。</string>
+    <string name="onboarding_simple_title">シンプルで効果的</string>
+    <string name="onboarding_simple_desc">大切なことに集中しましょう。スマートフォンを裏返すだけで、すぐに静かな環境を作れます。</string>
+    <string name="onboarding_all_set_title">準備完了です！</string>
+    <string name="onboarding_all_set_desc">スマートフォンを裏返して、動作を確認してみましょう。</string>
+    <string name="onboarding_get_started">始める</string>
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_setup_permissions_title">権限の設定</string>
+    <string name="onboarding_setup_permissions_desc">Flip 2 DNDが正しく動作するために、以下の権限を許可してください。</string>
+    <string name="permission_dnd_title">おやすみモードへのアクセス</string>
+    <string name="permission_dnd_desc">おやすみモードを切り替えるために必要です。</string>
+    <string name="permission_battery_title">電池の最適化</string>
+    <string name="permission_battery_desc">バックグラウンドで安定して動作させるために必要です。</string>
+    <string name="permission_notifications_title">通知</string>
+    <string name="permission_notifications_desc">（任意）サービスのステータスを表示します。</string>
+    <string name="permission_granted">許可済み</string>
+    <string name="permission_grant">許可する</string>
+
+    <!-- Donation -->
+    <string name="pay_with_redotpay">RedotPayで支払う</string>
+    <string name="redotpay_id">RedotPay ID</string>
+    <string name="pay_with_usdt">USDTで支払う</string>
+    <string name="usdt_network">BNB Smart Chain (BEP20)</string>
+    <string name="pay_with_bitcoin">Bitcoinで支払う</string>
+    <string name="bitcoin_network">Bitcoin ネットワーク</string>
+
+    <!-- Patterns and Sounds -->
+    <string name="sound_slush">スラッシュ</string>
+    <string name="sound_hiss">ヒス</string>
+    <string name="sound_shh">シー</string>
+    <string name="sound_whistle">口笛</string>
+    <string name="vibration_single_pulse">シングルパルス</string>
+    <string name="vibration_double_pulse">ダブルパルス</string>
+    <string name="vibration_triple_pulse">トリプルパルス</string>
+    <string name="vibration_long_pulse">ロングパルス</string>
+    <string name="vibration_rapid_pulse">高速パルス</string>
+    <string name="vibration_heartbeat">ハートビート</string>
+    <string name="vibration_tick_tock">チクタク</string>
+    <string name="flashlight_single_blink">シングル点滅</string>
+    <string name="flashlight_double_blink">ダブル点滅</string>
+    <string name="flashlight_triple_blink">トリプル点滅</string>
+    <string name="flashlight_long_blink">ロング点滅</string>
+    <string name="flashlight_rapid_blink">高速点滅</string>
+
+    <!-- Upgrade Dialog -->
+    <string name="upgrade_to_pro">Pro版へアップグレード</string>
+    <string name="upgrade_to_pro_description">すべてのプレミアム機能を利用可能にし、開発者を支援します。</string>
+    <string name="feature_auto_start">起動時に自動開始</string>
+    <string name="feature_sensitivity">高度な感度設定</string>
+    <string name="feature_delay">カスタム有効化遅延</string>
+    <string name="feature_schedules">DND、サウンド、バイブのスケジュール設定</string>
+    <string name="feature_custom_sounds">ファイルからカスタムサウンドを設定</string>
+    <string name="feature_telegram">Telegram サポートグループ</string>
+    <string name="get_pro">Flip 2 DND Pro を入手</string>
+    <string name="maybe_later">あとで</string>
+    <string name="pro">PRO</string>
+    <string name="day_sunday_short">日</string>
+    <string name="day_monday_short">月</string>
+    <string name="day_tuesday_short">火</string>
+    <string name="day_wednesday_short">水</string>
+    <string name="day_thursday_short">木</string>
+    <string name="day_friday_short">金</string>
+    <string name="day_saturday_short">土</string>
+
+    <!-- Sound Picker -->
+    <string name="error_sound_not_accessible">選択したサウンドファイルにアクセスできません</string>
+    <string name="error_permission">権限エラー: %1$s</string>
+    <string name="error_could_not_get_permission">サウンドファイルの権限を取得できませんでした</string>
+    <string name="error_failed_to_get_permission">選択したサウンドの権限取得に失敗しました</string>
+    <string name="error_processing_sound">サウンドの処理中にエラーが発生しました: %1$s</string>
+    <string name="error_no_sound_selected">サウンドファイルが選択されていません</string>
+    <string name="dnd_on_sound_saved">DND ONのカスタムサウンドを保存しました</string>
+    <string name="dnd_off_sound_saved">DND OFFのカスタムサウンドを保存しました</string>
+    <string name="error_saving_sound">カスタムサウンドの保存中にエラーが発生しました</string>
+
+    <!-- Notifications -->
+    <string name="notification_service_channel_name">Flip 2 DND サービス</string>
+    <string name="notification_service_channel_desc">スマートフォンの向きを監視してDNDモードを切り替えます</string>
+    <string name="notification_flip_channel_name">反転状態の通知</string>
+    <string name="notification_flip_channel_desc">反転状態やDNDの変更に関する通知</string>
+    <string name="notification_flip_detected_title">反転を検知しました</string>
+    <string name="notification_dnd_activate_now">DNDを今すぐ有効にします</string>
+    <string name="notification_dnd_activate_delay">%1$s 後にDNDを有効にします</string>
+    <string name="notification_dnd_state_changed_title">DND状態が変更されました</string>
+    <string name="notification_dnd_activated">DNDモードが有効になりました</string>
+    <string name="notification_dnd_deactivated">DNDモードが無効になりました</string>
+    <string name="notification_battery_saver_suggested_title">バッテリー節約の推奨</string>
+    <string name="notification_battery_saver_suggested_text">タップしてバッテリー節約を有効にする</string>
+    <string name="notification_monitoring_text">スマートフォンの向きを監視中</string>
+    <string name="address_copied">アドレスをクリップボードにコピーしました</string>
+
+    <string name="error_notification_permission_required">アプリの動作には通知権限が必要です</string>
+    <string name="error_grant_all_permissions">すべての機能を有効にするには、すべての権限を許可してください</string>
+    <string name="unknown">不明</string>
+    <string name="orientation_face_up">表向き</string>
+    <string name="orientation_face_down">裏向き</string>
 </resources>

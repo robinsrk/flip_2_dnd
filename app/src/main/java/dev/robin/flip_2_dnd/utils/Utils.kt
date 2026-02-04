@@ -7,11 +7,13 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.widget.Toast
 
+import dev.robin.flip_2_dnd.R
+
 fun copyAddressToClipboard(context: Context, address: String) {
 	val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-	val clip = ClipData.newPlainText("Crypto Address", address)
+	val clip = ClipData.newPlainText(context.getString(R.string.donate), address)
 	clipboardManager.setPrimaryClip(clip)
-	Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+	Toast.makeText(context, context.getString(R.string.address_copied), Toast.LENGTH_SHORT).show()
 }
 
 fun getFileNameFromUri(context: Context, uri: Uri): String? {

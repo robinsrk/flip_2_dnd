@@ -20,9 +20,12 @@
 	<string name="notifications_enabled">Уведомления включены</string>
 	<string name="high_sensitivity_mode">Режим высокой чувствительности</string>
 	<string name="battery_saver">Энергосбережение</string>
+    <string name="activation_delay">Задержка активации</string>
+    <string name="activation_delay_description">Задержка перед активацией DND после переворота телефона</string>
+    <string name="seconds">%1$d секунд</string>
 	<string name="dnd_on_sound">Звук при включении DND</string>
 	<string name="dnd_off_sound">Звук при выключении DND</string>
-	<string name="use_custom_volume">Использовать пользовательский громкость</string>
+	<string name="use_custom_volume">Использовать пользовательскую громкость</string>
 	<string name="custom_volume">Пользовательская громкость</string>
 	<string name="use_custom_vibration">Использовать пользовательскую вибрацию</string>
 	<string name="custom_vibration_strength">Сила пользовательской вибрации</string>
@@ -35,7 +38,12 @@
 	<string name="priority_dnd_description">Включить приоритетный режим DND вместо полного молчания</string>
 	<string name="notifications_enabled_description">Показывать уведомления при обнаружении переворота или изменении состояния DND</string>
 	<string name="high_sensitivity_mode_description">Когда включено, любое положение, не являющееся экраном вниз, будет считаться экраном вверх</string>
-	<string name="battery_saver_description">Отключить детекцию сенсоров и службы DND, когда телефон находится в режиме энергосбережения</string>
+	<string name="battery_saver_description">Автоматически переключает режим энергосбережения вместе с DND (требуется разрешение ADB)</string>
+    <string name="adb_permission_required">Требуется разрешение ADB</string>
+    <string name="adb_command_description">Чтобы включить автоматическое переключение режима энергосбережения, предоставьте разрешение WRITE_SECURE_SETTINGS с помощью следующей команды ADB:</string>
+    <string name="copy_command">Копировать команду</string>
+    <string name="close">Закрыть</string>
+    <string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
 	<string name="dnd_on_sound_description">Звук при включении DND</string>
 	<string name="dnd_off_sound_description">Звук при выключении DND</string>
 	<string name="use_custom_volume_description">Использовать пользовательский уровень громкости для звуков DND</string>
@@ -47,13 +55,169 @@
 	<string name="use_custom_vibration_strength">Использовать силу пользовательской вибрации</string>
 	<string name="extras">Дополнительно</string>
 	<string name="join_telegram">Присоединиться к Telegram</string>
-	<string name="join_telegram_description">Присоединяйтесь к нашему сообществу в Telegram</string>
+	<string name="join_telegram_description">Присоединяйтесь к нашему сообществу в Telegram (требуется Pro)</string>
 	<string name="support_developer">Поддержите разработчика</string>
 	<string name="support_developer_description">Помогите сохранить приложение бесплатным и улучшать его</string>
 	<string name="your_support_helps">Ваша поддержка помогает сохранять это приложение бесплатным и постоянно улучшать его!</string>
 	<string name="thanks_for_support">Спасибо за вашу щедрую поддержку! ❤️</string>
-    <string name="general">Общие</string>
-    <string name="language">Язык</string>
-    <string name="language_description">Изменить язык приложения</string>
-    <string name="error_opening_language_settings">Не удалось открыть настройки языка</string>
+	<string name="general">Общие</string>
+	<string name="language">Язык</string>
+	<string name="language_description">Изменить язык приложения</string>
+	<string name="error_opening_language_settings">Не удалось открыть настройки языка</string>
+    <string name="qs_tile_label">Служба Flip DND</string>
+    <string name="detection">Обнаружение</string>
+    <string name="flashlight_detection">Обнаружение фонарика</string>
+    <string name="flashlight_detection_description">Приостановить службу, когда включен фонарик</string>
+    <string name="media_playback_detection">Обнаружение воспроизведения медиа</string>
+    <string name="media_playback_detection_description">Приостановить службу во время воспроизведения медиа</string>
+    <string name="headphone_detection">Обнаружение наушников</string>
+    <string name="headphone_detection_description">Приостановить службу, когда подключены наушники</string>
+    <string name="dnd_activation_schedule">Расписание активации DND</string>
+    <string name="sound_schedule">Расписание звука</string>
+    <string name="vibration_schedule">Расписание вибрации</string>
+    <string name="schedule_enabled">Включить расписание</string>
+    <string name="dnd_schedule_description">Активировать DND только в это время.</string>
+    <string name="sound_schedule_description">Воспроизводить звуковые сигналы только в это время.</string>
+    <string name="vibration_schedule_description">Вибрировать только в это время.</string>
+    <string name="start_time">Время начала</string>
+    <string name="end_time">Время окончания</string>
+    <string name="days">Дни</string>
+    <string name="auto_start">Автозапуск при загрузке</string>
+    <string name="auto_start_description">Автоматически запускать службу обнаружения переворота при перезагрузке устройства (требуется Pro)</string>
+    <string name="flashlight">Фонарик</string>
+    <string name="flashlight_enabled">Световая индикация</string>
+    <string name="flashlight_enabled_description">Включить индикацию фонариком для DND</string>
+    <string name="dnd_on_flashlight_pattern">Шаблон фонарика при включении DND</string>
+    <string name="dnd_off_flashlight_pattern">Шаблон фонарика при выключении DND</string>
+
+    <!-- Missing Strings -->
+    <string name="back">Назад</string>
+    <string name="selected">Выбрано</string>
+    <string name="not_selected">Не выбрано</string>
+    <string name="none">Нет</string>
+    <string name="none_selected">Ничего не выбрано</string>
+    <string name="version">Версия</string>
+    <string name="changelog">Список изменений</string>
+    <string name="unable_to_load_changelog">Не удалось загрузить список изменений</string>
+    <string name="error_no_app_found">Приложение для открытия ссылки не найдено</string>
+    <string name="adb_command">Команда ADB</string>
+    <string name="command_copied">Команда скопирована в буфер обмена</string>
+    <string name="select_sound">Выбрать звук</string>
+    <string name="custom_sound">Свой звук</string>
+    <string name="custom_sound_format">Свой: %1$s</string>
+    <string name="error_opening_sound_picker">Не удалось открыть выбор звука</string>
+    <string name="select_vibration_pattern">Выбрать шаблон вибрации</string>
+    <string name="select_flashlight_pattern">Выбрать шаблон фонарика</string>
+    <string name="telegram_icon">Иконка Telegram</string>
+    <string name="support_icon">Иконка поддержки</string>
+    <string name="version_icon">Иконка версии</string>
+    <string name="stop_service">Остановить службу</string>
+    <string name="start_service">Запустить службу</string>
+    <string name="dnd_icon">Иконка Не беспокоить</string>
+
+    <!-- DND Modes -->
+    <string name="dnd_mode_total_silence">Полная тишина</string>
+    <string name="dnd_mode_priority">Приоритетный режим</string>
+    <string name="dnd_mode_alarms_only">Только будильники</string>
+    <string name="dnd_mode_all">Все уведомления</string>
+    <string name="dnd_mode_unknown">Неизвестный режим</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Добро пожаловать в Flip 2 DND</string>
+    <string name="onboarding_welcome_desc">Управляйте режимом "Не беспокоить", просто переворачивая телефон экраном вниз.</string>
+    <string name="onboarding_simple_title">Просто и эффективно</string>
+    <string name="onboarding_simple_desc">Сосредоточьтесь на важном. Переверните телефон, чтобы мгновенно отключить уведомления.</string>
+    <string name="onboarding_all_set_title">Все готово!</string>
+    <string name="onboarding_all_set_desc">Переверните телефон экраном вниз, чтобы попробовать.</string>
+    <string name="onboarding_get_started">Начать</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_setup_permissions_title">Настройка разрешений</string>
+    <string name="onboarding_setup_permissions_desc">Предоставьте следующие разрешения для корректной работы Flip 2 DND.</string>
+    <string name="permission_dnd_title">Доступ к "Не беспокоить"</string>
+    <string name="permission_dnd_desc">Требуется для переключения режима DND.</string>
+    <string name="permission_battery_title">Оптимизация батареи</string>
+    <string name="permission_battery_desc">Требуется для надежной работы в фоне.</string>
+    <string name="permission_notifications_title">Уведомления</string>
+    <string name="permission_notifications_desc">Необязательно. Показывает статус службы.</string>
+    <string name="permission_granted">Предоставлено</string>
+    <string name="permission_grant">Предоставить</string>
+
+    <!-- Donation -->
+    <string name="pay_with_redotpay">Оплатить через RedotPay</string>
+    <string name="redotpay_id">RedotPay ID</string>
+    <string name="pay_with_usdt">Оплатить через USDT</string>
+    <string name="usdt_network">BNB Smart Chain (BEP20)</string>
+    <string name="pay_with_bitcoin">Оплатить через Bitcoin</string>
+    <string name="bitcoin_network">Сеть Bitcoin</string>
+
+    <!-- Patterns and Sounds -->
+    <string name="sound_slush">Slush</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_whistle">Whistle</string>
+    <string name="vibration_single_pulse">Одиночный импульс</string>
+    <string name="vibration_double_pulse">Двойной импульс</string>
+    <string name="vibration_triple_pulse">Тройной импульс</string>
+    <string name="vibration_long_pulse">Длинный импульс</string>
+    <string name="vibration_rapid_pulse">Быстрый импульс</string>
+    <string name="vibration_heartbeat">Сердцебиение</string>
+    <string name="vibration_tick_tock">Тик-так</string>
+    <string name="flashlight_single_blink">Одиночное мигание</string>
+    <string name="flashlight_double_blink">Двойное мигание</string>
+    <string name="flashlight_triple_blink">Тройное мигание</string>
+    <string name="flashlight_long_blink">Длинное мигание</string>
+    <string name="flashlight_rapid_blink">Быстрое мигание</string>
+
+    <!-- Upgrade Dialog -->
+    <string name="upgrade_to_pro">Перейти на Pro</string>
+    <string name="upgrade_to_pro_description">Разблокируйте все премиум-функции и поддержите разработчика.</string>
+    <string name="feature_auto_start">Автозапуск при загрузке</string>
+    <string name="feature_sensitivity">Расширенные настройки чувствительности</string>
+    <string name="feature_delay">Своя задержка активации</string>
+    <string name="feature_schedules">Расписания DND, звука и вибрации</string>
+    <string name="feature_custom_sounds">Свои звуки из файлов</string>
+    <string name="feature_telegram">Группа поддержки в Telegram</string>
+    <string name="get_pro">Получить Flip 2 DND Pro</string>
+    <string name="maybe_later">Может позже</string>
+    <string name="pro">PRO</string>
+    <string name="day_sunday_short">Вс</string>
+    <string name="day_monday_short">Пн</string>
+    <string name="day_tuesday_short">Вт</string>
+    <string name="day_wednesday_short">Ср</string>
+    <string name="day_thursday_short">Чт</string>
+    <string name="day_friday_short">Пт</string>
+    <string name="day_saturday_short">Сб</string>
+
+    <!-- Sound Picker -->
+    <string name="error_sound_not_accessible">Выбранный звуковой файл недоступен</string>
+    <string name="error_permission">Ошибка разрешения: %1$s</string>
+    <string name="error_could_not_get_permission">Не удалось получить разрешение для звукового файла</string>
+    <string name="error_failed_to_get_permission">Не удалось получить разрешение для выбранного звука</string>
+    <string name="error_processing_sound">Ошибка обработки выбранного звука: %1$s</string>
+    <string name="error_no_sound_selected">Звуковой файл не выбран</string>
+    <string name="dnd_on_sound_saved">Свой звук для включения DND сохранен</string>
+    <string name="dnd_off_sound_saved">Свой звук для выключения DND сохранен</string>
+    <string name="error_saving_sound">Ошибка сохранения своего звука</string>
+
+    <!-- Notifications -->
+    <string name="notification_service_channel_name">Служба Flip 2 DND</string>
+    <string name="notification_service_channel_desc">Отслеживает ориентацию телефона для переключения режима DND</string>
+    <string name="notification_flip_channel_name">Уведомления о перевороте</string>
+    <string name="notification_flip_channel_desc">Уведомления о состоянии переворота и изменениях DND</string>
+    <string name="notification_flip_detected_title">Переворот обнаружен</string>
+    <string name="notification_dnd_activate_now">DND включится сейчас</string>
+    <string name="notification_dnd_activate_delay">DND включится через %1$s</string>
+    <string name="notification_dnd_state_changed_title">Состояние DND изменено</string>
+    <string name="notification_dnd_activated">Режим DND включен</string>
+    <string name="notification_dnd_deactivated">Режим DND выключен</string>
+    <string name="notification_battery_saver_suggested_title">Рекомендуется энергосбережение</string>
+    <string name="notification_battery_saver_suggested_text">Нажмите, чтобы включить энергосбережение</string>
+    <string name="notification_monitoring_text">Отслеживание ориентации телефона</string>
+    <string name="address_copied">Адрес скопирован в буфер обмена</string>
+
+    <string name="error_notification_permission_required">Разрешение на уведомления требуется для работы приложения</string>
+    <string name="error_grant_all_permissions">Пожалуйста, предоставьте все разрешения для полной функциональности</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="orientation_face_up">Экраном вверх</string>
+    <string name="orientation_face_down">Экраном вниз</string>
 </resources>

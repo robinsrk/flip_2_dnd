@@ -58,7 +58,7 @@
 	<string name="join_telegram_description">Join our Telegram Community (Requires Pro)</string>
 	<string name="support_developer">Support Developer</string>
 	<string name="support_developer_description">Help keep the app free and improving</string>
-	<string name="your_support_helps">Your support helps keep this app free and continously improving!</string>
+	<string name="your_support_helps">Your support helps keep this app free and continuously improving!</string>
 	<string name="thanks_for_support">Thank you for your generous support! ❤️</string>
 	<string name="general">General</string>
 	<string name="language">Language</string>
@@ -73,20 +73,151 @@
 	<string name="headphone_detection">Headphone Detection</string>
 	<string name="headphone_detection_description">Pause service when headphones are connected</string>
 	<string name="dnd_activation_schedule">DND Activation Schedule</string>
-    <string name="sound_schedule">Sound Schedule</string>
-    <string name="vibration_schedule">Vibration Schedule</string>
-    <string name="schedule_enabled">Enable Schedule</string>
-    <string name="dnd_schedule_description">Only activate DND during these times.</string>
-    <string name="sound_schedule_description">Only play sound feedback during these times.</string>
-    <string name="vibration_schedule_description">Only vibrate during these times.</string>
-    <string name="start_time">Start Time</string>
-    <string name="end_time">End Time</string>
-    <string name="days">Days</string>
-    <string name="auto_start">Auto Start on Boot</string>
-    <string name="auto_start_description">Automatically start the flip detector service when the device reboots (Requires Pro)</string>
-    <string name="flashlight">Flashlight</string>
-    <string name="flashlight_enabled">Flashlight Feedback</string>
-    <string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
-    <string name="dnd_on_flashlight_pattern">DND On Flashlight Pattern</string>
-    <string name="dnd_off_flashlight_pattern">DND Off Flashlight Pattern</string>
+	<string name="sound_schedule">Sound Schedule</string>
+	<string name="vibration_schedule">Vibration Schedule</string>
+	<string name="schedule_enabled">Enable Schedule</string>
+	<string name="dnd_schedule_description">Only activate DND during these times.</string>
+	<string name="sound_schedule_description">Only play sound feedback during these times.</string>
+	<string name="vibration_schedule_description">Only vibrate during these times.</string>
+	<string name="start_time">Start Time</string>
+	<string name="end_time">End Time</string>
+	<string name="days">Days</string>
+	<string name="auto_start">Auto Start on Boot</string>
+	<string name="auto_start_description">Automatically start the flip detector service when the device reboots (Requires Pro)</string>
+	<string name="flashlight">Flashlight</string>
+	<string name="flashlight_enabled">Flashlight Feedback</string>
+	<string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
+	<string name="dnd_on_flashlight_pattern">DND On Flashlight Pattern</string>
+	<string name="dnd_off_flashlight_pattern">DND Off Flashlight Pattern</string>
+
+	<!-- Missing Strings -->
+	<string name="back">Back</string>
+	<string name="selected">Selected</string>
+	<string name="not_selected">Not Selected</string>
+	<string name="none">None</string>
+	<string name="none_selected">None selected</string>
+	<string name="version">Version</string>
+	<string name="changelog">Changelog</string>
+	<string name="unable_to_load_changelog">Unable to load changelog</string>
+	<string name="error_no_app_found">No app found to open link</string>
+	<string name="adb_command">ADB Command</string>
+	<string name="command_copied">Command copied to clipboard</string>
+	<string name="select_sound">Select sound</string>
+	<string name="custom_sound">Custom Sound</string>
+	<string name="custom_sound_format">Custom: %1$s</string>
+	<string name="error_opening_sound_picker">Could not open sound picker</string>
+	<string name="select_vibration_pattern">Select vibration pattern</string>
+	<string name="select_flashlight_pattern">Select flashlight pattern</string>
+	<string name="telegram_icon">Telegram Icon</string>
+	<string name="support_icon">Support Icon</string>
+	<string name="version_icon">Version Icon</string>
+	<string name="stop_service">Stop Service</string>
+	<string name="start_service">Start Service</string>
+	<string name="dnd_icon">Do Not Disturb Icon</string>
+
+	<!-- DND Modes -->
+	<string name="dnd_mode_total_silence">Total Silence</string>
+	<string name="dnd_mode_priority">Priority Mode</string>
+	<string name="dnd_mode_alarms_only">Alarms Only</string>
+	<string name="dnd_mode_all">All Notifications</string>
+	<string name="dnd_mode_unknown">Unknown Mode</string>
+
+	<!-- Onboarding -->
+	<string name="onboarding_welcome_title">Welcome to Flip 2 DND</string>
+	<string name="onboarding_welcome_desc">Control your phone\'s Do Not Disturb mode by simply flipping it face down.</string>
+	<string name="onboarding_simple_title">Simple &amp; Effective</string>
+	<string name="onboarding_simple_desc">Focus on what matters. Flip your phone to silence interruptions instantly.</string>
+	<string name="onboarding_all_set_title">You\'re All Set!</string>
+	<string name="onboarding_all_set_desc">Flip your phone face down to try it out.</string>
+	<string name="onboarding_get_started">Get Started</string>
+	<string name="onboarding_next">Next</string>
+	<string name="onboarding_setup_permissions_title">Setup Permissions</string>
+	<string name="onboarding_setup_permissions_desc">Grant the following permissions to ensure Flip 2 DND works correctly.</string>
+	<string name="permission_dnd_title">Do Not Disturb Access</string>
+	<string name="permission_dnd_desc">Required to toggle DND mode.</string>
+	<string name="permission_battery_title">Battery Optimization</string>
+	<string name="permission_battery_desc">Required for background reliability.</string>
+	<string name="permission_notifications_title">Notifications</string>
+	<string name="permission_notifications_desc">Optional. Shows service status.</string>
+	<string name="permission_granted">Granted</string>
+	<string name="permission_grant">Grant</string>
+
+	<!-- Donation -->
+	<string name="pay_with_redotpay">Pay with RedotPay</string>
+	<string name="redotpay_id">RedotPay ID</string>
+	<string name="pay_with_usdt">Pay with USDT</string>
+	<string name="usdt_network">BNB Smart Chain (BEP20)</string>
+	<string name="pay_with_bitcoin">Pay with Bitcoin</string>
+	<string name="bitcoin_network">Bitcoin Network</string>
+
+	<!-- Patterns and Sounds -->
+	<string name="sound_slush">Slush</string>
+	<string name="sound_hiss">Hiss</string>
+	<string name="sound_shh">Shh</string>
+	<string name="sound_whistle">Whistle</string>
+	<string name="vibration_single_pulse">Single Pulse</string>
+	<string name="vibration_double_pulse">Double Pulse</string>
+	<string name="vibration_triple_pulse">Triple Pulse</string>
+	<string name="vibration_long_pulse">Long Pulse</string>
+	<string name="vibration_rapid_pulse">Rapid Pulse</string>
+	<string name="vibration_heartbeat">Heartbeat</string>
+	<string name="vibration_tick_tock">Tick Tock</string>
+	<string name="flashlight_single_blink">Single Blink</string>
+	<string name="flashlight_double_blink">Double Blink</string>
+	<string name="flashlight_triple_blink">Triple Blink</string>
+	<string name="flashlight_long_blink">Long Blink</string>
+	<string name="flashlight_rapid_blink">Rapid Blink</string>
+
+	<!-- Upgrade Dialog -->
+	<string name="upgrade_to_pro">Upgrade to Pro</string>
+	<string name="upgrade_to_pro_description">Unlock all premium features and support the developer.</string>
+	<string name="feature_auto_start">Auto start on boot</string>
+	<string name="feature_sensitivity">Advanced sensitivity settings</string>
+	<string name="feature_delay">Custom activation delay</string>
+	<string name="feature_schedules">DND, Sound, &amp; Vibration schedules</string>
+	<string name="feature_custom_sounds">Custom sounds from files</string>
+	<string name="feature_telegram">Telegram Support Group</string>
+	<string name="get_pro">Get Flip 2 DND Pro</string>
+	<string name="maybe_later">Maybe Later</string>
+	<string name="pro">PRO</string>
+	<string name="day_sunday_short">S</string>
+	<string name="day_monday_short">M</string>
+	<string name="day_tuesday_short">T</string>
+	<string name="day_wednesday_short">W</string>
+	<string name="day_thursday_short">T</string>
+	<string name="day_friday_short">F</string>
+	<string name="day_saturday_short">S</string>
+
+	<!-- Sound Picker -->
+	<string name="error_sound_not_accessible">Selected sound file is not accessible</string>
+	<string name="error_permission">Permission error: %1$s</string>
+	<string name="error_could_not_get_permission">Could not get permission for the sound file</string>
+	<string name="error_failed_to_get_permission">Failed to get permission for the selected sound</string>
+	<string name="error_processing_sound">Error processing selected sound: %1$s</string>
+	<string name="error_no_sound_selected">No sound file was selected</string>
+	<string name="dnd_on_sound_saved">DND ON custom sound saved</string>
+	<string name="dnd_off_sound_saved">DND OFF custom sound saved</string>
+	<string name="error_saving_sound">Error saving custom sound</string>
+
+	<!-- Notifications -->
+	<string name="notification_service_channel_name">Flip 2 DND Service</string>
+	<string name="notification_service_channel_desc">Monitors phone orientation to toggle DND mode</string>
+	<string name="notification_flip_channel_name">Flip State Notifications</string>
+	<string name="notification_flip_channel_desc">Notifications about phone flip state and DND changes</string>
+	<string name="notification_flip_detected_title">Flip Detected</string>
+	<string name="notification_dnd_activate_now">DND will activate now</string>
+	<string name="notification_dnd_activate_delay">DND will activate in %1$s</string>
+	<string name="notification_dnd_state_changed_title">DND State Changed</string>
+	<string name="notification_dnd_activated">DND mode activated</string>
+	<string name="notification_dnd_deactivated">DND mode deactivated</string>
+	<string name="notification_battery_saver_suggested_title">Battery Saver suggested</string>
+	<string name="notification_battery_saver_suggested_text">Tap to enable Battery Saver</string>
+	<string name="notification_monitoring_text">Monitoring phone orientation</string>
+    <string name="address_copied">Address copied to clipboard</string>
+
+    <string name="error_notification_permission_required">Notification permission is required for app functionality</string>
+    <string name="error_grant_all_permissions">Please grant all permissions for full functionality</string>
+    <string name="unknown">Unknown</string>
+    <string name="orientation_face_up">Face up</string>
+    <string name="orientation_face_down">Face down</string>
 </resources>

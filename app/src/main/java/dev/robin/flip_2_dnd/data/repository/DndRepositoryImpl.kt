@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.repository.DndRepository
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,7 @@ class DndRepositoryImpl @Inject constructor(
 	private val notificationManager =
 		context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 	private val _isDndEnabled = MutableStateFlow(false)
-	private val _dndMode = MutableStateFlow("All Notifications")
+	private val _dndMode = MutableStateFlow(R.string.dnd_mode_all)
 
 	private val dndStateUpdateJob: Job
 
@@ -45,7 +46,7 @@ class DndRepositoryImpl @Inject constructor(
 	}
 
 	override fun isDndEnabled(): Flow<Boolean> = _isDndEnabled
-	override fun getDndMode(): Flow<String> = _dndMode
+	override fun getDndMode(): Flow<Int> = _dndMode
 
 	override suspend fun setDndEnabled(enabled: Boolean) {
 		if (!notificationManager.isNotificationPolicyAccessGranted) {
@@ -86,11 +87,11 @@ class DndRepositoryImpl @Inject constructor(
 		val isDndActive = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
 
 		val dndMode = when (currentFilter) {
-			NotificationManager.INTERRUPTION_FILTER_NONE -> "Total Silence"
-			NotificationManager.INTERRUPTION_FILTER_PRIORITY -> "Priority Mode"
-			NotificationManager.INTERRUPTION_FILTER_ALARMS -> "Alarms Only"
-			NotificationManager.INTERRUPTION_FILTER_ALL -> "All Notifications"
-			else -> "Unknown Mode"
+			NotificationManager.INTERRUPTION_FILTER_NONE -> R.string.dnd_mode_total_silence
+			NotificationManager.INTERRUPTION_FILTER_PRIORITY -> R.string.dnd_mode_priority
+			NotificationManager.INTERRUPTION_FILTER_ALARMS -> R.string.dnd_mode_alarms_only
+			NotificationManager.INTERRUPTION_FILTER_ALL -> R.string.dnd_mode_all
+			else -> R.string.dnd_mode_unknown
 		}
 
 		// Only update if the state has changed to avoid unnecessary updates

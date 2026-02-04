@@ -54,7 +54,7 @@ class SoundPickerActivity : ComponentActivity() {
                         }
                     } catch (e: Exception) {
                         android.util.Log.e(TAG, "URI is not accessible: ${e.message}", e)
-                        showToast("Selected sound file is not accessible")
+                        showToast(getString(R.string.error_sound_not_accessible))
                         finish()
                         return@let
                     }
@@ -65,7 +65,7 @@ class SoundPickerActivity : ComponentActivity() {
                         android.util.Log.d(TAG, "Requested persistable permission for URI: $uri")
                     } catch (e: SecurityException) {
                         android.util.Log.e(TAG, "Error taking persistable URI permission: ${e.message}", e)
-                        showToast("Permission error: ${e.localizedMessage ?: "Could not get permission for the sound file"}")
+                        showToast(getString(R.string.error_permission, e.localizedMessage ?: getString(R.string.error_could_not_get_permission)))
                         finish()
                         return@let
                     }
@@ -82,17 +82,17 @@ class SoundPickerActivity : ComponentActivity() {
                         saveUriToSettings(uri)
                     } else {
                         android.util.Log.e(TAG, "Failed to get persistable permission for URI: $uri")
-                        showToast("Failed to get permission for the selected sound")
+                        showToast(getString(R.string.error_failed_to_get_permission))
                         finish()
                     }
                 } catch (e: Exception) {
                     android.util.Log.e(TAG, "Error processing selected audio: ${e.message}", e)
-                    showToast("Error processing selected sound: ${e.localizedMessage ?: e.toString()}")
+                    showToast(getString(R.string.error_processing_sound, e.localizedMessage ?: e.toString()))
                     finish()
                 }
             } ?: run {
                 android.util.Log.e(TAG, "No URI returned from picker")
-                showToast("No sound file was selected")
+                showToast(getString(R.string.error_no_sound_selected))
                 finish()
             }
         } else {
@@ -125,7 +125,7 @@ class SoundPickerActivity : ComponentActivity() {
                 pickAudio.launch(intent)
             } catch (e: ActivityNotFoundException) {
                 android.util.Log.e(TAG, "No activity found to handle audio picker", e)
-                showToast("Could not open sound picker")
+                showToast(getString(R.string.error_opening_sound_picker))
                 finish()
             }
         }
@@ -146,12 +146,12 @@ class SoundPickerActivity : ComponentActivity() {
                     settingsRepository.setDndOnCustomSoundUri(uriString)
                     settingsRepository.setDndOnSound(Sound.CUSTOM)
                     android.util.Log.d(TAG, "Successfully saved DND ON custom sound URI and set sound type to CUSTOM")
-                    showToast("DND ON custom sound saved")
+                    showToast(getString(R.string.dnd_on_sound_saved))
                 } else {
                     settingsRepository.setDndOffCustomSoundUri(uriString)
                     settingsRepository.setDndOffSound(Sound.CUSTOM)
                     android.util.Log.d(TAG, "Successfully saved DND OFF custom sound URI and set sound type to CUSTOM")
-                    showToast("DND OFF custom sound saved")
+                    showToast(getString(R.string.dnd_off_sound_saved))
                 }
                 
                 // Verify the sound can be played in a background thread
@@ -163,7 +163,7 @@ class SoundPickerActivity : ComponentActivity() {
                 finish()
             } catch (e: Exception) {
                 android.util.Log.e(TAG, "Error saving URI to settings: ${e.message}", e)
-                showToast("Error saving custom sound")
+                showToast(getString(R.string.error_saving_sound))
                 finish()
             }
         }

@@ -20,6 +20,9 @@
 	<string name="notifications_enabled">Notificaciones habilitadas</string>
 	<string name="high_sensitivity_mode">Modo de alta sensibilidad</string>
 	<string name="battery_saver">Ahorro de batería</string>
+    <string name="activation_delay">Retraso de activación</string>
+    <string name="activation_delay_description">Retraso antes de activar DND después de voltear el teléfono</string>
+    <string name="seconds">%1$d segundos</string>
 	<string name="dnd_on_sound">Sonido de DND activado</string>
 	<string name="dnd_off_sound">Sonido de DND desactivado</string>
 	<string name="use_custom_volume">Usar volumen personalizado</string>
@@ -35,7 +38,12 @@
 	<string name="priority_dnd_description">Habilitar el modo DND prioritario en lugar de silencio total</string>
 	<string name="notifications_enabled_description">Mostrar notificaciones cuando se detecte el flip o cambie el estado de DND</string>
 	<string name="high_sensitivity_mode_description">Cuando está habilitado, cualquier orientación que no esté boca abajo se considerará boca arriba</string>
-	<string name="battery_saver_description">Desactivar la detección de sensores y los servicios de DND cuando el teléfono esté en modo de ahorro de batería</string>
+	<string name="battery_saver_description">Alterna automáticamente el ahorro de batería con DND (requiere permiso ADB)</string>
+    <string name="adb_permission_required">Permiso ADB requerido</string>
+    <string name="adb_command_description">Para habilitar el cambio automático del ahorro de batería, otorgue el permiso WRITE_SECURE_SETTINGS mediante el siguiente comando ADB:</string>
+    <string name="copy_command">Copiar comando</string>
+    <string name="close">Cerrar</string>
+    <string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
 	<string name="dnd_on_sound_description">Sonido a reproducir cuando se active DND</string>
 	<string name="dnd_off_sound_description">Sonido a reproducir cuando se desactive DND</string>
 	<string name="use_custom_volume_description">Usar volumen personalizado para los sonidos de DND</string>
@@ -47,7 +55,7 @@
 	<string name="use_custom_vibration_strength">Usar fuerza de vibración personalizada</string>
 	<string name="extras">Extras</string>
 	<string name="join_telegram">Únete a Telegram</string>
-	<string name="join_telegram_description">Únete a nuestra comunidad de Telegram</string>
+	<string name="join_telegram_description">Únete a nuestra comunidad de Telegram (requiere Pro)</string>
 	<string name="support_developer">Apoya al desarrollador</string>
 	<string name="support_developer_description">Ayuda a mantener la aplicación gratuita y mejorando</string>
 	<string name="your_support_helps">¡Tu apoyo ayuda a mantener esta aplicación gratuita y en constante mejora!</string>
@@ -56,4 +64,160 @@
 	<string name="language">Idioma</string>
 	<string name="language_description">Cambiar el idioma de la aplicación</string>
 	<string name="error_opening_language_settings">No se pudieron abrir los ajustes de idioma</string>
+    <string name="qs_tile_label">Servicio Flip DND</string>
+    <string name="detection">Detección</string>
+    <string name="flashlight_detection">Detección de linterna</string>
+    <string name="flashlight_detection_description">Pausar servicio cuando la linterna esté encendida</string>
+    <string name="media_playback_detection">Detección de reproducción multimedia</string>
+    <string name="media_playback_detection_description">Pausar servicio cuando se esté reproduciendo multimedia</string>
+    <string name="headphone_detection">Detección de auriculares</string>
+    <string name="headphone_detection_description">Pausar servicio cuando los auriculares estén conectados</string>
+    <string name="dnd_activation_schedule">Programación de activación de DND</string>
+    <string name="sound_schedule">Programación de sonido</string>
+    <string name="vibration_schedule">Programación de vibración</string>
+    <string name="schedule_enabled">Habilitar programación</string>
+    <string name="dnd_schedule_description">Solo activar DND durante estos horarios.</string>
+    <string name="sound_schedule_description">Solo reproducir sonido durante estos horarios.</string>
+    <string name="vibration_schedule_description">Solo vibrar durante estos horarios.</string>
+    <string name="start_time">Hora de inicio</string>
+    <string name="end_time">Hora de fin</string>
+    <string name="days">Días</string>
+    <string name="auto_start">Inicio automático al arrancar</string>
+    <string name="auto_start_description">Iniciar automáticamente el servicio al reiniciar el dispositivo (requiere Pro)</string>
+    <string name="flashlight">Linterna</string>
+    <string name="flashlight_enabled">Retroalimentación de linterna</string>
+    <string name="flashlight_enabled_description">Habilitar retroalimentación de linterna para DND</string>
+    <string name="dnd_on_flashlight_pattern">Patrón de linterna DND activado</string>
+    <string name="dnd_off_flashlight_pattern">Patrón de linterna DND desactivado</string>
+
+    <!-- Missing Strings -->
+    <string name="back">Atrás</string>
+    <string name="selected">Seleccionado</string>
+    <string name="not_selected">No seleccionado</string>
+    <string name="none">Ninguno</string>
+    <string name="none_selected">Ninguno seleccionado</string>
+    <string name="version">Versión</string>
+    <string name="changelog">Registro de cambios</string>
+    <string name="unable_to_load_changelog">No se pudo cargar el registro de cambios</string>
+    <string name="error_no_app_found">No se encontró ninguna aplicación para abrir el enlace</string>
+    <string name="adb_command">Comando ADB</string>
+    <string name="command_copied">Comando copiado al portapapeles</string>
+    <string name="select_sound">Seleccionar sonido</string>
+    <string name="custom_sound">Sonido personalizado</string>
+    <string name="custom_sound_format">Pers: %1$s</string>
+    <string name="error_opening_sound_picker">No se pudo abrir el selector de sonidos</string>
+    <string name="select_vibration_pattern">Seleccionar patrón de vibración</string>
+    <string name="select_flashlight_pattern">Seleccionar patrón de linterna</string>
+    <string name="telegram_icon">Icono de Telegram</string>
+    <string name="support_icon">Icono de Soporte</string>
+    <string name="version_icon">Icono de Versión</string>
+    <string name="stop_service">Detener servicio</string>
+    <string name="start_service">Iniciar servicio</string>
+    <string name="dnd_icon">Icono de No molestar</string>
+
+    <!-- DND Modes -->
+    <string name="dnd_mode_total_silence">Silencio total</string>
+    <string name="dnd_mode_priority">Modo prioritario</string>
+    <string name="dnd_mode_alarms_only">Solo alarmas</string>
+    <string name="dnd_mode_all">Todas las notificaciones</string>
+    <string name="dnd_mode_unknown">Modo desconocido</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Bienvenido a Flip 2 DND</string>
+    <string name="onboarding_welcome_desc">Controla el modo No molestar de tu teléfono simplemente volteándolo boca abajo.</string>
+    <string name="onboarding_simple_title">Simple y efectivo</string>
+    <string name="onboarding_simple_desc">Concéntrate en lo que importa. Voltea tu teléfono para silenciar las interrupciones al instante.</string>
+    <string name="onboarding_all_set_title">¡Todo listo!</string>
+    <string name="onboarding_all_set_desc">Voltea tu teléfono boca abajo para probarlo.</string>
+    <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_next">Siguiente</string>
+    <string name="onboarding_setup_permissions_title">Configurar permisos</string>
+    <string name="onboarding_setup_permissions_desc">Otorga los siguientes permisos para asegurar que Flip 2 DND funcione correctamente.</string>
+    <string name="permission_dnd_title">Acceso a No molestar</string>
+    <string name="permission_dnd_desc">Requerido para alternar el modo DND.</string>
+    <string name="permission_battery_title">Optimización de batería</string>
+    <string name="permission_battery_desc">Requerido para la confiabilidad en segundo plano.</string>
+    <string name="permission_notifications_title">Notificaciones</string>
+    <string name="permission_notifications_desc">Opcional. Muestra el estado del servicio.</string>
+    <string name="permission_granted">Otorgado</string>
+    <string name="permission_grant">Otorgar</string>
+
+    <!-- Donation -->
+    <string name="pay_with_redotpay">Pagar con RedotPay</string>
+    <string name="redotpay_id">ID de RedotPay</string>
+    <string name="pay_with_usdt">Pagar con USDT</string>
+    <string name="usdt_network">BNB Smart Chain (BEP20)</string>
+    <string name="pay_with_bitcoin">Pagar con Bitcoin</string>
+    <string name="bitcoin_network">Red Bitcoin</string>
+
+    <!-- Patterns and Sounds -->
+    <string name="sound_slush">Slush</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_whistle">Whistle</string>
+    <string name="vibration_single_pulse">Pulso único</string>
+    <string name="vibration_double_pulse">Pulso doble</string>
+    <string name="vibration_triple_pulse">Pulso triple</string>
+    <string name="vibration_long_pulse">Pulso largo</string>
+    <string name="vibration_rapid_pulse">Pulso rápido</string>
+    <string name="vibration_heartbeat">Latido</string>
+    <string name="vibration_tick_tock">Tic Tac</string>
+    <string name="flashlight_single_blink">Parpadeo único</string>
+    <string name="flashlight_double_blink">Parpadeo doble</string>
+    <string name="flashlight_triple_blink">Parpadeo triple</string>
+    <string name="flashlight_long_blink">Parpadeo largo</string>
+    <string name="flashlight_rapid_blink">Parpadeo rápido</string>
+
+    <!-- Upgrade Dialog -->
+    <string name="upgrade_to_pro">Actualizar a Pro</string>
+    <string name="upgrade_to_pro_description">Desbloquea todas las funciones premium y apoya al desarrollador.</string>
+    <string name="feature_auto_start">Inicio automático al arrancar</string>
+    <string name="feature_sensitivity">Ajustes avanzados de sensibilidad</string>
+    <string name="feature_delay">Retraso de activación personalizado</string>
+    <string name="feature_schedules">Programaciones de DND, Sonido y Vibración</string>
+    <string name="feature_custom_sounds">Sonidos personalizados desde archivos</string>
+    <string name="feature_telegram">Grupo de soporte en Telegram</string>
+    <string name="get_pro">Obtener Flip 2 DND Pro</string>
+    <string name="maybe_later">Quizás más tarde</string>
+    <string name="pro">PRO</string>
+    <string name="day_sunday_short">D</string>
+    <string name="day_monday_short">L</string>
+    <string name="day_tuesday_short">M</string>
+    <string name="day_wednesday_short">M</string>
+    <string name="day_thursday_short">J</string>
+    <string name="day_friday_short">V</string>
+    <string name="day_saturday_short">S</string>
+
+    <!-- Sound Picker -->
+    <string name="error_sound_not_accessible">El archivo de sonido seleccionado no es accesible</string>
+    <string name="error_permission">Error de permiso: %1$s</string>
+    <string name="error_could_not_get_permission">No se pudo obtener permiso para el archivo de sonido</string>
+    <string name="error_failed_to_get_permission">Error al obtener permiso para el sonido seleccionado</string>
+    <string name="error_processing_sound">Error al procesar el sonido seleccionado: %1$s</string>
+    <string name="error_no_sound_selected">No se seleccionó ningún archivo de sonido</string>
+    <string name="dnd_on_sound_saved">Sonido personalizado de DND activado guardado</string>
+    <string name="dnd_off_sound_saved">Sonido personalizado de DND desactivado guardado</string>
+    <string name="error_saving_sound">Error al guardar el sonido personalizado</string>
+
+    <!-- Notifications -->
+    <string name="notification_service_channel_name">Servicio Flip 2 DND</string>
+    <string name="notification_service_channel_desc">Monitorea la orientación del teléfono para alternar el modo DND</string>
+    <string name="notification_flip_channel_name">Notificaciones de estado de flip</string>
+    <string name="notification_flip_channel_desc">Notificaciones sobre el estado del flip del teléfono y cambios de DND</string>
+    <string name="notification_flip_detected_title">Flip detectado</string>
+    <string name="notification_dnd_activate_now">DND se activará ahora</string>
+    <string name="notification_dnd_activate_delay">DND se activará en %1$s</string>
+    <string name="notification_dnd_state_changed_title">Estado de DND cambiado</string>
+    <string name="notification_dnd_activated">Modo DND activado</string>
+    <string name="notification_dnd_deactivated">Modo DND desactivado</string>
+    <string name="notification_battery_saver_suggested_title">Sugerencia de ahorro de batería</string>
+    <string name="notification_battery_saver_suggested_text">Toca para habilitar el ahorro de batería</string>
+    <string name="notification_monitoring_text">Monitoreando la orientación del teléfono</string>
+    <string name="address_copied">Dirección copiada al portapapeles</string>
+
+    <string name="error_notification_permission_required">Se requiere permiso de notificación para la funcionalidad de la aplicación</string>
+    <string name="error_grant_all_permissions">Por favor, otorgue todos los permisos para una funcionalidad completa</string>
+    <string name="unknown">Desconocido</string>
+    <string name="orientation_face_up">Boca arriba</string>
+    <string name="orientation_face_down">Boca abajo</string>
 </resources>

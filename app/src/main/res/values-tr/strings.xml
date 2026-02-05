@@ -34,8 +34,8 @@
     <string name="dnd_on_vibration_pattern">DND Açık Titreşim Deseni</string>
     <string name="dnd_off_vibration_pattern">DND Kapalı Titreşim Deseni</string>
     <string name="flip_sensitivity_description">Çevirme algılama hassasiyetini ayarlayın</string>
-    <string name="screen_off_only_description">DND'yi yalnızca ekran kapalıyken etkinleştirin</string>
-    <string name="priority_dnd_description">Tam Sessizlik yerine Öncelikli mod DND'yi etkinleştirin</string>
+    <string name="screen_off_only_description">"DND'yi yalnızca ekran kapalıyken etkinleştirin"</string>
+    <string name="priority_dnd_description">"Tam Sessizlik yerine Öncelikli mod DND'yi etkinleştirin"</string>
     <string name="notifications_enabled_description">Çevirme algılandığında veya DND durumu değiştiğinde bildirimleri göster</string>
     <string name="high_sensitivity_mode_description">Etkinleştirildiğinde, yüz aşağı olmayan herhangi bir yön yüz yukarı olarak kabul edilecektir</string>
     <string name="battery_saver_description">DND ile Pil Tasarrufunu otomatik olarak açar/kapatır (Otomatik geçiş için ADB izni gereklidir)</string>
@@ -54,7 +54,7 @@
     <string name="vibration_enabled_description">DND için titreşimi etkinleştir</string>
     <string name="use_custom_vibration_strength">Özel titreşim gücü kullan</string>
     <string name="extras">Ekstralar</string>
-    <string name="join_telegram">Telegram'a Katıl</string>
+    <string name="join_telegram">"Telegram'a Katıl"</string>
     <string name="join_telegram_description">Telegram Topluluğumuza katılın (Pro gerektirir)</string>
     <string name="support_developer">Geliştiriciyi Destekle</string>
     <string name="support_developer_description">Uygulamanın ücretsiz kalmasına ve gelişmesine yardımcı olun</string>
@@ -76,7 +76,7 @@
     <string name="sound_schedule">Ses Programı</string>
     <string name="vibration_schedule">Titreşim Programı</string>
     <string name="schedule_enabled">Programı Etkinleştir</string>
-    <string name="dnd_schedule_description">DND'yi yalnızca bu zamanlarda etkinleştir.</string>
+    <string name="dnd_schedule_description">"DND'yi yalnızca bu zamanlarda etkinleştir."</string>
     <string name="sound_schedule_description">Sesli geri bildirimi yalnızca bu zamanlarda çal.</string>
     <string name="vibration_schedule_description">Yalnızca bu zamanlarda titre.</string>
     <string name="start_time">Başlangıç Saati</string>
@@ -123,7 +123,7 @@
     <string name="dnd_mode_unknown">Bilinmeyen Mod</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_welcome_title">Flip 2 DND'ye Hoş Geldiniz</string>
+    <string name="onboarding_welcome_title">"Flip 2 DND'ye Hoş Geldiniz"</string>
     <string name="onboarding_welcome_desc">Telefonunuzu yüz aşağı çevirerek Rahatsız Etmeyin modunu kontrol edin.</string>
     <string name="onboarding_simple_title">Basit ve Etkili</string>
     <string name="onboarding_simple_desc">Önemli olanlara odaklanın. Kesintileri anında susturmak için telefonunuzu çevirin.</string>
@@ -132,7 +132,7 @@
     <string name="onboarding_get_started">Başlayın</string>
     <string name="onboarding_next">İleri</string>
     <string name="onboarding_setup_permissions_title">İzinleri Ayarlayın</string>
-    <string name="onboarding_setup_permissions_desc">Flip 2 DND'nin düzgün çalıştığından emin olmak için aşağıdaki izinleri verin.</string>
+    <string name="onboarding_setup_permissions_desc">"Flip 2 DND'nin düzgün çalıştığından emin olmak için aşağıdaki izinleri verin."</string>
     <string name="permission_dnd_title">Rahatsız Etmeyin Erişimi</string>
     <string name="permission_dnd_desc">DND modunu değiştirmek için gereklidir.</string>
     <string name="permission_battery_title">Pil Optimizasyonu</string>
@@ -170,7 +170,7 @@
     <string name="flashlight_rapid_blink">Hızlı Göz Kırpma</string>
 
     <!-- Upgrade Dialog -->
-    <string name="upgrade_to_pro">Pro'ya Yükselt</string>
+    <string name="upgrade_to_pro">"Pro'ya Yükselt"</string>
     <string name="upgrade_to_pro_description">Tüm premium özellikleri açın ve geliştiriciyi destekleyin.</string>
     <string name="feature_auto_start">Başlangıçta otomatik başlatma</string>
     <string name="feature_sensitivity">Gelişmiş hassasiyet ayarları</string>

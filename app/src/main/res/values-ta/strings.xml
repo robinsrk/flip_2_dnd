@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Flip 2 DND</string>
-    <string name="service_description">ஃபோனின் நோக்குநிலையைக் கண்டறிய சாதன சென்சார்களைப் பயன்படுத்துகிறது மற்றும் முகம் குப்புற இருக்கும்போது தானாகவே 'தொந்தரவு செய்யாதே' பயன்முறையை இயக்குகிறது.</string>
+    <string name="service_description">ஃபோனின் நோக்குநிலையைக் கண்டறிய சாதன சென்சார்களைப் பயன்படுத்துகிறது மற்றும் முகம் குப்புற இருக்கும்போது தானாகவே \'தொந்தரவு செய்யாதே\' பயன்முறையை இயக்குகிறது.</string>
     <string name="widget_toggle_description">Flip 2 DND சேவையை நிலைமாற்று</string>
     <string name="home">முகப்பு</string>
     <string name="settings">அமைப்புகள்</string>

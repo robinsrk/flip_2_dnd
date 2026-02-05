@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import dev.robin.flip_2_dnd.R
 
 @AndroidEntryPoint
 class SoundPickerActivity : ComponentActivity() {

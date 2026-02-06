@@ -31,12 +31,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
+import dev.robin.flip_2_dnd.presentation.history.HistoryScreen
+import dev.robin.flip_2_dnd.presentation.history.HistoryViewModel
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
 import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
 
 sealed class Screen(val route: String, val icon: Int, val labelResId: Int) {
 	object Home : Screen("home", R.drawable.ic_home, R.string.home)
+	object History : Screen("history", R.drawable.ic_history, R.string.history)
 	object Settings : Screen("settings", R.drawable.ic_settings, R.string.settings)
 	object Donation : Screen("donation", R.drawable.ic_coin, R.string.support)
 }
@@ -48,7 +51,7 @@ fun AppNavigation() {
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 	val currentDestination = navBackStackEntry?.destination
 
-	val items = listOf(Screen.Home, Screen.Settings)
+	val items = listOf(Screen.Home, Screen.History, Screen.Settings)
 
 	Scaffold(
 		bottomBar = {
@@ -110,6 +113,14 @@ fun AppNavigation() {
 					state = state,
 					onDonateClick = { navController.navigate(Screen.Donation.route) },
 					onToggleService = { mainViewModel.toggleService() }
+				)
+			}
+			composable(Screen.History.route) {
+				val historyViewModel: HistoryViewModel = hiltViewModel()
+				val state by historyViewModel.state.collectAsState()
+				HistoryScreen(
+					state = state,
+					onClearHistory = { historyViewModel.clearHistory() }
 				)
 			}
 			composable(Screen.Settings.route) {

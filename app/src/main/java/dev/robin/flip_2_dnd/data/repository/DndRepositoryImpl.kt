@@ -6,6 +6,7 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.repository.DndRepository
+import dev.robin.flip_2_dnd.domain.repository.HistoryRepository
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,8 @@ import javax.inject.Singleton
 @Singleton
 class DndRepositoryImpl @Inject constructor(
 	@param:ApplicationContext private val context: Context,
-	private val settingsRepository: SettingsRepository
+	private val settingsRepository: SettingsRepository,
+	private val historyRepository: HistoryRepository
 ) : DndRepository {
 	private val notificationManager =
 		context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -97,6 +99,10 @@ class DndRepositoryImpl @Inject constructor(
 		// Only update if the state has changed to avoid unnecessary updates
 		if (_isDndEnabled.value != isDndActive) {
 			_isDndEnabled.value = isDndActive
+			// Record history when state changes
+			CoroutineScope(Dispatchers.IO).launch {
+				historyRepository.addHistory(isDndActive, currentFilter)
+			}
 		}
 
 		if (_dndMode.value != dndMode) {

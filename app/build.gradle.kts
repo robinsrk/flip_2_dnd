@@ -3,7 +3,7 @@ plugins {
 	id("org.jetbrains.kotlin.android")
 	id("com.google.dagger.hilt.android")
 	alias(libs.plugins.compose.compiler)
-	id("kotlin-kapt")
+	alias(libs.plugins.ksp)
 }
 
 android {
@@ -91,14 +91,15 @@ dependencies {
 	// Hilt
 	implementation("com.google.dagger:hilt-android:2.57.2")
 	implementation(libs.material3)
-	kapt("com.google.dagger:hilt-android-compiler:2.57.2")
+	ksp("com.google.dagger:hilt-android-compiler:2.57.2")
 	implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
 	// Accompanist
 	implementation("com.google.accompanist:accompanist-pager:0.36.0")
 	implementation("com.google.accompanist:accompanist-pager-indicators:0.36.0")
-}
 
-kapt {
-	correctErrorTypes = true
+	// Room
+	implementation(libs.androidx.room.runtime)
+	implementation(libs.androidx.room.ktx)
+	ksp(libs.androidx.room.compiler)
 }

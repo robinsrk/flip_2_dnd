@@ -91,6 +91,9 @@ class SettingsViewModel @Inject constructor(
 	private val _headphoneDetectionEnabled = MutableStateFlow(false)
 	val headphoneDetectionEnabled = _headphoneDetectionEnabled.asStateFlow()
 
+	private val _proximityDetectionEnabled = MutableStateFlow(false)
+	val proximityDetectionEnabled = _proximityDetectionEnabled.asStateFlow()
+
 	private val _flashlightFeedbackEnabled = MutableStateFlow(false)
 	val flashlightFeedbackEnabled = _flashlightFeedbackEnabled.asStateFlow()
 
@@ -249,6 +252,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getHeadphoneDetectionEnabled().collect { enabled ->
 				_headphoneDetectionEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getProximityDetectionEnabled().collect { enabled ->
+				_proximityDetectionEnabled.value = enabled
 			}
 		}
 		viewModelScope.launch {
@@ -450,6 +458,12 @@ class SettingsViewModel @Inject constructor(
 	fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setHeadphoneDetectionEnabled(enabled)
+		}
+	}
+
+	fun setProximityDetectionEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setProximityDetectionEnabled(enabled)
 		}
 	}
 

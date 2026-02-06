@@ -25,9 +25,13 @@ class SensorService(
 	private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 	private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 	private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+	private val proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
 
 	private val _orientation = MutableStateFlow(PhoneOrientation.FACE_UP)
 	val orientation: StateFlow<PhoneOrientation> = _orientation
+
+	private val _isProximityCovered = MutableStateFlow(false)
+	val isProximityCovered: StateFlow<Boolean> = _isProximityCovered
 
 	private val _accelerometerData = MutableStateFlow(FloatArray(3) { 0f })
 	val accelerometerData: StateFlow<FloatArray> = _accelerometerData
@@ -82,6 +86,12 @@ class SensorService(
 					_gyroscopeData.value = event.values.clone()
 //					Log.d(TAG, "Gyroscope data: ${lastGyroReading.contentToString()}")
 				}
+
+				Sensor.TYPE_PROXIMITY -> {
+					val distance = event.values[0]
+					_isProximityCovered.value = distance < (proximity?.maximumRange ?: 0f)
+					Log.d(TAG, "Proximity distance: $distance, covered: ${_isProximityCovered.value}")
+				}
 			}
 		}
 
@@ -125,6 +135,19 @@ class SensorService(
 			Log.e(TAG, "Failed to register gyroscope")
 			sensorManager.unregisterListener(sensorListener)
 			return
+		}
+
+		if (proximity != null) {
+			success = success && sensorManager.registerListener(
+				sensorListener,
+				proximity,
+				SensorManager.SENSOR_DELAY_UI
+			)
+			if (!success) {
+				Log.e(TAG, "Failed to register proximity sensor")
+			}
+		} else {
+			Log.w(TAG, "Proximity sensor not available")
 		}
 
 		isRegistered = true

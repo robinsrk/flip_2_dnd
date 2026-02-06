@@ -73,6 +73,8 @@
     <string name="media_playback_detection_description">Dienst pausieren, wenn Medien abgespielt werden</string>
     <string name="headphone_detection">Kopfhörer-Erkennung</string>
     <string name="headphone_detection_description">Dienst pausieren, wenn Kopfhörer angeschlossen sind</string>
+    <string name="proximity_detection">Näherungserkennung</string>
+    <string name="proximity_detection_description">DND nur aktivieren, wenn der Näherungssensor ebenfalls verdeckt ist (Pro erforderlich)</string>
     <string name="dnd_activation_schedule">DND-Aktivierungszeitplan</string>
     <string name="sound_schedule">Ton-Zeitplan</string>
     <string name="vibration_schedule">Vibrations-Zeitplan</string>
@@ -177,6 +179,7 @@
     <string name="feature_delay">Benutzerdefinierte Aktivierungsverzögerung</string>
     <string name="feature_schedules">DND, Ton &amp; Vibrations-Zeitpläne</string>
     <string name="feature_custom_sounds">Benutzerdefinierte Töne aus Dateien</string>
+    <string name="feature_proximity">Näherungssensor-Erkennung</string>
     <string name="feature_telegram">Telegram-Support-Gruppe</string>
     <string name="get_pro">Flip 2 DND Pro holen</string>
     <string name="maybe_later">Vielleicht später</string>

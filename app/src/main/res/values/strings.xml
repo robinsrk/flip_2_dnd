@@ -72,6 +72,8 @@
 	<string name="media_playback_detection_description">Pause service when media is playing</string>
 	<string name="headphone_detection">Headphone Detection</string>
 	<string name="headphone_detection_description">Pause service when headphones are connected</string>
+	<string name="proximity_detection">Proximity Detection</string>
+	<string name="proximity_detection_description">Only enable DND if proximity sensor is also covered (Requires Pro)</string>
 	<string name="dnd_activation_schedule">DND Activation Schedule</string>
 	<string name="sound_schedule">Sound Schedule</string>
 	<string name="vibration_schedule">Vibration Schedule</string>
@@ -114,6 +116,12 @@
 	<string name="stop_service">Stop Service</string>
 	<string name="start_service">Start Service</string>
 	<string name="dnd_icon">Do Not Disturb Icon</string>
+	<string name="history">History</string>
+	<string name="clear_history">Clear History</string>
+	<string name="history_empty">No history events recorded yet</string>
+	<string name="dnd_activated_at">DND Activated</string>
+	<string name="dnd_deactivated_at">DND Deactivated</string>
+	<string name="history_icon">History Icon</string>
 
 	<!-- DND Modes -->
 	<string name="dnd_mode_total_silence">Total Silence</string>
@@ -176,6 +184,7 @@
 	<string name="feature_delay">Custom activation delay</string>
 	<string name="feature_schedules">DND, Sound, &amp; Vibration schedules</string>
 	<string name="feature_custom_sounds">Custom sounds from files</string>
+	<string name="feature_proximity">Proximity sensor detection</string>
 	<string name="feature_telegram">Telegram Support Group</string>
 	<string name="get_pro">Get Flip 2 DND Pro</string>
 	<string name="maybe_later">Maybe Later</string>
@@ -220,4 +229,6 @@
     <string name="unknown">Unknown</string>
     <string name="orientation_face_up">Face up</string>
     <string name="orientation_face_down">Face down</string>
+	<string name="whats_new">What\'s New</string>
+	<string name="continue_button">Continue</string>
 </resources>

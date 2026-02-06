@@ -46,6 +46,7 @@ private const val KEY_ACTIVATION_DELAY = "activation_delay"
 private const val KEY_FLASHLIGHT_DETECTION = "flashlight_detection"
 private const val KEY_MEDIA_PLAYBACK_DETECTION = "media_playback_detection"
 private const val KEY_HEADPHONE_DETECTION = "headphone_detection"
+private const val KEY_PROXIMITY_DETECTION = "proximity_detection"
 private const val KEY_FLASHLIGHT_FEEDBACK_ENABLED = "flashlight_feedback_enabled"
 private const val KEY_DND_ON_FLASHLIGHT_PATTERN = "dnd_on_flashlight_pattern"
 private const val KEY_DND_OFF_FLASHLIGHT_PATTERN = "dnd_off_flashlight_pattern"
@@ -121,6 +122,7 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val flashlightDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_DETECTION, false))
 	private val mediaPlaybackDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_MEDIA_PLAYBACK_DETECTION, false))
 	private val headphoneDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_HEADPHONE_DETECTION, false))
+	private val proximityDetectionEnabled = MutableStateFlow(prefs.getBoolean(KEY_PROXIMITY_DETECTION, false))
 	private val flashlightFeedbackEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_FEEDBACK_ENABLED, false))
 	private val dndOnFlashlightPattern = MutableStateFlow(
 		FlashlightPattern.valueOf(
@@ -356,6 +358,14 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setHeadphoneDetectionEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_HEADPHONE_DETECTION, enabled).apply()
 		headphoneDetectionEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getProximityDetectionEnabled(): Flow<Boolean> = proximityDetectionEnabled
+
+	override suspend fun setProximityDetectionEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_PROXIMITY_DETECTION, enabled).apply()
+		proximityDetectionEnabled.value = enabled
 		restartFlipDetectorService()
 	}
 

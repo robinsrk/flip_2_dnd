@@ -101,6 +101,7 @@ fun SettingsScreen(
 	val customVibrationStrength by viewModel.customVibrationStrength.collectAsState()
 	val hasSecureSettingsPermission by viewModel.hasSecureSettingsPermission.collectAsState()
 	val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
+	val proximityDetectionEnabled by viewModel.proximityDetectionEnabled.collectAsState()
 
 	val dndScheduleEnabled by viewModel.dndScheduleEnabled.collectAsState()
 	val dndScheduleStartTime by viewModel.dndScheduleStartTime.collectAsState()
@@ -503,6 +504,21 @@ fun SettingsScreen(
                 onCheckedChange = { 
                     if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
                         viewModel.setHeadphoneDetectionEnabled(it) 
+                    } else {
+                        showUpgradeDialog = true
+                    }
+                },
+                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+                isPro = true
+            )
+
+            SettingsSwitchItem(
+                title = stringResource(id = R.string.proximity_detection),
+                description = stringResource(id = R.string.proximity_detection_description),
+                checked = proximityDetectionEnabled,
+                onCheckedChange = {
+                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+                        viewModel.setProximityDetectionEnabled(it)
                     } else {
                         showUpgradeDialog = true
                     }

@@ -15,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.robin.flip_2_dnd.MainActivity
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
+import dev.robin.flip_2_dnd.domain.repository.DndRepository
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -38,6 +39,9 @@ class FlipDetectorService : Service() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
     
+    @Inject
+    lateinit var dndRepository: DndRepository
+    
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     
     private val _isScreenOff = MutableStateFlow(false)
@@ -57,6 +61,7 @@ class FlipDetectorService : Service() {
     private var flashlightDetectionEnabled = false
     private var mediaPlaybackDetectionEnabled = false
     private var headphoneDetectionEnabled = false
+    private var proximityDetectionEnabled = false
 
     private lateinit var cameraManager: android.hardware.camera2.CameraManager
     private val torchCallback = object : android.hardware.camera2.CameraManager.TorchCallback() {
@@ -208,6 +213,13 @@ class FlipDetectorService : Service() {
                 }
             }
 
+            serviceScope.launch {
+                settingsRepository.getProximityDetectionEnabled().collect { enabled ->
+                    proximityDetectionEnabled = enabled
+                    Log.d(TAG, "Settings updated - Proximity detection: $enabled")
+                }
+            }
+
             // Observe DND activation schedule settings
             serviceScope.launch {
                 settingsRepository.getDndScheduleEnabled().collect { enabled ->
@@ -299,6 +311,11 @@ class FlipDetectorService : Service() {
                             return
                         }
 
+                        if (proximityDetectionEnabled && !sensorService.isProximityCovered.value) {
+                            Log.d(TAG, "Proximity is NOT covered - Ignoring face down")
+                            return
+                        }
+
                         Log.d(TAG, "Phone is face down and DND is OFF - Starting $activationDelaySeconds-second delay")
                         showFlipDetectedNotification()
                         orientationJob = serviceScope.launch {
@@ -306,6 +323,10 @@ class FlipDetectorService : Service() {
                             // Double check screen state and orientation after delay
                             if (onlyWhenScreenOff && !isScreenOff.value) {
                                 Log.d(TAG, "Screen turned ON during delay - Cancelling DND toggle")
+                                return@launch
+                            }
+                            if (proximityDetectionEnabled && !sensorService.isProximityCovered.value) {
+                                Log.d(TAG, "Proximity uncovered during delay - Cancelling DND toggle")
                                 return@launch
                             }
                             if (sensorService.orientation.value == PhoneOrientation.FACE_DOWN) {

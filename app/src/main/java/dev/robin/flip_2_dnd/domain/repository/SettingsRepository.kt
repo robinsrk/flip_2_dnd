@@ -51,6 +51,9 @@ interface SettingsRepository {
     fun getHeadphoneDetectionEnabled(): Flow<Boolean>
     suspend fun setHeadphoneDetectionEnabled(enabled: Boolean)
 
+    fun getProximityDetectionEnabled(): Flow<Boolean>
+    suspend fun setProximityDetectionEnabled(enabled: Boolean)
+
     fun getFlashlightFeedbackEnabled(): Flow<Boolean>
     suspend fun setFlashlightFeedbackEnabled(enabled: Boolean)
     fun getDndOnFlashlightPattern(): Flow<FlashlightPattern>

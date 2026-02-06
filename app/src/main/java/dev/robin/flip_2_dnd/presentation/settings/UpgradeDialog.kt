@@ -72,6 +72,7 @@ fun UpgradeDialog(
                         FeatureItem(stringResource(id = R.string.feature_delay))
                         FeatureItem(stringResource(id = R.string.feature_schedules))
                         FeatureItem(stringResource(id = R.string.feature_custom_sounds))
+                        FeatureItem(stringResource(id = R.string.feature_proximity))
                         FeatureItem(stringResource(id = R.string.feature_telegram))
                     }
                 }

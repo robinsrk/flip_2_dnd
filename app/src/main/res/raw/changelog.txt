@@ -1,10 +1,17 @@
-[v9.0.4-pre2] (BETA)
+[v10.1.2]
+• Added DND history to track activations and deactivations
+• Added proximity sensor detection for more reliable activation
+• Migrated to KSP for better performance and Kotlin compatibility
+• Added "What's New" changelog dialog
+• UI improvements and theme consistency updates
+• Fixed various minor bugs
+
+[v10.1.1]
 • Added about app section
 • Fixed battery permission command dialog
 • Improved donation screen layout and navigation UI
-• Added dynamic changelog support with beta section support
+• Added dynamic changelog support
 • Refined top bar animations and font weight handling
-• Enhanced custom sound URI validation and permission recovery
-• Improved MediaPlayer error handling and logging
+• Enhanced custom sound URI validation
+• Improved MediaPlayer error handling
 • Added new vibration patterns (Heartbeat, Tick Tock)
-• Added file name extraction helper for custom sounds

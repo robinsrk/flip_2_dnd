@@ -1,0 +1,5 @@
+- Added DND history page
+- Added proximity sensor detection
+- Added "What's New" dialog
+- Migrated to KSP for better performance
+- UI and theme improvements

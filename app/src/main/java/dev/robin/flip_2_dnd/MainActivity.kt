@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
+import dev.robin.flip_2_dnd.presentation.main.ChangelogBottomSheet
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
 import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
   private var showOnboarding = true
   private val PREFS_NAME = "FlipDndPrefs"
   private val ONBOARDING_COMPLETED = "onboarding_completed"
+  private val LAST_SEEN_VERSION = "last_seen_version"
 
   private val dndPermissionLauncher =
           registerForActivityResult(
@@ -79,8 +81,25 @@ class MainActivity : ComponentActivity() {
     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     showOnboarding = !prefs.getBoolean(ONBOARDING_COMPLETED, false)
 
+    val currentVersionCode = try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageManager.getPackageInfo(packageName, 0).longVersionCode
+      } else {
+        @Suppress("DEPRECATION")
+        packageManager.getPackageInfo(packageName, 0).versionCode.toLong()
+      }
+    } catch (e: Exception) {
+      0L
+    }
+
+    val lastSeenVersion = prefs.getLong(LAST_SEEN_VERSION, 0L)
+
     setContent {
       var showOnboardingState by remember { mutableStateOf(showOnboarding) }
+      var showChangelog by remember { 
+        mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion) 
+      }
+
       Flip_2_DNDTheme {
         val isDarkTheme = isSystemInDarkTheme()
         val surfaceColor = MaterialTheme.colorScheme.surface.toArgb()
@@ -106,11 +125,25 @@ class MainActivity : ComponentActivity() {
               showOnboarding = false
               // Save onboarding completion state
               prefs.edit().putBoolean(ONBOARDING_COMPLETED, true).apply()
+              
+              // Also update last seen version when onboarding is completed
+              // so changelog doesn't show immediately after onboarding
+              prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
+              
               checkAndStartService()
             }
           )
         } else {
           AppNavigation()
+          
+          if (showChangelog) {
+            ChangelogBottomSheet(
+              onDismiss = {
+                showChangelog = false
+                prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
+              }
+            )
+          }
         }
       }
     }

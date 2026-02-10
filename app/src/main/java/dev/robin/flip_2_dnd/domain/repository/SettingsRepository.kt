@@ -88,6 +88,15 @@ interface SettingsRepository {
     fun getVibrationScheduleDays(): Flow<Set<Int>>
     suspend fun setVibrationScheduleDays(days: Set<Int>)
 
+    fun getFlashlightScheduleEnabled(): Flow<Boolean>
+    suspend fun setFlashlightScheduleEnabled(enabled: Boolean)
+    fun getFlashlightScheduleStartTime(): Flow<String>
+    suspend fun setFlashlightScheduleStartTime(startTime: String)
+    fun getFlashlightScheduleEndTime(): Flow<String>
+    suspend fun setFlashlightScheduleEndTime(endTime: String)
+    fun getFlashlightScheduleDays(): Flow<Set<Int>>
+    suspend fun setFlashlightScheduleDays(days: Set<Int>)
+
     fun getAutoStartEnabled(): Flow<Boolean>
     suspend fun setAutoStartEnabled(enabled: Boolean)
 }

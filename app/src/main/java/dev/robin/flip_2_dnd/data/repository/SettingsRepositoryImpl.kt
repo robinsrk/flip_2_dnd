@@ -64,6 +64,10 @@ private const val KEY_VIBRATION_SCHEDULE_ENABLED = "vibration_schedule_enabled"
 private const val KEY_VIBRATION_SCHEDULE_START_TIME = "vibration_schedule_start_time"
 private const val KEY_VIBRATION_SCHEDULE_END_TIME = "vibration_schedule_end_time"
 private const val KEY_VIBRATION_SCHEDULE_DAYS = "vibration_schedule_days"
+private const val KEY_FLASHLIGHT_SCHEDULE_ENABLED = "flashlight_schedule_enabled"
+private const val KEY_FLASHLIGHT_SCHEDULE_START_TIME = "flashlight_schedule_start_time"
+private const val KEY_FLASHLIGHT_SCHEDULE_END_TIME = "flashlight_schedule_end_time"
+private const val KEY_FLASHLIGHT_SCHEDULE_DAYS = "flashlight_schedule_days"
 private const val KEY_AUTO_START = "auto_start"
 
 @Singleton
@@ -157,6 +161,14 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val vibrationScheduleEndTime = MutableStateFlow(prefs.getString(KEY_VIBRATION_SCHEDULE_END_TIME, "07:00") ?: "07:00")
 	private val vibrationScheduleDays = MutableStateFlow(
 		prefs.getStringSet(KEY_VIBRATION_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
+			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
+	)
+
+	private val flashlightScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_FLASHLIGHT_SCHEDULE_ENABLED, false))
+	private val flashlightScheduleStartTime = MutableStateFlow(prefs.getString(KEY_FLASHLIGHT_SCHEDULE_START_TIME, "22:00") ?: "22:00")
+	private val flashlightScheduleEndTime = MutableStateFlow(prefs.getString(KEY_FLASHLIGHT_SCHEDULE_END_TIME, "07:00") ?: "07:00")
+	private val flashlightScheduleDays = MutableStateFlow(
+		prefs.getStringSet(KEY_FLASHLIGHT_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
 			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
 	)
 
@@ -484,6 +496,38 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setVibrationScheduleDays(days: Set<Int>) {
 		prefs.edit().putStringSet(KEY_VIBRATION_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
 		vibrationScheduleDays.value = days
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightScheduleEnabled(): Flow<Boolean> = flashlightScheduleEnabled
+
+	override suspend fun setFlashlightScheduleEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_FLASHLIGHT_SCHEDULE_ENABLED, enabled).apply()
+		flashlightScheduleEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightScheduleStartTime(): Flow<String> = flashlightScheduleStartTime
+
+	override suspend fun setFlashlightScheduleStartTime(startTime: String) {
+		prefs.edit().putString(KEY_FLASHLIGHT_SCHEDULE_START_TIME, startTime).apply()
+		flashlightScheduleStartTime.value = startTime
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightScheduleEndTime(): Flow<String> = flashlightScheduleEndTime
+
+	override suspend fun setFlashlightScheduleEndTime(endTime: String) {
+		prefs.edit().putString(KEY_FLASHLIGHT_SCHEDULE_END_TIME, endTime).apply()
+		flashlightScheduleEndTime.value = endTime
+		restartFlipDetectorService()
+	}
+
+	override fun getFlashlightScheduleDays(): Flow<Set<Int>> = flashlightScheduleDays
+
+	override suspend fun setFlashlightScheduleDays(days: Set<Int>) {
+		prefs.edit().putStringSet(KEY_FLASHLIGHT_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
+		flashlightScheduleDays.value = days
 		restartFlipDetectorService()
 	}
 

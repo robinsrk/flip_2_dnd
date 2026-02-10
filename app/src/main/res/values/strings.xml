@@ -91,6 +91,8 @@
 	<string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
 	<string name="dnd_on_flashlight_pattern">DND On Flashlight Pattern</string>
 	<string name="dnd_off_flashlight_pattern">DND Off Flashlight Pattern</string>
+	<string name="flashlight_schedule">Flashlight Schedule</string>
+	<string name="flashlight_schedule_description">Only blink flashlight during these times.</string>
 
 	<!-- Missing Strings -->
 	<string name="back">Back</string>

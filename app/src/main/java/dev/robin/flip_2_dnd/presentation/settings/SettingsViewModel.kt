@@ -142,6 +142,18 @@ class SettingsViewModel @Inject constructor(
     private val _vibrationScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
     val vibrationScheduleDays = _vibrationScheduleDays.asStateFlow()
 
+    private val _flashlightScheduleEnabled = MutableStateFlow(false)
+    val flashlightScheduleEnabled = _flashlightScheduleEnabled.asStateFlow()
+
+    private val _flashlightScheduleStartTime = MutableStateFlow("22:00")
+    val flashlightScheduleStartTime = _flashlightScheduleStartTime.asStateFlow()
+
+    private val _flashlightScheduleEndTime = MutableStateFlow("07:00")
+    val flashlightScheduleEndTime = _flashlightScheduleEndTime.asStateFlow()
+
+    private val _flashlightScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
+    val flashlightScheduleDays = _flashlightScheduleDays.asStateFlow()
+
 	init {
 		checkSecureSettingsPermission()
 		viewModelScope.launch {
@@ -315,23 +327,28 @@ class SettingsViewModel @Inject constructor(
 			}
 		}
 		viewModelScope.launch {
-			settingsRepository.getVibrationScheduleEnabled().collect { enabled ->
-				_vibrationScheduleEnabled.value = enabled
-			}
-		}
-		viewModelScope.launch {
-			settingsRepository.getVibrationScheduleStartTime().collect { time ->
-				_vibrationScheduleStartTime.value = time
-			}
-		}
-		viewModelScope.launch {
-			settingsRepository.getVibrationScheduleEndTime().collect { time ->
-				_vibrationScheduleEndTime.value = time
-			}
-		}
-		viewModelScope.launch {
 			settingsRepository.getVibrationScheduleDays().collect { days ->
 				_vibrationScheduleDays.value = days
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightScheduleEnabled().collect { enabled ->
+				_flashlightScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightScheduleStartTime().collect { time ->
+				_flashlightScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightScheduleEndTime().collect { time ->
+				_flashlightScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightScheduleDays().collect { days ->
+				_flashlightScheduleDays.value = days
 			}
 		}
 		viewModelScope.launch {
@@ -554,6 +571,30 @@ class SettingsViewModel @Inject constructor(
 	fun setVibrationScheduleDays(days: Set<Int>) {
 		viewModelScope.launch {
 			settingsRepository.setVibrationScheduleDays(days)
+		}
+	}
+
+	fun setFlashlightScheduleEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightScheduleEnabled(enabled)
+		}
+	}
+
+	fun setFlashlightScheduleStartTime(startTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightScheduleStartTime(startTime)
+		}
+	}
+
+	fun setFlashlightScheduleEndTime(endTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightScheduleEndTime(endTime)
+		}
+	}
+
+	fun setFlashlightScheduleDays(days: Set<Int>) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightScheduleDays(days)
 		}
 	}
 

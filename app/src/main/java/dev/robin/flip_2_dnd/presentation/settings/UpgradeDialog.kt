@@ -1,5 +1,6 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
+import dev.robin.flip_2_dnd.BuildConfig
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -23,7 +24,7 @@ fun UpgradeDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val gumroadUrl = "https://robinsrk.gumroad.com/l/flip_2_dnd"
+    val gumroadUrl = BuildConfig.GUMROAD_URL
 
     AlertDialog(
         onDismissRequest = onDismiss,

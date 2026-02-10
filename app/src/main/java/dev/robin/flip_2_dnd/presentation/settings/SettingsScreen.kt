@@ -123,6 +123,11 @@ fun SettingsScreen(
 	val dndOnFlashlightPattern by viewModel.dndOnFlashlightPattern.collectAsState()
 	val dndOffFlashlightPattern by viewModel.dndOffFlashlightPattern.collectAsState()
 
+	val flashlightScheduleEnabled by viewModel.flashlightScheduleEnabled.collectAsState()
+	val flashlightScheduleStartTime by viewModel.flashlightScheduleStartTime.collectAsState()
+	val flashlightScheduleEndTime by viewModel.flashlightScheduleEndTime.collectAsState()
+	val flashlightScheduleDays by viewModel.flashlightScheduleDays.collectAsState()
+
 	var showAdbDialog by remember { mutableStateOf(false) }
 	var showUpgradeDialog by remember { mutableStateOf(false) }
 	var showChangelogSheet by remember { mutableStateOf(false) }
@@ -1089,6 +1094,28 @@ fun SettingsScreen(
 						Spacer(modifier = Modifier.height(20.dp))
 					}
 				}
+
+				Spacer(modifier = Modifier.height(12.dp))
+
+				ScheduleSection(
+					title = null,
+					enabled = flashlightScheduleEnabled,
+					onEnabledChange = { 
+						if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+							viewModel.setFlashlightScheduleEnabled(it) 
+						} else {
+							showUpgradeDialog = true
+						}
+					},
+					description = stringResource(id = R.string.flashlight_schedule_description),
+					startTime = flashlightScheduleStartTime,
+					onStartTimeChange = { viewModel.setFlashlightScheduleStartTime(it) },
+					endTime = flashlightScheduleEndTime,
+					onEndTimeChange = { viewModel.setFlashlightScheduleEndTime(it) },
+					selectedDays = flashlightScheduleDays,
+					onDaysChange = { viewModel.setFlashlightScheduleDays(it) },
+					alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+				)
 			}
 		}
 	}

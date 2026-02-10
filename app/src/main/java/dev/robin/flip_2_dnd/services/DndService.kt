@@ -277,6 +277,18 @@ class DndService(
 			// Check if Pro feature
 			if (!dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) return@runBlocking
 
+			// Check if schedule enabled
+			val scheduleEnabled = settingsRepository.getFlashlightScheduleEnabled().first()
+			if (scheduleEnabled) {
+				val startTime = settingsRepository.getFlashlightScheduleStartTime().first()
+				val endTime = settingsRepository.getFlashlightScheduleEndTime().first()
+				val days = settingsRepository.getFlashlightScheduleDays().first()
+				if (!isWithinSchedule(startTime, endTime, days)) {
+					Log.d(TAG, "Current time is outside flashlight schedule. Skipping flashlight blink.")
+					return@runBlocking
+				}
+			}
+
 			try {
 				pattern.pattern.forEachIndexed { index, duration ->
 					if (index == 0) {

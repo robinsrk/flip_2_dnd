@@ -1,6 +1,5 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
-import dev.robin.flip_2_dnd.BuildConfig
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -1143,7 +1142,7 @@ fun SettingsScreen(
 				},
 				onClick = {
 					if (dev.robin.flip_2_dnd.PremiumProvider.engine.telegramSupportEnabled()) {
-						val telegramUrl = BuildConfig.TELEGRAM_URL
+						val telegramUrl = "https://t.me/robins_dev_hub"
 						val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
 						try {
 							context.startActivity(intent)

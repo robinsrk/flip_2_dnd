@@ -1,5 +1,3 @@
-import java.util.Properties
-import java.io.FileInputStream
 
 plugins {
 	id("com.android.application")
@@ -13,12 +11,6 @@ android {
 	namespace = "dev.robin.flip_2_dnd"
 	compileSdk = 36
 
-	val localProperties = Properties()
-	val localPropertiesFile = rootProject.file("local.properties")
-	if (localPropertiesFile.exists()) {
-		localProperties.load(FileInputStream(localPropertiesFile))
-	}
-
 	defaultConfig {
 		applicationId = "dev.robin.flip_2_dnd"
 		minSdk = 23
@@ -28,18 +20,6 @@ android {
 		vectorDrawables {
 			useSupportLibrary = true
 		}
-
-		val gumroadUrl = localProperties.getProperty("GUMROAD_URL") ?: ""
-		val redotpayId = localProperties.getProperty("REDOTPAY_ID") ?: ""
-		val usdtAddress = localProperties.getProperty("USDT_ADDRESS") ?: ""
-		val btcAddress = localProperties.getProperty("BTC_ADDRESS") ?: ""
-		val telegramUrl = localProperties.getProperty("TELEGRAM_URL") ?: ""
-
-		buildConfigField("String", "GUMROAD_URL", "\"$gumroadUrl\"")
-		buildConfigField("String", "REDOTPAY_ID", "\"$redotpayId\"")
-		buildConfigField("String", "USDT_ADDRESS", "\"$usdtAddress\"")
-		buildConfigField("String", "BTC_ADDRESS", "\"$btcAddress\"")
-		buildConfigField("String", "TELEGRAM_URL", "\"$telegramUrl\"")
 	}
 
 	flavorDimensions += "tier"

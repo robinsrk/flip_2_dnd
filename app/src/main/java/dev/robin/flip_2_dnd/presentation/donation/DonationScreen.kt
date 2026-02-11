@@ -1,6 +1,5 @@
 package dev.robin.flip_2_dnd.presentation.donation
 
-import dev.robin.flip_2_dnd.BuildConfig
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,9 +54,9 @@ import androidx.compose.material3.CardDefaults
 @Composable
 fun DonationScreen(navController: NavController? = null) {
 	val context = LocalContext.current
-	val redotpayID = BuildConfig.REDOTPAY_ID
-	val usdtAddress = BuildConfig.USDT_ADDRESS
-	val btcAddress = BuildConfig.BTC_ADDRESS
+	val redotpayID = "1986637347"
+	val usdtAddress = "0x9fC1AcF713A474e5317473A7fbcd7774E2fCF7C5"
+	val btcAddress = "12jF3RASnsPMzvDYVKavGrmNZkMUPHJrgq"
 
 	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 

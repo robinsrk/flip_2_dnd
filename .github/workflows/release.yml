@@ -73,19 +73,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Create local.properties
-        env:
-          GUMROAD_URL: ${{ secrets.GUMROAD_URL }}
-          REDOTPAY_ID: ${{ secrets.REDOTPAY_ID }}
-          USDT_ADDRESS: ${{ secrets.USDT_ADDRESS }}
-          BTC_ADDRESS: ${{ secrets.BTC_ADDRESS }}
-          TELEGRAM_URL: ${{ secrets.TELEGRAM_URL }}
-        run: |
-          echo "GUMROAD_URL=$GUMROAD_URL" >> local.properties
-          echo "REDOTPAY_ID=$REDOTPAY_ID" >> local.properties
-          echo "USDT_ADDRESS=$USDT_ADDRESS" >> local.properties
-          echo "BTC_ADDRESS=$BTC_ADDRESS" >> local.properties
-          echo "TELEGRAM_URL=$TELEGRAM_URL" >> local.properties
 
       - name: Build release APK
         run: ./gradlew assembleFreeRelease

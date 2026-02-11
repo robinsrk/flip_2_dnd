@@ -1,3 +1,8 @@
+[v10.1.4]
+• Restored fully reproducible builds for Free flavor
+• Removed all environment-dependent build constants
+• Optimized build process for F-Droid and IzzyOnDroid
+
 [v10.1.3]
 • Added schedule support for flashlight feedback (Start Time, End Time, and Days)
 • Improved feedback logic consistency across sound, vibration, and flashlight

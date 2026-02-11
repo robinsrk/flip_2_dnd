@@ -1,0 +1,3 @@
+• Restored fully reproducible builds for Free flavor.
+• Removed all environment-dependent build constants.
+• Optimized build process for F-Droid and IzzyOnDroid.

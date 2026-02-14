@@ -41,6 +41,8 @@ class SensorService(
 
 	private var lastAccelReading = FloatArray(3)
 	private var lastGyroReading = FloatArray(3)
+	private var filteredAccel = FloatArray(3)
+	private val alpha = 0.15f // Smoothing factor for low-pass filter
 	private var isProcessing = false
 	private var isRegistered = false
 	private var sensitivity = 0.5f
@@ -75,9 +77,12 @@ class SensorService(
 		override fun onSensorChanged(event: SensorEvent) {
 			when (event.sensor.type) {
 				Sensor.TYPE_ACCELEROMETER -> {
-					lastAccelReading = event.values.clone()
-					_accelerometerData.value = event.values.clone()
-//					Log.d(TAG, "Accelerometer data: ${lastAccelReading.contentToString()}")
+					val currentAccel = event.values
+					for (i in 0..2) {
+						filteredAccel[i] = alpha * currentAccel[i] + (1 - alpha) * filteredAccel[i]
+					}
+					lastAccelReading = filteredAccel.clone()
+					_accelerometerData.value = filteredAccel.clone()
 					processOrientation()
 				}
 
@@ -119,7 +124,7 @@ class SensorService(
 		success = success && sensorManager.registerListener(
 			sensorListener,
 			accelerometer,
-			SensorManager.SENSOR_DELAY_UI
+			SensorManager.SENSOR_DELAY_GAME
 		)
 		if (!success) {
 			Log.e(TAG, "Failed to register accelerometer")
@@ -129,7 +134,7 @@ class SensorService(
 		success = success && sensorManager.registerListener(
 			sensorListener,
 			gyroscope,
-			SensorManager.SENSOR_DELAY_UI
+			SensorManager.SENSOR_DELAY_GAME
 		)
 		if (!success) {
 			Log.e(TAG, "Failed to register gyroscope")
@@ -173,20 +178,21 @@ class SensorService(
 		val z = lastAccelReading[2]
 
 		// Adjust thresholds based on sensitivity
-		// Lower sensitivity means stricter thresholds
-		val gyroThreshold = 0.1f - (sensitivity * 0.08f) // Range: 0.02f to 0.1f
-		val accelThreshold = 9.0f + ((1.0f - sensitivity) * 1.0f) // Range: 9.0f to 10.0f
+		val gyroThreshold = 0.12f - (sensitivity * 0.08f) 
+		val accelThreshold = 8.8f + ((1.0f - sensitivity) * 1.0f)
 
 		// Check if the phone is relatively stable (not in motion)
 		val isStable = abs(lastGyroReading[0]) < gyroThreshold &&
 				abs(lastGyroReading[1]) < gyroThreshold &&
 				abs(lastGyroReading[2]) < gyroThreshold
 
+		// For true face-down, we also want X and Y to be near zero
+		val isFlat = abs(x) < 2.5f && abs(y) < 2.5f
+
 		// For face down, check stability. For other orientations, update immediately
 		val orientation = when {
-			abs(z) >= accelThreshold && z < 0 -> {
+			abs(z) >= accelThreshold && z < 0 && isFlat -> {
 				// Only check stability for face down
-				Log.d(TAG, "z value: ${abs(z)} $z (threshold: $accelThreshold, stable: $isStable)")
 				if (isStable) PhoneOrientation.FACE_DOWN else _orientation.value
 			}
 

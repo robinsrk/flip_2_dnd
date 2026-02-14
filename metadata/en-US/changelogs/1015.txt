@@ -1,0 +1,3 @@
+• Improved flip detection precision using a low-pass filter and higher sampling rate
+• Mandatory permissions (DND, Battery Optimization) are now checked on every app startup
+• Notification permission is no longer mandatory to use the app

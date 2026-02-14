@@ -1,3 +1,8 @@
+[v10.1.5]
+• Improved flip detection precision using a low-pass filter and higher sampling rate
+• Mandatory permissions (DND, Battery Optimization) are now checked on every app startup
+• Notification permission is no longer mandatory to use the app
+
 [v10.1.4]
 • Restored fully reproducible builds for Free flavor
 • Removed all environment-dependent build constants

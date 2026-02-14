@@ -1,0 +1,94 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/Users/robin/.gradle/wrapper/dists/gradle-9.2.0-bin/11i5gvueggl8a5cioxuftxrik/gradle-9.2.0/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+> Task :app:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preFreeReleaseBuild UP-TO-DATE
+> Task :app:mergeFreeReleaseJniLibFolders
+> Task :app:mergeFreeReleaseNativeLibs
+
+> Task :app:stripFreeReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :app:extractFreeReleaseNativeSymbolTables
+> Task :app:buildKotlinToolingMetadata
+> Task :app:mergeFreeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:mergeFreeReleaseArtProfile
+> Task :app:generateFreeReleaseBuildConfig
+> Task :app:checkFreeReleaseDuplicateClasses
+> Task :app:generateFreeReleaseResValues
+> Task :app:checkFreeReleaseAarMetadata
+> Task :app:mapFreeReleaseSourceSetPaths
+> Task :app:generateFreeReleaseResources
+> Task :app:packageFreeReleaseResources
+> Task :app:createFreeReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksFreeRelease
+> Task :app:parseFreeReleaseLocalResources
+> Task :app:processFreeReleaseMainManifest
+> Task :app:processFreeReleaseManifest
+> Task :app:extractProguardFiles
+> Task :app:mergeFreeReleaseStartupProfile UP-TO-DATE
+> Task :app:mergeFreeReleaseShaders
+> Task :app:compileFreeReleaseShaders NO-SOURCE
+> Task :app:generateFreeReleaseAssets UP-TO-DATE
+> Task :app:mergeFreeReleaseAssets
+> Task :app:processFreeReleaseManifestForPackage
+> Task :app:extractFreeReleaseVersionControlInfo
+> Task :app:javaPreCompileFreeRelease
+> Task :app:compressFreeReleaseAssets
+> Task :app:mergeFreeReleaseResources
+> Task :app:collectFreeReleaseDependencies
+> Task :app:sdkFreeReleaseDependencyData
+> Task :app:writeFreeReleaseAppMetadata
+> Task :app:writeFreeReleaseSigningConfigVersions
+> Task :app:processFreeReleaseResources
+> Task :app:kspFreeReleaseKotlin
+
+> Task :app:compileFreeReleaseKotlin
+w: file:///Users/robin/AndroidStudioProjects/flip_2_dnd/app/src/main/java/dev/robin/flip_2_dnd/presentation/main/MainViewModel.kt:54:24 'fun getRunningServices(p0: Int): (Mutable)List<ActivityManager.RunningServiceInfo!>!' is deprecated. Deprecated in Java.
+w: file:///Users/robin/AndroidStudioProjects/flip_2_dnd/app/src/main/java/dev/robin/flip_2_dnd/quicksettings/FlipQuickSettingsTileService.kt:66:24 'fun getRunningServices(p0: Int): (Mutable)List<ActivityManager.RunningServiceInfo!>!' is deprecated. Deprecated in Java.
+w: file:///Users/robin/AndroidStudioProjects/flip_2_dnd/app/src/main/java/dev/robin/flip_2_dnd/widget/FlipDndWidgetProvider.kt:85:29 'fun getRunningServices(p0: Int): (Mutable)List<ActivityManager.RunningServiceInfo!>!' is deprecated. Deprecated in Java.
+
+> Task :app:compileFreeReleaseJavaWithJavac
+> Task :app:hiltAggregateDepsFreeRelease
+> Task :app:hiltJavaCompileFreeRelease
+> Task :app:processFreeReleaseJavaRes
+> Task :app:generateFreeReleaseLintVitalReportModel
+> Task :app:transformFreeReleaseClassesWithAsm
+> Task :app:mergeFreeReleaseGeneratedProguardFiles
+> Task :app:expandFreeReleaseArtProfileWildcards
+> Task :app:mergeFreeReleaseJavaResource
+> Task :app:lintVitalAnalyzeFreeRelease
+> Task :app:minifyFreeReleaseWithR8
+
+> Task :app:lintVitalReportFreeRelease
+Lint found no errors or warnings
+
+61 errors/warnings were listed in the baseline file (/Users/robin/AndroidStudioProjects/flip_2_dnd/app/lint-baseline.xml) but not found in the project; perhaps they have been fixed?
+
+Note: The baseline was created using a different target/variant than it was checked against.
+Creation variant: lint
+Current variant: lintVitalRelease
+
+> Task :app:lintVitalFreeRelease
+> Task :app:convertShrunkResourcesToBinaryFreeRelease
+> Task :app:compileFreeReleaseArtProfile
+> Task :app:optimizeFreeReleaseResources
+> Task :app:packageFreeRelease
+> Task :app:createFreeReleaseApkListingFileRedirect
+> Task :app:assembleFreeRelease
+
+[Incubating] Problems report is available at: file:///Users/robin/AndroidStudioProjects/flip_2_dnd/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.2.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m
+53 actionable tasks: 52 executed, 1 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.2.0/userguide/configuration_cache_enabling.html

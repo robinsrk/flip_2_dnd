@@ -21,14 +21,19 @@ import androidx.compose.material3.*
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -52,6 +57,9 @@ class MainActivity : ComponentActivity() {
   private val PREFS_NAME = "FlipDndPrefs"
   private val ONBOARDING_COMPLETED = "onboarding_completed"
   private val LAST_SEEN_VERSION = "last_seen_version"
+  
+  private var isPermissionMissing by mutableStateOf(false)
+  private val missingPermissions = mutableStateListOf<String>()
 
   private val dndPermissionLauncher =
           registerForActivityResult(
@@ -145,8 +153,72 @@ class MainActivity : ComponentActivity() {
             )
           }
         }
+
+        if (!showOnboardingState && isPermissionMissing) {
+          PermissionDialog(
+            missingPermissions = missingPermissions,
+            onGrantClick = { permission ->
+              when (permission) {
+                "DND" -> requestNotificationPolicyAccess()
+                "Battery" -> requestDisableBatteryOptimization()
+                "Notification" -> {
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                  }
+                }
+              }
+            }
+          )
+        }
       }
     }
+    
+    // Check permissions every time the app opens
+    if (!showOnboarding) {
+        checkAndStartService()
+    }
+  }
+
+  @Composable
+  private fun PermissionDialog(
+    missingPermissions: List<String>,
+    onGrantClick: (String) -> Unit
+  ) {
+    AlertDialog(
+      onDismissRequest = { /* Cannot dismiss mandatory dialog */ },
+      title = { Text(getString(R.string.permission_required_title)) },
+      text = {
+        Column {
+          Text(getString(R.string.permission_required_desc))
+          Spacer(modifier = Modifier.height(16.dp))
+          missingPermissions.forEach { permission ->
+            Row(
+              modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Text(
+                text = when (permission) {
+                  "DND" -> getString(R.string.permission_dnd)
+                  "Battery" -> getString(R.string.permission_battery)
+                  "Notification" -> getString(R.string.permission_notification)
+                  else -> permission
+                },
+                modifier = Modifier.weight(1f)
+              )
+              Button(onClick = { onGrantClick(permission) }) {
+                Text(getString(R.string.grant))
+              }
+            }
+          }
+        }
+      },
+      confirmButton = {
+        TextButton(onClick = { checkAndStartService() }) {
+          Text(getString(R.string.check_again))
+        }
+      }
+    )
   }
 
   private fun checkAndStartService() {
@@ -158,32 +230,19 @@ class MainActivity : ComponentActivity() {
         true
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationPermissionGranted) {
-        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        return
-    }
+    // Update missing permissions state
+    missingPermissions.clear()
+    if (!notificationPolicyGranted) missingPermissions.add("DND")
+    if (!batteryOptimizationDisabled) missingPermissions.add("Battery")
 
-    // Always start the service if notification permission is granted
-    if (notificationPermissionGranted) {
+    isPermissionMissing = missingPermissions.isNotEmpty()
+
+    // Start service if mandatory permissions are granted
+    if (notificationPolicyGranted && batteryOptimizationDisabled) {
         startFlipDetectorService()
     }
 
-    // If other permissions are not granted, show a warning
-    if (!notificationPolicyGranted || !batteryOptimizationDisabled) {
-        Toast.makeText(
-            this,
-            getString(R.string.error_grant_all_permissions),
-            Toast.LENGTH_LONG
-        ).show()
-
-        if (!notificationPolicyGranted) {
-            requestNotificationPolicyAccess()
-        }
-
-      if (!batteryOptimizationDisabled) {
-        requestDisableBatteryOptimization()
-      }
-    }
+    // If mandatory permissions are missing, the dialog will be shown via Compose state
   }
 
   private fun isNotificationPolicyAccessGranted(): Boolean {

@@ -233,4 +233,11 @@
     <string name="orientation_face_down">Face down</string>
 	<string name="whats_new">What\'s New</string>
 	<string name="continue_button">Continue</string>
+	<string name="permission_required_title">Permissions Required</string>
+	<string name="permission_required_desc">Flip 2 DND requires mandatory permissions to function properly. Please grant them to continue.</string>
+	<string name="permission_dnd">Do Not Disturb Access</string>
+	<string name="permission_battery">Battery Optimization Exclusion</string>
+	<string name="permission_notification">Notification Permission</string>
+	<string name="grant">Grant</string>
+	<string name="check_again">Check Again</string>
 </resources>

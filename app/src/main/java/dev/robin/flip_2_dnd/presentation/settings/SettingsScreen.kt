@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.animation.AnimatedVisibility
 import androidx.navigation.NavController
 import android.os.Build
 import android.provider.Settings
@@ -126,6 +127,11 @@ fun SettingsScreen(
 	val flashlightScheduleStartTime by viewModel.flashlightScheduleStartTime.collectAsState()
 	val flashlightScheduleEndTime by viewModel.flashlightScheduleEndTime.collectAsState()
 	val flashlightScheduleDays by viewModel.flashlightScheduleDays.collectAsState()
+
+	val highSensitivityScheduleEnabled by viewModel.highSensitivityScheduleEnabled.collectAsState()
+	val highSensitivityScheduleStartTime by viewModel.highSensitivityScheduleStartTime.collectAsState()
+	val highSensitivityScheduleEndTime by viewModel.highSensitivityScheduleEndTime.collectAsState()
+	val highSensitivityScheduleDays by viewModel.highSensitivityScheduleDays.collectAsState()
 
 	var showAdbDialog by remember { mutableStateOf(false) }
 	var showUpgradeDialog by remember { mutableStateOf(false) }
@@ -297,6 +303,21 @@ fun SettingsScreen(
 						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f,
 						isPro = true
 					)
+
+					AnimatedVisibility(visible = highSensitivityModeEnabled) {
+						ScheduleSection(
+							title = stringResource(id = R.string.high_sensitivity_schedule),
+							description = stringResource(id = R.string.high_sensitivity_schedule_description),
+							enabled = highSensitivityScheduleEnabled,
+							onEnabledChange = { viewModel.setHighSensitivityScheduleEnabled(it) },
+							startTime = highSensitivityScheduleStartTime,
+							onStartTimeChange = { viewModel.setHighSensitivityScheduleStartTime(it) },
+							endTime = highSensitivityScheduleEndTime,
+							onEndTimeChange = { viewModel.setHighSensitivityScheduleEndTime(it) },
+							selectedDays = highSensitivityScheduleDays,
+							onDaysChange = { viewModel.setHighSensitivityScheduleDays(it) }
+						)
+					}
 
 					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
 					SettingsSwitchItem(
@@ -588,12 +609,9 @@ fun SettingsScreen(
                 checked = soundEnabled,
                 onCheckedChange = { viewModel.setSoundEnabled(it) },
             )
-        }
-    }
 
-    item {
-        if (soundEnabled) {
-            Column {
+            AnimatedVisibility(visible = soundEnabled) {
+                Column {
                 var dndOnExpanded by remember { mutableStateOf(false) }
                 var dndOffExpanded by remember { mutableStateOf(false) }
                 val soundSheetState = rememberModalBottomSheetState()
@@ -747,7 +765,7 @@ fun SettingsScreen(
 						onCheckedChange = { viewModel.setUseCustomVolume(it) },
 					)
 
-					if (useCustomVolume) {
+					AnimatedVisibility(visible = useCustomVolume) {
 						SettingsSliderItem(
 							title = stringResource(id = R.string.custom_volume),
 							sliderContent = {
@@ -799,6 +817,7 @@ fun SettingsScreen(
 				}
 			}
 		}
+	}
 
 	item {
 		Column {
@@ -818,7 +837,8 @@ fun SettingsScreen(
 				onCheckedChange = { viewModel.setVibrationEnabled(it) },
 			)
 
-			if (vibrationEnabled) {
+			AnimatedVisibility(visible = vibrationEnabled) {
+				Column {
 				var dndOnVibrationExpanded by remember { mutableStateOf(false) }
 				var dndOffVibrationExpanded by remember { mutableStateOf(false) }
 				val vibrationSheetState = rememberModalBottomSheetState()
@@ -920,7 +940,7 @@ fun SettingsScreen(
 					onCheckedChange = { viewModel.setUseCustomVibration(it) },
 				)
 
-				if (useCustomVibration) {
+				AnimatedVisibility(visible = useCustomVibration) {
 					SettingsSliderItem(
 						title = stringResource(id = R.string.custom_vibration_strength),
 						sliderContent = {
@@ -972,6 +992,7 @@ fun SettingsScreen(
 			}
 		}
 	}
+}
 
 	item {
 		Column {
@@ -999,7 +1020,8 @@ fun SettingsScreen(
 				isPro = true
 			)
 
-			if (flashlightFeedbackEnabled) {
+			AnimatedVisibility(visible = flashlightFeedbackEnabled) {
+				Column {
 				var dndOnFlashlightExpanded by remember { mutableStateOf(false) }
 				var dndOffFlashlightExpanded by remember { mutableStateOf(false) }
 				val flashlightSheetState = rememberModalBottomSheetState()
@@ -1118,6 +1140,7 @@ fun SettingsScreen(
 			}
 		}
 	}
+}
 
 	item {
 		Column {
@@ -1261,55 +1284,57 @@ private fun ScheduleSection(
             onCheckedChange = onEnabledChange,
         )
 
-        if (enabled) {
-            SettingsClickableItem(
-                title = stringResource(id = R.string.start_time),
-                description = startTime,
-                onClick = {
-                    val parts = startTime.split(":")
-                    val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
-                    val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-                    TimePickerDialog(
-                        context,
-                        { _, h, m ->
-                            onStartTimeChange(String.format("%02d:%02d", h, m))
-                        },
-                        hour,
-                        minute,
-                        true
-                    ).show()
-                }
-            )
+        AnimatedVisibility(visible = enabled) {
+            Column {
+                SettingsClickableItem(
+                    title = stringResource(id = R.string.start_time),
+                    description = startTime,
+                    onClick = {
+                        val parts = startTime.split(":")
+                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                        TimePickerDialog(
+                            context,
+                            { _, h, m ->
+                                onStartTimeChange(String.format("%02d:%02d", h, m))
+                            },
+                            hour,
+                            minute,
+                            true
+                        ).show()
+                    }
+                )
 
-            SettingsClickableItem(
-                title = stringResource(id = R.string.end_time),
-                description = endTime,
-                onClick = {
-                    val parts = endTime.split(":")
-                    val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
-                    val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-                    TimePickerDialog(
-                        context,
-                        { _, h, m ->
-                            onEndTimeChange(String.format("%02d:%02d", h, m))
-                        },
-                        hour,
-                        minute,
-                        true
-                    ).show()
-                }
-            )
+                SettingsClickableItem(
+                    title = stringResource(id = R.string.end_time),
+                    description = endTime,
+                    onClick = {
+                        val parts = endTime.split(":")
+                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                        TimePickerDialog(
+                            context,
+                            { _, h, m ->
+                                onEndTimeChange(String.format("%02d:%02d", h, m))
+                            },
+                            hour,
+                            minute,
+                            true
+                        ).show()
+                    }
+                )
 
-            Text(
-                text = stringResource(id = R.string.days),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+                Text(
+                    text = stringResource(id = R.string.days),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
 
-            DayPicker(
-                selectedDays = selectedDays,
-                onDaysChange = onDaysChange
-            )
+                DayPicker(
+                    selectedDays = selectedDays,
+                    onDaysChange = onDaysChange
+                )
+            }
         }
     }
 }

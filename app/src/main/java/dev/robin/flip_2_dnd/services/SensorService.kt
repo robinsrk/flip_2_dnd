@@ -47,6 +47,10 @@ class SensorService(
 	private var isRegistered = false
 	private var sensitivity = 0.5f
 	private var highSensitivityMode = false
+	private var highSensitivityScheduleEnabled = false
+	private var highSensitivityScheduleStartTime = "22:00"
+	private var highSensitivityScheduleEndTime = "07:00"
+	private var highSensitivityScheduleDays = setOf(1, 2, 3, 4, 5, 6, 7)
 
 	init {
 		if (accelerometer == null) {
@@ -69,6 +73,30 @@ class SensorService(
 			settingsRepository.getHighSensitivityModeEnabled().collect { enabled ->
 				highSensitivityMode = enabled
 				Log.d(TAG, "High sensitivity mode updated to: $highSensitivityMode")
+			}
+		}
+
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getHighSensitivityScheduleEnabled().collect { enabled ->
+				highSensitivityScheduleEnabled = enabled
+			}
+		}
+
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getHighSensitivityScheduleStartTime().collect { time ->
+				highSensitivityScheduleStartTime = time
+			}
+		}
+
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getHighSensitivityScheduleEndTime().collect { time ->
+				highSensitivityScheduleEndTime = time
+			}
+		}
+
+		CoroutineScope(Dispatchers.Main).launch {
+			settingsRepository.getHighSensitivityScheduleDays().collect { days ->
+				highSensitivityScheduleDays = days
 			}
 		}
 	}
@@ -198,7 +226,17 @@ class SensorService(
 
 			// When high sensitivity mode is enabled, any orientation that's not face down is considered face up
 			else -> {
-				if (highSensitivityMode) {
+				val isHighSensitivityEnabled = if (highSensitivityScheduleEnabled) {
+					highSensitivityMode && isWithinSchedule(
+						highSensitivityScheduleStartTime,
+						highSensitivityScheduleEndTime,
+						highSensitivityScheduleDays
+					)
+				} else {
+					highSensitivityMode
+				}
+
+				if (isHighSensitivityEnabled) {
 					PhoneOrientation.FACE_UP
 				} else if (abs(z) >= accelThreshold && z > 0) {
 					PhoneOrientation.FACE_UP
@@ -213,5 +251,31 @@ class SensorService(
 		}
 
 		isProcessing = false
+	}
+
+	private fun isWithinSchedule(startTime: String, endTime: String, days: Set<Int>): Boolean {
+		try {
+			val now = java.util.Calendar.getInstance()
+			val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
+
+			if (!days.contains(dayOfWeek)) {
+				return false
+			}
+
+			val currentTime = String.format(
+				"%02d:%02d",
+				now.get(java.util.Calendar.HOUR_OF_DAY),
+				now.get(java.util.Calendar.MINUTE)
+			)
+
+			return if (startTime <= endTime) {
+				currentTime in startTime..endTime
+			} else {
+				currentTime >= startTime || currentTime <= endTime
+			}
+		} catch (e: Exception) {
+			Log.e(TAG, "Error checking schedule: ${e.message}")
+			return true // Default to true if scheduling fails
+		}
 	}
 }

@@ -93,6 +93,8 @@
 	<string name="dnd_off_flashlight_pattern">DND Off Flashlight Pattern</string>
 	<string name="flashlight_schedule">Flashlight Schedule</string>
 	<string name="flashlight_schedule_description">Only blink flashlight during these times.</string>
+	<string name="high_sensitivity_schedule">High Sensitivity Schedule</string>
+	<string name="high_sensitivity_schedule_description">Only enable high sensitivity during these times.</string>
 
 	<!-- Missing Strings -->
 	<string name="back">Back</string>

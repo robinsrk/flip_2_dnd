@@ -154,6 +154,18 @@ class SettingsViewModel @Inject constructor(
     private val _flashlightScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
     val flashlightScheduleDays = _flashlightScheduleDays.asStateFlow()
 
+    private val _highSensitivityScheduleEnabled = MutableStateFlow(false)
+    val highSensitivityScheduleEnabled = _highSensitivityScheduleEnabled.asStateFlow()
+
+    private val _highSensitivityScheduleStartTime = MutableStateFlow("22:00")
+    val highSensitivityScheduleStartTime = _highSensitivityScheduleStartTime.asStateFlow()
+
+    private val _highSensitivityScheduleEndTime = MutableStateFlow("07:00")
+    val highSensitivityScheduleEndTime = _highSensitivityScheduleEndTime.asStateFlow()
+
+    private val _highSensitivityScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
+    val highSensitivityScheduleDays = _highSensitivityScheduleDays.asStateFlow()
+
 	init {
 		checkSecureSettingsPermission()
 		viewModelScope.launch {
@@ -327,6 +339,21 @@ class SettingsViewModel @Inject constructor(
 			}
 		}
 		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleEnabled().collect { enabled ->
+				_vibrationScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleStartTime().collect { time ->
+				_vibrationScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getVibrationScheduleEndTime().collect { time ->
+				_vibrationScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
 			settingsRepository.getVibrationScheduleDays().collect { days ->
 				_vibrationScheduleDays.value = days
 			}
@@ -349,6 +376,26 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getFlashlightScheduleDays().collect { days ->
 				_flashlightScheduleDays.value = days
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHighSensitivityScheduleEnabled().collect { enabled ->
+				_highSensitivityScheduleEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHighSensitivityScheduleStartTime().collect { time ->
+				_highSensitivityScheduleStartTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHighSensitivityScheduleEndTime().collect { time ->
+				_highSensitivityScheduleEndTime.value = time
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getHighSensitivityScheduleDays().collect { days ->
+				_highSensitivityScheduleDays.value = days
 			}
 		}
 		viewModelScope.launch {
@@ -814,6 +861,30 @@ class SettingsViewModel @Inject constructor(
 			android.util.Log.e("SettingsViewModel", "Error during vibration: ${e.message}", e)
 		}
 	}
+	fun setHighSensitivityScheduleEnabled(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setHighSensitivityScheduleEnabled(enabled)
+		}
+	}
+
+	fun setHighSensitivityScheduleStartTime(startTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setHighSensitivityScheduleStartTime(startTime)
+		}
+	}
+
+	fun setHighSensitivityScheduleEndTime(endTime: String) {
+		viewModelScope.launch {
+			settingsRepository.setHighSensitivityScheduleEndTime(endTime)
+		}
+	}
+
+	fun setHighSensitivityScheduleDays(days: Set<Int>) {
+		viewModelScope.launch {
+			settingsRepository.setHighSensitivityScheduleDays(days)
+		}
+	}
+
 	fun setAutoStartEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setAutoStartEnabled(enabled)

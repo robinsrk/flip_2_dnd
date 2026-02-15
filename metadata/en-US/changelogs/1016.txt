@@ -1,0 +1,3 @@
+• Added schedule support for High Sensitivity Mode (Start Time, End Time, and Days)
+• Added smooth animations when toggling settings sections
+• Improved UI layout consistency and resolved tile overlapping issues

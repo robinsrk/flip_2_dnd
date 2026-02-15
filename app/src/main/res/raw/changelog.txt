@@ -1,3 +1,8 @@
+[v10.1.6]
+• Added schedule support for High Sensitivity Mode (Start Time, End Time, and Days)
+• Added smooth animations when toggling settings sections
+• Improved UI layout consistency and resolved tile overlapping issues
+
 [v10.1.5]
 • Improved flip detection precision using a low-pass filter and higher sampling rate
 • Mandatory permissions (DND, Battery Optimization) are now checked on every app startup

@@ -68,6 +68,10 @@ private const val KEY_FLASHLIGHT_SCHEDULE_ENABLED = "flashlight_schedule_enabled
 private const val KEY_FLASHLIGHT_SCHEDULE_START_TIME = "flashlight_schedule_start_time"
 private const val KEY_FLASHLIGHT_SCHEDULE_END_TIME = "flashlight_schedule_end_time"
 private const val KEY_FLASHLIGHT_SCHEDULE_DAYS = "flashlight_schedule_days"
+private const val KEY_HIGH_SENSITIVITY_SCHEDULE_ENABLED = "high_sensitivity_schedule_enabled"
+private const val KEY_HIGH_SENSITIVITY_SCHEDULE_START_TIME = "high_sensitivity_schedule_start_time"
+private const val KEY_HIGH_SENSITIVITY_SCHEDULE_END_TIME = "high_sensitivity_schedule_end_time"
+private const val KEY_HIGH_SENSITIVITY_SCHEDULE_DAYS = "high_sensitivity_schedule_days"
 private const val KEY_AUTO_START = "auto_start"
 
 @Singleton
@@ -169,6 +173,13 @@ class SettingsRepositoryImpl @Inject constructor(
 	private val flashlightScheduleEndTime = MutableStateFlow(prefs.getString(KEY_FLASHLIGHT_SCHEDULE_END_TIME, "07:00") ?: "07:00")
 	private val flashlightScheduleDays = MutableStateFlow(
 		prefs.getStringSet(KEY_FLASHLIGHT_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
+			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
+	)
+	private val highSensitivityScheduleEnabled = MutableStateFlow(prefs.getBoolean(KEY_HIGH_SENSITIVITY_SCHEDULE_ENABLED, false))
+	private val highSensitivityScheduleStartTime = MutableStateFlow(prefs.getString(KEY_HIGH_SENSITIVITY_SCHEDULE_START_TIME, "22:00") ?: "22:00")
+	private val highSensitivityScheduleEndTime = MutableStateFlow(prefs.getString(KEY_HIGH_SENSITIVITY_SCHEDULE_END_TIME, "07:00") ?: "07:00")
+	private val highSensitivityScheduleDays = MutableStateFlow(
+		prefs.getStringSet(KEY_HIGH_SENSITIVITY_SCHEDULE_DAYS, setOf("1", "2", "3", "4", "5", "6", "7"))
 			?.map { it.toInt() }?.toSet() ?: setOf(1, 2, 3, 4, 5, 6, 7)
 	)
 
@@ -537,6 +548,38 @@ class SettingsRepositoryImpl @Inject constructor(
 		prefs.edit().putBoolean(KEY_AUTO_START, enabled).apply()
 		autoStartEnabled.value = enabled
 		// No need to restart service for this, as it's only checked on boot
+	}
+
+	override fun getHighSensitivityScheduleEnabled(): Flow<Boolean> = highSensitivityScheduleEnabled
+
+	override suspend fun setHighSensitivityScheduleEnabled(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_HIGH_SENSITIVITY_SCHEDULE_ENABLED, enabled).apply()
+		highSensitivityScheduleEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	override fun getHighSensitivityScheduleStartTime(): Flow<String> = highSensitivityScheduleStartTime
+
+	override suspend fun setHighSensitivityScheduleStartTime(startTime: String) {
+		prefs.edit().putString(KEY_HIGH_SENSITIVITY_SCHEDULE_START_TIME, startTime).apply()
+		highSensitivityScheduleStartTime.value = startTime
+		restartFlipDetectorService()
+	}
+
+	override fun getHighSensitivityScheduleEndTime(): Flow<String> = highSensitivityScheduleEndTime
+
+	override suspend fun setHighSensitivityScheduleEndTime(endTime: String) {
+		prefs.edit().putString(KEY_HIGH_SENSITIVITY_SCHEDULE_END_TIME, endTime).apply()
+		highSensitivityScheduleEndTime.value = endTime
+		restartFlipDetectorService()
+	}
+
+	override fun getHighSensitivityScheduleDays(): Flow<Set<Int>> = highSensitivityScheduleDays
+
+	override suspend fun setHighSensitivityScheduleDays(days: Set<Int>) {
+		prefs.edit().putStringSet(KEY_HIGH_SENSITIVITY_SCHEDULE_DAYS, days.map { it.toString() }.toSet()).apply()
+		highSensitivityScheduleDays.value = days
+		restartFlipDetectorService()
 	}
 
 	override fun getVibrationScheduleDays(): Flow<Set<Int>> = vibrationScheduleDays

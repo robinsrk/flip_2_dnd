@@ -97,6 +97,15 @@ interface SettingsRepository {
     fun getFlashlightScheduleDays(): Flow<Set<Int>>
     suspend fun setFlashlightScheduleDays(days: Set<Int>)
 
+    fun getHighSensitivityScheduleEnabled(): Flow<Boolean>
+    suspend fun setHighSensitivityScheduleEnabled(enabled: Boolean)
+    fun getHighSensitivityScheduleStartTime(): Flow<String>
+    suspend fun setHighSensitivityScheduleStartTime(startTime: String)
+    fun getHighSensitivityScheduleEndTime(): Flow<String>
+    suspend fun setHighSensitivityScheduleEndTime(endTime: String)
+    fun getHighSensitivityScheduleDays(): Flow<Set<Int>>
+    suspend fun setHighSensitivityScheduleDays(days: Set<Int>)
+
     fun getAutoStartEnabled(): Flow<Boolean>
     suspend fun setAutoStartEnabled(enabled: Boolean)
 }

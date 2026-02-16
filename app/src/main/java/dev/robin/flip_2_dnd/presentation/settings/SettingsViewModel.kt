@@ -7,6 +7,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.domain.repository.ActivationMode
+import dev.robin.flip_2_dnd.domain.repository.DndMode
+import dev.robin.flip_2_dnd.domain.repository.RingerMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -165,6 +168,15 @@ class SettingsViewModel @Inject constructor(
 
     private val _highSensitivityScheduleDays = MutableStateFlow(setOf(1, 2, 3, 4, 5, 6, 7))
     val highSensitivityScheduleDays = _highSensitivityScheduleDays.asStateFlow()
+
+	private val _activationMode = MutableStateFlow(ActivationMode.DND)
+	val activationMode = _activationMode.asStateFlow()
+
+	private val _dndMode = MutableStateFlow(DndMode.TOTAL_SILENCE)
+	val dndMode = _dndMode.asStateFlow()
+
+	private val _ringerMode = MutableStateFlow(RingerMode.SILENT)
+	val ringerMode = _ringerMode.asStateFlow()
 
 	init {
 		checkSecureSettingsPermission()
@@ -401,6 +413,21 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getAutoStartEnabled().collect { enabled ->
 				_autoStartEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getActivationMode().collect { mode ->
+				_activationMode.value = mode
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getDndMode().collect { mode ->
+				_dndMode.value = mode
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getRingerMode().collect { mode ->
+				_ringerMode.value = mode
 			}
 		}
 	}
@@ -642,6 +669,24 @@ class SettingsViewModel @Inject constructor(
 	fun setFlashlightScheduleDays(days: Set<Int>) {
 		viewModelScope.launch {
 			settingsRepository.setFlashlightScheduleDays(days)
+		}
+	}
+
+	fun setActivationMode(mode: ActivationMode) {
+		viewModelScope.launch {
+			settingsRepository.setActivationMode(mode)
+		}
+	}
+
+	fun setDndMode(mode: DndMode) {
+		viewModelScope.launch {
+			settingsRepository.setDndMode(mode)
+		}
+	}
+
+	fun setRingerMode(mode: RingerMode) {
+		viewModelScope.launch {
+			settingsRepository.setRingerMode(mode)
 		}
 	}
 

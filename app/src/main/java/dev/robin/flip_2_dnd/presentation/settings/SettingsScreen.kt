@@ -18,7 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import dev.robin.flip_2_dnd.domain.repository.ActivationMode
+import dev.robin.flip_2_dnd.domain.repository.DndMode
+import dev.robin.flip_2_dnd.domain.repository.RingerMode
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +39,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -133,8 +142,14 @@ fun SettingsScreen(
 	val highSensitivityScheduleEndTime by viewModel.highSensitivityScheduleEndTime.collectAsState()
 	val highSensitivityScheduleDays by viewModel.highSensitivityScheduleDays.collectAsState()
 
+	val activationMode by viewModel.activationMode.collectAsState()
+	val dndModeSetting by viewModel.dndMode.collectAsState()
+	val ringerModeSetting by viewModel.ringerMode.collectAsState()
+	val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+
 	var showAdbDialog by remember { mutableStateOf(false) }
 	var showUpgradeDialog by remember { mutableStateOf(false) }
+	var showSupportDialog by remember { mutableStateOf(false) }
 	var showChangelogSheet by remember { mutableStateOf(false) }
 	val changelogSheetState = rememberModalBottomSheetState()
 
@@ -243,28 +258,120 @@ fun SettingsScreen(
 			item {
 				Column {
 					Text(
-						text = stringResource(id = R.string.behavior),
+						text = stringResource(id = R.string.flip_behavior),
 						color = MaterialTheme.colorScheme.primary,
 						style = MaterialTheme.typography.headlineSmall,
 						fontWeight = FontWeight.ExtraBold,
 						modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
 					)
 
-					val autoStartEnabled by viewModel.autoStartEnabled.collectAsState()
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.auto_start),
-						description = stringResource(id = R.string.auto_start_description),
-						checked = autoStartEnabled,
-						onCheckedChange = {
-							if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) {
-								viewModel.setAutoStartEnabled(it)
-							} else {
-								showUpgradeDialog = true
+					SettingsSliderItem(
+						title = stringResource(id = R.string.activation_mode),
+						description = stringResource(id = R.string.activation_mode_description),
+						sliderContent = {
+							Column(modifier = Modifier.width(200.dp)) {
+								Row(
+									modifier = Modifier.fillMaxWidth(),
+									horizontalArrangement = Arrangement.SpaceBetween
+								) {
+									val modes = listOf(
+										ActivationMode.DND to R.string.mode_dnd,
+										ActivationMode.RINGER to R.string.mode_ringer
+									)
+									
+									modes.forEach { (mode, labelRes) ->
+										val isSelected = activationMode == mode
+										Surface(
+											modifier = Modifier
+												.weight(1f)
+												.padding(4.dp)
+												.clickable { viewModel.setActivationMode(mode) },
+											color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+											shape = RoundedCornerShape(8.dp)
+										) {
+											Text(
+												text = stringResource(id = labelRes),
+												modifier = Modifier.padding(8.dp),
+												textAlign = TextAlign.Center,
+												style = MaterialTheme.typography.bodySmall,
+												color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									}
+								}
 							}
-						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f,
-						isPro = true
+						}
 					)
+
+					AnimatedVisibility(visible = activationMode == ActivationMode.DND) {
+						SettingsSliderItem(
+							title = stringResource(id = R.string.dnd_sub_mode),
+							sliderContent = {
+								Row(modifier = Modifier.width(200.dp)) {
+									val modes = listOf(
+										DndMode.PRIORITY to R.string.dnd_mode_priority,
+										DndMode.TOTAL_SILENCE to R.string.dnd_mode_total_silence,
+										DndMode.ALARMS_ONLY to R.string.dnd_mode_alarms_only
+									)
+									
+									modes.forEach { (mode, labelRes) ->
+										val isSelected = dndModeSetting == mode
+										Surface(
+											modifier = Modifier
+												.weight(1f)
+												.padding(2.dp)
+												.clickable { viewModel.setDndMode(mode) },
+											color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+											shape = RoundedCornerShape(8.dp)
+										) {
+											Text(
+												text = stringResource(id = labelRes),
+												modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
+												textAlign = TextAlign.Center,
+												style = MaterialTheme.typography.labelSmall,
+												color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									}
+								}
+							}
+						)
+					}
+
+					AnimatedVisibility(visible = activationMode == ActivationMode.RINGER) {
+						SettingsSliderItem(
+							title = stringResource(id = R.string.ringer_sub_mode),
+							sliderContent = {
+								Row(modifier = Modifier.width(200.dp)) {
+									val modes = listOf(
+										RingerMode.SILENT to R.string.ringer_silent,
+										RingerMode.VIBRATE to R.string.ringer_vibrate,
+										RingerMode.NORMAL to R.string.ringer_normal
+									)
+									
+									modes.forEach { (mode, labelRes) ->
+										val isSelected = ringerModeSetting == mode
+										Surface(
+											modifier = Modifier
+												.weight(1f)
+												.padding(2.dp)
+												.clickable { viewModel.setRingerMode(mode) },
+											color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+											shape = RoundedCornerShape(8.dp)
+										) {
+											Text(
+												text = stringResource(id = labelRes),
+												modifier = Modifier.padding(8.dp),
+												textAlign = TextAlign.Center,
+												style = MaterialTheme.typography.labelSmall,
+												color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+											)
+										}
+									}
+								}
+							}
+						)
+					}
 
 					SettingsSwitchItem(
 						title = stringResource(id = R.string.screen_off_only),
@@ -273,122 +380,12 @@ fun SettingsScreen(
 						onCheckedChange = { viewModel.setScreenOffOnly(it) },
 					)
 
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.priority_dnd),
-						description = stringResource(id = R.string.priority_dnd_description),
-						checked = priorityDndEnabled,
-						onCheckedChange = { viewModel.setPriorityDndEnabled(it) },
-					)
-
-					val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.notifications_enabled),
-						description = stringResource(id = R.string.notifications_enabled_description),
-						checked = notificationsEnabled,
-						onCheckedChange = { viewModel.setNotificationsEnabled(it) },
-					)
-
-					val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.high_sensitivity_mode),
-						description = stringResource(id = R.string.high_sensitivity_mode_description),
-						checked = highSensitivityModeEnabled,
-						onCheckedChange = {
-							if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) {
-								viewModel.setHighSensitivityModeEnabled(it)
-							} else {
-								showUpgradeDialog = true
-							}
-						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f,
-						isPro = true
-					)
-
-					AnimatedVisibility(visible = highSensitivityModeEnabled) {
-						ScheduleSection(
-							title = stringResource(id = R.string.high_sensitivity_schedule),
-							description = stringResource(id = R.string.high_sensitivity_schedule_description),
-							enabled = highSensitivityScheduleEnabled,
-							onEnabledChange = { viewModel.setHighSensitivityScheduleEnabled(it) },
-							startTime = highSensitivityScheduleStartTime,
-							onStartTimeChange = { viewModel.setHighSensitivityScheduleStartTime(it) },
-							endTime = highSensitivityScheduleEndTime,
-							onEndTimeChange = { viewModel.setHighSensitivityScheduleEndTime(it) },
-							selectedDays = highSensitivityScheduleDays,
-							onDaysChange = { viewModel.setHighSensitivityScheduleDays(it) }
-						)
-					}
-
-					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
-					SettingsSwitchItem(
-						title = stringResource(id = R.string.battery_saver),
-						description = stringResource(id = R.string.battery_saver_description),
-						checked = batterySaverOnFlipEnabled,
-						onCheckedChange = {
-							if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled()) {
-								if (hasSecureSettingsPermission) {
-									viewModel.setBatterySaverOnFlipEnabled(it)
-								} else {
-									showAdbDialog = true
-								}
-							} else {
-								showUpgradeDialog = true
-							}
-						},
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled() && hasSecureSettingsPermission) 1f else 0.5f,
-						isPro = true
-					)
-
-					if (showAdbDialog) {
-						AlertDialog(
-							onDismissRequest = { showAdbDialog = false },
-							title = { Text(stringResource(R.string.adb_permission_required)) },
-							text = {
-								Column {
-									Text(stringResource(R.string.adb_command_description))
-									Spacer(modifier = Modifier.height(16.dp))
-									Text(
-										text = stringResource(R.string.adb_command_text),
-										style = MaterialTheme.typography.bodySmall,
-										modifier = Modifier
-											.fillMaxWidth()
-											.background(
-												MaterialTheme.colorScheme.surfaceVariant,
-												RoundedCornerShape(8.dp)
-											)
-											.padding(12.dp),
-										textAlign = TextAlign.Start,
-										fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
-									)
-								}
-							},
-							confirmButton = {
-								TextButton(onClick = {
-									val adbCommand = context.getString(R.string.adb_command_text)
-									val clipData = ClipData.newPlainText(context.getString(R.string.adb_command), adbCommand)
-									scope.launch {
-										clipboard.setClipEntry(ClipEntry(clipData))
-									}
-									Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
-									showAdbDialog = false
-								}) {
-									Text(stringResource(R.string.copy_command))
-								}
-							},
-							dismissButton = {
-								TextButton(onClick = { showAdbDialog = false }) {
-									Text(stringResource(R.string.close))
-								}
-							}
-						)
-					}
-
-					val activationDelay by viewModel.activationDelay.collectAsState()
 					SettingsSliderItem(
 						title = stringResource(id = R.string.activation_delay),
 						description = stringResource(id = R.string.activation_delay_description),
 						isPro = true,
 						sliderContent = {
+							val activationDelay by viewModel.activationDelay.collectAsState()
 							var sliderPosition by remember { mutableStateOf(activationDelay.toFloat()) }
 							LaunchedEffect(activationDelay) {
 								sliderPosition = activationDelay.toFloat()
@@ -453,8 +450,6 @@ fun SettingsScreen(
 						}
 					)
 
-					Spacer(modifier = Modifier.height(16.dp))
-
 					ScheduleSection(
 						title = stringResource(id = R.string.dnd_activation_schedule),
 						enabled = dndScheduleEnabled,
@@ -478,669 +473,704 @@ fun SettingsScreen(
 				}
 			}
 
-    item {
-        Column {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(id = R.string.detection),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
-            )
-
-            val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
-            SettingsSwitchItem(
-                title = stringResource(id = R.string.flashlight_detection),
-                description = stringResource(id = R.string.flashlight_detection_description),
-                checked = flashlightDetectionEnabled,
-                onCheckedChange = { 
-                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
-                        viewModel.setFlashlightDetectionEnabled(it) 
-                    } else {
-                        showUpgradeDialog = true
-                    }
-                },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
-                isPro = true
-            )
-
-            val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
-            SettingsSwitchItem(
-                title = stringResource(id = R.string.media_playback_detection),
-                description = stringResource(id = R.string.media_playback_detection_description),
-                checked = mediaPlaybackDetectionEnabled,
-                onCheckedChange = { 
-                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
-                        viewModel.setMediaPlaybackDetectionEnabled(it) 
-                    } else {
-                        showUpgradeDialog = true
-                    }
-                },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
-                isPro = true
-            )
-
-            val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
-            SettingsSwitchItem(
-                title = stringResource(id = R.string.headphone_detection),
-                description = stringResource(id = R.string.headphone_detection_description),
-                checked = headphoneDetectionEnabled,
-                onCheckedChange = { 
-                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
-                        viewModel.setHeadphoneDetectionEnabled(it) 
-                    } else {
-                        showUpgradeDialog = true
-                    }
-                },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
-                isPro = true
-            )
-
-            SettingsSwitchItem(
-                title = stringResource(id = R.string.proximity_detection),
-                description = stringResource(id = R.string.proximity_detection_description),
-                checked = proximityDetectionEnabled,
-                onCheckedChange = {
-                    if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
-                        viewModel.setProximityDetectionEnabled(it)
-                    } else {
-                        showUpgradeDialog = true
-                    }
-                },
-                alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
-                isPro = true
-            )
-        }
-    }
-
-    item {
-        Column {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(id = R.string.general),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
-            )
-
-            SettingsClickableItem(
-                title = stringResource(id = R.string.language),
-                description = stringResource(id = R.string.language_description),
-                onClick = {
-                    try {
-                        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
-                        } else {
-                            Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
-                        }
-                        intent.data = Uri.fromParts("package", context.packageName, null)
-                        context.startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(
-                            context,
-                            R.string.error_opening_language_settings,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            )
-        }
-    }
-
-    item {
-        Column {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(id = R.string.sound),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
-            )
-
-            SettingsSwitchItem(
-                title = stringResource(id = R.string.sound_enabled),
-                description = stringResource(id = R.string.sound_enabled_description),
-                checked = soundEnabled,
-                onCheckedChange = { viewModel.setSoundEnabled(it) },
-            )
-
-            AnimatedVisibility(visible = soundEnabled) {
-                Column {
-                var dndOnExpanded by remember { mutableStateOf(false) }
-                var dndOffExpanded by remember { mutableStateOf(false) }
-                val soundSheetState = rememberModalBottomSheetState()
-
-                val dndOnCustomSoundUri by viewModel.dndOnCustomSoundUri.collectAsState()
-                val dndOnCustomSoundName = remember(dndOnCustomSoundUri) {
-                    dndOnCustomSoundUri?.let { uriString ->
-                        getFileNameFromUri(context, Uri.parse(uriString))
-                    } ?: context.getString(R.string.none_selected)
-                }
-
-                SettingsClickableItem(
-                    title = stringResource(id = R.string.dnd_on_sound),
-                    description = if (dndOnSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOnCustomSoundName) else stringResource(dndOnSound.stringResId),
-                    trailingIcon = {
-                        Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
-                    },
-                    onClick = { dndOnExpanded = true }
-                )
-
-					if (dndOnExpanded) {
-						ModalBottomSheet(
-							onDismissRequest = { dndOnExpanded = false },
-							sheetState = soundSheetState
-						) {
-							Column {
-								viewModel.availableSounds.forEach { sound ->
-									SettingsClickableItem(
-										title = stringResource(sound.stringResId),
-										trailingIcon = {
-											if (sound == dndOnSound) {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = stringResource(R.string.selected),
-													tint = MaterialTheme.colorScheme.primary
-												)
-											} else {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = stringResource(R.string.not_selected),
-													tint = MaterialTheme.colorScheme.onSurfaceVariant
-												)
-											}
-										},
-										onClick = {
-											if (sound == Sound.CUSTOM) {
-												if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
-													val intent = Intent(context, SoundPickerActivity::class.java).apply {
-														putExtra(
-															SoundPickerActivity.EXTRA_SOUND_TYPE,
-															SoundPickerActivity.DND_ON_SOUND
-														)
-													}
-													try {
-														context.startActivity(intent)
-													} catch (e: ActivityNotFoundException) {
-														Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
-															.show()
-													}
-												} else {
-													showUpgradeDialog = true
-												}
-											} else {
-												viewModel.setDndOnSound(sound)
-												viewModel.playSelectedSound(sound)
-											}
-											dndOnExpanded = false
-										}
-									)
-								}
-							}
-							Spacer(modifier = Modifier.height(20.dp))
-						}
-					}
-
-					val dndOffCustomSoundUri by viewModel.dndOffCustomSoundUri.collectAsState()
-					val dndOffCustomSoundName = remember(dndOffCustomSoundUri) {
-						dndOffCustomSoundUri?.let { uriString ->
-							getFileNameFromUri(context, Uri.parse(uriString))
-						} ?: context.getString(R.string.none_selected)
-					}
-
-					SettingsClickableItem(
-						title = stringResource(id = R.string.dnd_off_sound),
-						description = if (dndOffSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOffCustomSoundName) else stringResource(dndOffSound.stringResId),
-						trailingIcon = {
-							Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
-						},
-						onClick = { dndOffExpanded = true }
+			item {
+				Column {
+					Text(
+						text = stringResource(id = R.string.feedback),
+						color = MaterialTheme.colorScheme.primary,
+						style = MaterialTheme.typography.headlineSmall,
+						fontWeight = FontWeight.ExtraBold,
+						modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
 					)
-
-					if (dndOffExpanded) {
-						ModalBottomSheet(
-							onDismissRequest = { dndOffExpanded = false },
-							sheetState = soundSheetState
-						) {
-							Column {
-								viewModel.availableSounds.forEach { sound ->
-									SettingsClickableItem(
-										title = stringResource(sound.stringResId),
-										trailingIcon = {
-											if (sound == dndOffSound) {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_checked),
-													contentDescription = stringResource(R.string.selected),
-													tint = MaterialTheme.colorScheme.primary
-												)
-											} else {
-												Icon(
-													painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-													contentDescription = stringResource(R.string.not_selected),
-													tint = MaterialTheme.colorScheme.onSurfaceVariant
-												)
-											}
-										},
-										onClick = {
-											if (sound == Sound.CUSTOM) {
-												if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
-													val intent = Intent(context, SoundPickerActivity::class.java).apply {
-														putExtra(
-															SoundPickerActivity.EXTRA_SOUND_TYPE,
-															SoundPickerActivity.DND_OFF_SOUND
-														)
-													}
-													try {
-														context.startActivity(intent)
-													} catch (e: ActivityNotFoundException) {
-														Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
-															.show()
-													}
-												} else {
-													showUpgradeDialog = true
-												}
-											} else {
-												viewModel.setDndOffSound(sound)
-												viewModel.playSelectedSound(sound, isForDndOn = false)
-											}
-											dndOffExpanded = false
-										}
-									)
-								}
-							}
-							Spacer(modifier = Modifier.height(20.dp))
-						}
-					}
 
 					SettingsSwitchItem(
-						title = stringResource(id = R.string.use_custom_volume),
-						description = stringResource(id = R.string.use_custom_volume_description),
-						checked = useCustomVolume,
-						onCheckedChange = { viewModel.setUseCustomVolume(it) },
+						title = stringResource(id = R.string.notifications_enabled),
+						description = stringResource(id = R.string.notifications_enabled_description),
+						checked = notificationsEnabled,
+						onCheckedChange = { viewModel.setNotificationsEnabled(it) },
 					)
 
-					AnimatedVisibility(visible = useCustomVolume) {
-						SettingsSliderItem(
-							title = stringResource(id = R.string.custom_volume),
-							sliderContent = {
-								var sliderPosition by remember { mutableStateOf(customVolume) }
-								LaunchedEffect(customVolume) {
-									sliderPosition = customVolume
+					Spacer(modifier = Modifier.height(8.dp))
+
+					// Sound Subsection
+					SettingsSubsectionHeader(
+						title = stringResource(id = R.string.sound_feedback),
+						expanded = soundEnabled,
+						onExpandedChange = { viewModel.setSoundEnabled(it) }
+					)
+					
+					AnimatedVisibility(visible = soundEnabled) {
+						Column {
+							var dndOnExpanded by remember { mutableStateOf(false) }
+							var dndOffExpanded by remember { mutableStateOf(false) }
+							val soundSheetState = rememberModalBottomSheetState()
+
+							val dndOnCustomSoundUri by viewModel.dndOnCustomSoundUri.collectAsState()
+							val dndOnCustomSoundName = remember(dndOnCustomSoundUri) {
+								dndOnCustomSoundUri?.let { uriString ->
+									getFileNameFromUri(context, Uri.parse(uriString))
+								} ?: context.getString(R.string.none_selected)
+							}
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_on_sound),
+								description = if (dndOnSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOnCustomSoundName) else stringResource(dndOnSound.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
+								},
+								onClick = { dndOnExpanded = true }
+							)
+
+							if (dndOnExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOnExpanded = false },
+									sheetState = soundSheetState
+								) {
+									Column {
+										viewModel.availableSounds.forEach { sound ->
+											SettingsClickableItem(
+												title = stringResource(sound.stringResId),
+												trailingIcon = {
+													if (sound == dndOnSound) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													if (sound == Sound.CUSTOM) {
+														if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
+															val intent = Intent(context, SoundPickerActivity::class.java).apply {
+																putExtra(
+																	SoundPickerActivity.EXTRA_SOUND_TYPE,
+																	SoundPickerActivity.DND_ON_SOUND
+																)
+															}
+															try {
+																context.startActivity(intent)
+															} catch (e: ActivityNotFoundException) {
+																Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
+																	.show()
+															}
+														} else {
+															showUpgradeDialog = true
+														}
+													} else {
+														viewModel.setDndOnSound(sound)
+														viewModel.playSelectedSound(sound)
+													}
+													dndOnExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
 								}
-								Slider(
-									value = sliderPosition,
-									onValueChange = { newVolume ->
-										val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
-										val nearestStep =
-											steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
-										sliderPosition = nearestStep
-									},
-									onValueChangeFinished = {
-										viewModel.setCustomVolume(sliderPosition)
-										// Play DND on sound as feedback when slider changes
-										viewModel.playSelectedSound(viewModel.dndOnSound.value)
-									},
-									modifier = Modifier.width(200.dp),
-									steps = 9
+							}
+
+							val dndOffCustomSoundUri by viewModel.dndOffCustomSoundUri.collectAsState()
+							val dndOffCustomSoundName = remember(dndOffCustomSoundUri) {
+								dndOffCustomSoundUri?.let { uriString ->
+									getFileNameFromUri(context, Uri.parse(uriString))
+								} ?: context.getString(R.string.none_selected)
+							}
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_off_sound),
+								description = if (dndOffSound == Sound.CUSTOM) stringResource(R.string.custom_sound_format, dndOffCustomSoundName) else stringResource(dndOffSound.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_sound))
+								},
+								onClick = { dndOffExpanded = true }
+							)
+
+							if (dndOffExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOffExpanded = false },
+									sheetState = soundSheetState
+								) {
+									Column {
+										viewModel.availableSounds.forEach { sound ->
+											SettingsClickableItem(
+												title = stringResource(sound.stringResId),
+												trailingIcon = {
+													if (sound == dndOffSound) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													if (sound == Sound.CUSTOM) {
+														if (dev.robin.flip_2_dnd.PremiumProvider.engine.customSoundEnabled()) {
+															val intent = Intent(context, SoundPickerActivity::class.java).apply {
+																putExtra(
+																	SoundPickerActivity.EXTRA_SOUND_TYPE,
+																	SoundPickerActivity.DND_OFF_SOUND
+																)
+															}
+															try {
+																context.startActivity(intent)
+															} catch (e: ActivityNotFoundException) {
+																Toast.makeText(context, context.getString(R.string.error_opening_sound_picker), Toast.LENGTH_SHORT)
+																	.show()
+															}
+														} else {
+															showUpgradeDialog = true
+														}
+													} else {
+														viewModel.setDndOffSound(sound)
+														viewModel.playSelectedSound(sound, isForDndOn = false)
+													}
+													dndOffExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
+								}
+							}
+
+							SettingsSwitchItem(
+								title = stringResource(id = R.string.use_custom_volume),
+								description = stringResource(id = R.string.use_custom_volume_description),
+								checked = useCustomVolume,
+								onCheckedChange = { viewModel.setUseCustomVolume(it) },
+							)
+
+							AnimatedVisibility(visible = useCustomVolume) {
+								SettingsSliderItem(
+									title = stringResource(id = R.string.custom_volume),
+									sliderContent = {
+										var sliderPosition by remember { mutableStateOf(customVolume) }
+										LaunchedEffect(customVolume) {
+											sliderPosition = customVolume
+										}
+										Slider(
+											value = sliderPosition,
+											onValueChange = { newVolume ->
+												val steps = listOf(0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f)
+												val nearestStep =
+													steps.minByOrNull { kotlin.math.abs(it - newVolume) } ?: newVolume
+												sliderPosition = nearestStep
+											},
+											onValueChangeFinished = {
+												viewModel.setCustomVolume(sliderPosition)
+												viewModel.playSelectedSound(viewModel.dndOnSound.value)
+											},
+											modifier = Modifier.width(200.dp),
+											steps = 9
+										)
+									}
 								)
 							}
-						)
+
+							ScheduleSection(
+								title = null,
+								enabled = soundScheduleEnabled,
+								onEnabledChange = { 
+									if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+										viewModel.setSoundScheduleEnabled(it) 
+									} else {
+										showUpgradeDialog = true
+									}
+								},
+								description = stringResource(id = R.string.sound_schedule_description),
+								startTime = soundScheduleStartTime,
+								onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
+								endTime = soundScheduleEndTime,
+								onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
+								selectedDays = soundScheduleDays,
+								onDaysChange = { viewModel.setSoundScheduleDays(it) },
+								alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+							)
+						}
 					}
 
-					Spacer(modifier = Modifier.height(12.dp))
+					// Vibration Subsection
+					SettingsSubsectionHeader(
+						title = stringResource(id = R.string.vibration_feedback),
+						expanded = vibrationEnabled,
+						onExpandedChange = { viewModel.setVibrationEnabled(it) }
+					)
 
-					ScheduleSection(
-						title = null,
-						enabled = soundScheduleEnabled,
-						onEnabledChange = { 
-							if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
-								viewModel.setSoundScheduleEnabled(it) 
+					AnimatedVisibility(visible = vibrationEnabled) {
+						Column {
+							var dndOnVibrationExpanded by remember { mutableStateOf(false) }
+							var dndOffVibrationExpanded by remember { mutableStateOf(false) }
+							val vibrationSheetState = rememberModalBottomSheetState()
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_on_vibration_pattern),
+								description = stringResource(viewModel.dndOnVibration.collectAsState().value.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
+								},
+								onClick = { dndOnVibrationExpanded = true }
+							)
+
+							if (dndOnVibrationExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOnVibrationExpanded = false },
+									sheetState = vibrationSheetState
+								) {
+									Column {
+										viewModel.availableVibrationPatterns.forEach { pattern ->
+											SettingsClickableItem(
+												title = stringResource(pattern.stringResId),
+												trailingIcon = {
+													if (pattern == viewModel.dndOnVibration.collectAsState().value) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													viewModel.setDndOnVibration(pattern)
+													viewModel.playSelectedVibration(pattern)
+													dndOnVibrationExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
+								}
+							}
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_off_vibration_pattern),
+								description = stringResource(viewModel.dndOffVibration.collectAsState().value.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
+								},
+								onClick = { dndOffVibrationExpanded = true }
+							)
+
+							if (dndOffVibrationExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOffVibrationExpanded = false },
+									sheetState = vibrationSheetState
+								) {
+									Column {
+										viewModel.availableVibrationPatterns.forEach { pattern ->
+											SettingsClickableItem(
+												title = stringResource(pattern.stringResId),
+												trailingIcon = {
+													if (pattern == viewModel.dndOffVibration.collectAsState().value) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													viewModel.setDndOffVibration(pattern)
+													viewModel.playSelectedVibration(pattern)
+													dndOffVibrationExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
+								}
+							}
+
+							SettingsSwitchItem(
+								title = stringResource(id = R.string.use_custom_vibration_strength),
+								description = stringResource(id = R.string.use_custom_vibration_description),
+								checked = useCustomVibration,
+								onCheckedChange = { viewModel.setUseCustomVibration(it) },
+							)
+
+							AnimatedVisibility(visible = useCustomVibration) {
+								SettingsSliderItem(
+									title = stringResource(id = R.string.custom_vibration_strength),
+									sliderContent = {
+										var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
+										LaunchedEffect(customVibrationStrength) {
+											sliderPosition = customVibrationStrength
+										}
+										Slider(
+											value = sliderPosition,
+											onValueChange = { newStrength ->
+												val steps = listOf(0f, 0.33f, 0.66f, 1f)
+												val nearestStep =
+													steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
+												sliderPosition = nearestStep
+											},
+											onValueChangeFinished = {
+												viewModel.setCustomVibrationStrength(sliderPosition)
+												viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
+											},
+											modifier = Modifier.width(200.dp),
+											steps = 2
+										)
+									}
+								)
+							}
+
+							ScheduleSection(
+								title = null,
+								enabled = vibrationScheduleEnabled,
+								onEnabledChange = { 
+									if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+										viewModel.setVibrationScheduleEnabled(it) 
+									} else {
+										showUpgradeDialog = true
+									}
+								},
+								description = stringResource(id = R.string.vibration_schedule_description),
+								startTime = vibrationScheduleStartTime,
+								onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
+								endTime = vibrationScheduleEndTime,
+								onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
+								selectedDays = vibrationScheduleDays,
+								onDaysChange = { viewModel.setVibrationScheduleDays(it) },
+								alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+							)
+						}
+					}
+
+					// Flashlight Subsection
+					SettingsSubsectionHeader(
+						title = stringResource(id = R.string.flashlight_feedback),
+						expanded = flashlightFeedbackEnabled,
+						onExpandedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) {
+								viewModel.setFlashlightFeedbackEnabled(it)
+							} else {
+								showUpgradeDialog = true
+							}
+						}
+					)
+
+					AnimatedVisibility(visible = flashlightFeedbackEnabled) {
+						Column {
+							var dndOnFlashlightExpanded by remember { mutableStateOf(false) }
+							var dndOffFlashlightExpanded by remember { mutableStateOf(false) }
+							val flashlightSheetState = rememberModalBottomSheetState()
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_on_flashlight_pattern),
+								description = stringResource(dndOnFlashlightPattern.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
+								},
+								onClick = { dndOnFlashlightExpanded = true }
+							)
+
+							if (dndOnFlashlightExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOnFlashlightExpanded = false },
+									sheetState = flashlightSheetState
+								) {
+									Column {
+										viewModel.availableFlashlightPatterns.forEach { pattern ->
+											SettingsClickableItem(
+												title = stringResource(pattern.stringResId),
+												trailingIcon = {
+													if (pattern == dndOnFlashlightPattern) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													viewModel.setDndOnFlashlightPattern(pattern)
+													viewModel.playSelectedFlashlightPattern(pattern)
+													dndOnFlashlightExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
+								}
+							}
+
+							SettingsClickableItem(
+								title = stringResource(id = R.string.dnd_off_flashlight_pattern),
+								description = stringResource(dndOffFlashlightPattern.stringResId),
+								trailingIcon = {
+									Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
+								},
+								onClick = { dndOffFlashlightExpanded = true }
+							)
+
+							if (dndOffFlashlightExpanded) {
+								ModalBottomSheet(
+									onDismissRequest = { dndOffFlashlightExpanded = false },
+									sheetState = flashlightSheetState
+								) {
+									Column {
+										viewModel.availableFlashlightPatterns.forEach { pattern ->
+											SettingsClickableItem(
+												title = stringResource(pattern.stringResId),
+												trailingIcon = {
+													if (pattern == dndOffFlashlightPattern) {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_checked),
+															contentDescription = stringResource(R.string.selected),
+															tint = MaterialTheme.colorScheme.primary
+														)
+													} else {
+														Icon(
+															painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
+															contentDescription = stringResource(R.string.not_selected),
+															tint = MaterialTheme.colorScheme.onSurfaceVariant
+														)
+													}
+												},
+												onClick = {
+													viewModel.setDndOffFlashlightPattern(pattern)
+													viewModel.playSelectedFlashlightPattern(pattern)
+													dndOffFlashlightExpanded = false
+												}
+											)
+										}
+									}
+									Spacer(modifier = Modifier.height(20.dp))
+								}
+							}
+
+							ScheduleSection(
+								title = null,
+								enabled = flashlightScheduleEnabled,
+								onEnabledChange = { 
+									if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
+										viewModel.setFlashlightScheduleEnabled(it) 
+									} else {
+										showUpgradeDialog = true
+									}
+								},
+								description = stringResource(id = R.string.flashlight_schedule_description),
+								startTime = flashlightScheduleStartTime,
+								onStartTimeChange = { viewModel.setFlashlightScheduleStartTime(it) },
+								endTime = flashlightScheduleEndTime,
+								onEndTimeChange = { viewModel.setFlashlightScheduleEndTime(it) },
+								selectedDays = flashlightScheduleDays,
+								onDaysChange = { viewModel.setFlashlightScheduleDays(it) },
+								alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+							)
+						}
+					}
+				}
+			}
+
+			item {
+				Column {
+					Text(
+						text = stringResource(id = R.string.advanced_filters),
+						color = MaterialTheme.colorScheme.primary,
+						style = MaterialTheme.typography.headlineSmall,
+						fontWeight = FontWeight.ExtraBold,
+						modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
+					)
+
+					val flashlightDetectionEnabled by viewModel.flashlightDetectionEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.flashlight_detection),
+						description = stringResource(id = R.string.flashlight_detection_description),
+						checked = flashlightDetectionEnabled,
+						onCheckedChange = { 
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+								viewModel.setFlashlightDetectionEnabled(it) 
 							} else {
 								showUpgradeDialog = true
 							}
 						},
-						description = stringResource(id = R.string.sound_schedule_description),
-						startTime = soundScheduleStartTime,
-						onStartTimeChange = { viewModel.setSoundScheduleStartTime(it) },
-						endTime = soundScheduleEndTime,
-						onEndTimeChange = { viewModel.setSoundScheduleEndTime(it) },
-						selectedDays = soundScheduleDays,
-						onDaysChange = { viewModel.setSoundScheduleDays(it) },
-						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+						isPro = true
+					)
+
+					val mediaPlaybackDetectionEnabled by viewModel.mediaPlaybackDetectionEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.media_playback_detection),
+						description = stringResource(id = R.string.media_playback_detection_description),
+						checked = mediaPlaybackDetectionEnabled,
+						onCheckedChange = { 
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+								viewModel.setMediaPlaybackDetectionEnabled(it) 
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+						isPro = true
+					)
+
+					val headphoneDetectionEnabled by viewModel.headphoneDetectionEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.headphone_detection),
+						description = stringResource(id = R.string.headphone_detection_description),
+						checked = headphoneDetectionEnabled,
+						onCheckedChange = { 
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+								viewModel.setHeadphoneDetectionEnabled(it) 
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+						isPro = true
+					)
+
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.proximity_detection),
+						description = stringResource(id = R.string.proximity_detection_description),
+						checked = proximityDetectionEnabled,
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) {
+								viewModel.setProximityDetectionEnabled(it)
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.detectionFiltersEnabled()) 1f else 0.5f,
+						isPro = true
 					)
 				}
 			}
-		}
-	}
 
-	item {
-		Column {
-			// Vibration Section
-			Text(
-				text = stringResource(id = R.string.vibration),
-				color = MaterialTheme.colorScheme.primary,
-				style = MaterialTheme.typography.headlineSmall,
-				fontWeight = FontWeight.ExtraBold,
-				modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
-			)
-
-			SettingsSwitchItem(
-				title = stringResource(id = R.string.vibration_enabled),
-				description = stringResource(id = R.string.vibration_enabled_description),
-				checked = vibrationEnabled,
-				onCheckedChange = { viewModel.setVibrationEnabled(it) },
-			)
-
-			AnimatedVisibility(visible = vibrationEnabled) {
+			item {
 				Column {
-				var dndOnVibrationExpanded by remember { mutableStateOf(false) }
-				var dndOffVibrationExpanded by remember { mutableStateOf(false) }
-				val vibrationSheetState = rememberModalBottomSheetState()
+					Text(
+						text = stringResource(id = R.string.app_settings),
+						color = MaterialTheme.colorScheme.primary,
+						style = MaterialTheme.typography.headlineSmall,
+						fontWeight = FontWeight.ExtraBold,
+						modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
+					)
 
-				SettingsClickableItem(
-					title = stringResource(id = R.string.dnd_on_vibration_pattern),
-					description = stringResource(viewModel.dndOnVibration.collectAsState().value.stringResId),
-					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
-					},
-					onClick = { dndOnVibrationExpanded = true }
-				)
-
-				if (dndOnVibrationExpanded) {
-					ModalBottomSheet(
-						onDismissRequest = { dndOnVibrationExpanded = false },
-						sheetState = vibrationSheetState
-					) {
-						Column {
-							viewModel.availableVibrationPatterns.forEach { pattern ->
-								SettingsClickableItem(
-									title = stringResource(pattern.stringResId),
-									trailingIcon = {
-										if (pattern == viewModel.dndOnVibration.collectAsState().value) {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = stringResource(R.string.selected),
-												tint = MaterialTheme.colorScheme.primary
-											)
-										} else {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = stringResource(R.string.not_selected),
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-										}
-									},
-									onClick = {
-										viewModel.setDndOnVibration(pattern)
-										viewModel.playSelectedVibration(pattern)
-										dndOnVibrationExpanded = false
-									}
-								)
+					val autoStartEnabled by viewModel.autoStartEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.auto_start),
+						description = stringResource(id = R.string.auto_start_description),
+						checked = autoStartEnabled,
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) {
+								viewModel.setAutoStartEnabled(it)
+							} else {
+								showUpgradeDialog = true
 							}
-						}
-						Spacer(modifier = Modifier.height(20.dp))
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f,
+						isPro = true
+					)
+
+					val batterySaverOnFlipEnabled by viewModel.batterySaverOnFlipEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.battery_saver),
+						description = stringResource(id = R.string.battery_saver_description),
+						checked = batterySaverOnFlipEnabled,
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled()) {
+								if (hasSecureSettingsPermission) {
+									viewModel.setBatterySaverOnFlipEnabled(it)
+								} else {
+									showAdbDialog = true
+								}
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.batterySaverSyncEnabled() && hasSecureSettingsPermission) 1f else 0.5f,
+						isPro = true
+					)
+
+					val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
+					SettingsSwitchItem(
+						title = stringResource(id = R.string.high_sensitivity_mode),
+						description = stringResource(id = R.string.high_sensitivity_mode_description),
+						checked = highSensitivityModeEnabled,
+						onCheckedChange = {
+							if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) {
+								viewModel.setHighSensitivityModeEnabled(it)
+							} else {
+								showUpgradeDialog = true
+							}
+						},
+						alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.advancedSensitivityEnabled()) 1f else 0.5f,
+						isPro = true
+					)
+
+					AnimatedVisibility(visible = highSensitivityModeEnabled) {
+						ScheduleSection(
+							title = null,
+							description = stringResource(id = R.string.high_sensitivity_schedule_description),
+							enabled = highSensitivityScheduleEnabled,
+							onEnabledChange = { viewModel.setHighSensitivityScheduleEnabled(it) },
+							startTime = highSensitivityScheduleStartTime,
+							onStartTimeChange = { viewModel.setHighSensitivityScheduleStartTime(it) },
+							endTime = highSensitivityScheduleEndTime,
+							onEndTimeChange = { viewModel.setHighSensitivityScheduleEndTime(it) },
+							selectedDays = highSensitivityScheduleDays,
+							onDaysChange = { viewModel.setHighSensitivityScheduleDays(it) }
+						)
 					}
-				}
 
-				SettingsClickableItem(
-					title = stringResource(id = R.string.dnd_off_vibration_pattern),
-					description = stringResource(viewModel.dndOffVibration.collectAsState().value.stringResId),
-					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_vibration_pattern))
-					},
-					onClick = { dndOffVibrationExpanded = true }
-				)
-
-				if (dndOffVibrationExpanded) {
-					ModalBottomSheet(
-						onDismissRequest = { dndOffVibrationExpanded = false },
-						sheetState = vibrationSheetState
-					) {
-						Column {
-							viewModel.availableVibrationPatterns.forEach { pattern ->
-								SettingsClickableItem(
-									title = stringResource(pattern.stringResId),
-									trailingIcon = {
-										if (pattern == viewModel.dndOffVibration.collectAsState().value) {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = stringResource(R.string.selected),
-												tint = MaterialTheme.colorScheme.primary
-											)
-										} else {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = stringResource(R.string.not_selected),
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-										}
-									},
-									onClick = {
-										viewModel.setDndOffVibration(pattern)
-										viewModel.playSelectedVibration(pattern)
-										dndOffVibrationExpanded = false
-									}
-								)
+					SettingsClickableItem(
+						title = stringResource(id = R.string.language),
+						description = stringResource(id = R.string.language_description),
+						onClick = {
+							try {
+								val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+									Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS)
+								} else {
+									Intent(android.provider.Settings.ACTION_LOCALE_SETTINGS)
+								}
+								intent.data = Uri.fromParts("package", context.packageName, null)
+								context.startActivity(intent)
+							} catch (e: ActivityNotFoundException) {
+								Toast.makeText(
+									context,
+									R.string.error_opening_language_settings,
+									Toast.LENGTH_SHORT
+								).show()
 							}
-						}
-						Spacer(modifier = Modifier.height(20.dp))
-					}
-				}
-
-				SettingsSwitchItem(
-					title = stringResource(id = R.string.use_custom_vibration_strength),
-					description = stringResource(id = R.string.use_custom_vibration_description),
-					checked = useCustomVibration,
-					onCheckedChange = { viewModel.setUseCustomVibration(it) },
-				)
-
-				AnimatedVisibility(visible = useCustomVibration) {
-					SettingsSliderItem(
-						title = stringResource(id = R.string.custom_vibration_strength),
-						sliderContent = {
-							var sliderPosition by remember { mutableStateOf(customVibrationStrength) }
-							LaunchedEffect(customVibrationStrength) {
-								sliderPosition = customVibrationStrength
-							}
-							Slider(
-								value = sliderPosition,
-								onValueChange = { newStrength ->
-									// Snap to nearest step (0.0, 0.33, 0.66, 1.0)
-									val steps = listOf(0f, 0.33f, 0.66f, 1f)
-									val nearestStep =
-										steps.minByOrNull { kotlin.math.abs(it - newStrength) } ?: newStrength
-									sliderPosition = nearestStep
-								},
-								onValueChangeFinished = {
-									viewModel.setCustomVibrationStrength(sliderPosition)
-									viewModel.playSelectedVibration(VibrationPattern.SINGLE_PULSE)
-								},
-								modifier = Modifier.width(200.dp),
-								steps = 2 // This creates 4 discrete points (start, 2 steps, and end)
-							)
 						}
 					)
 				}
-
-				Spacer(modifier = Modifier.height(12.dp))
-
-				ScheduleSection(
-					title = null,
-					enabled = vibrationScheduleEnabled,
-					onEnabledChange = { 
-						if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
-							viewModel.setVibrationScheduleEnabled(it) 
-						} else {
-							showUpgradeDialog = true
-						}
-					},
-					description = stringResource(id = R.string.vibration_schedule_description),
-					startTime = vibrationScheduleStartTime,
-					onStartTimeChange = { viewModel.setVibrationScheduleStartTime(it) },
-					endTime = vibrationScheduleEndTime,
-					onEndTimeChange = { viewModel.setVibrationScheduleEndTime(it) },
-					selectedDays = vibrationScheduleDays,
-					onDaysChange = { viewModel.setVibrationScheduleDays(it) },
-					alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
-				)
 			}
-		}
-	}
-}
 
-	item {
-		Column {
-			// Flashlight Section
-			Text(
-				text = stringResource(id = R.string.flashlight),
-				color = MaterialTheme.colorScheme.primary,
-				style = MaterialTheme.typography.headlineSmall,
-				fontWeight = FontWeight.ExtraBold,
-				modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 8.dp),
-			)
-
-			SettingsSwitchItem(
-				title = stringResource(id = R.string.flashlight_enabled),
-				description = stringResource(id = R.string.flashlight_enabled_description),
-				checked = flashlightFeedbackEnabled,
-				onCheckedChange = {
-					if (dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) {
-						viewModel.setFlashlightFeedbackEnabled(it)
-					} else {
-						showUpgradeDialog = true
-					}
-				},
-				alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) 1f else 0.5f,
-				isPro = true
-			)
-
-			AnimatedVisibility(visible = flashlightFeedbackEnabled) {
-				Column {
-				var dndOnFlashlightExpanded by remember { mutableStateOf(false) }
-				var dndOffFlashlightExpanded by remember { mutableStateOf(false) }
-				val flashlightSheetState = rememberModalBottomSheetState()
-
-				SettingsClickableItem(
-					title = stringResource(id = R.string.dnd_on_flashlight_pattern),
-					description = stringResource(dndOnFlashlightPattern.stringResId),
-					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
-					},
-					onClick = { dndOnFlashlightExpanded = true }
-				)
-
-				if (dndOnFlashlightExpanded) {
-					ModalBottomSheet(
-						onDismissRequest = { dndOnFlashlightExpanded = false },
-						sheetState = flashlightSheetState
-					) {
-						Column {
-							viewModel.availableFlashlightPatterns.forEach { pattern ->
-								SettingsClickableItem(
-									title = stringResource(pattern.stringResId),
-									trailingIcon = {
-										if (pattern == dndOnFlashlightPattern) {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = stringResource(R.string.selected),
-												tint = MaterialTheme.colorScheme.primary
-											)
-										} else {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = stringResource(R.string.not_selected),
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-										}
-									},
-									onClick = {
-										viewModel.setDndOnFlashlightPattern(pattern)
-										viewModel.playSelectedFlashlightPattern(pattern)
-										dndOnFlashlightExpanded = false
-									}
-								)
-							}
-						}
-						Spacer(modifier = Modifier.height(20.dp))
-					}
-				}
-
-				SettingsClickableItem(
-					title = stringResource(id = R.string.dnd_off_flashlight_pattern),
-					description = stringResource(dndOffFlashlightPattern.stringResId),
-					trailingIcon = {
-						Icon(Icons.Default.ArrowDropDown, stringResource(R.string.select_flashlight_pattern))
-					},
-					onClick = { dndOffFlashlightExpanded = true }
-				)
-
-				if (dndOffFlashlightExpanded) {
-					ModalBottomSheet(
-						onDismissRequest = { dndOffFlashlightExpanded = false },
-						sheetState = flashlightSheetState
-					) {
-						Column {
-							viewModel.availableFlashlightPatterns.forEach { pattern ->
-								SettingsClickableItem(
-									title = stringResource(pattern.stringResId),
-									trailingIcon = {
-										if (pattern == dndOffFlashlightPattern) {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_checked),
-												contentDescription = stringResource(R.string.selected),
-												tint = MaterialTheme.colorScheme.primary
-											)
-										} else {
-											Icon(
-												painter = painterResource(id = R.drawable.ic_radio_button_unchecked),
-												contentDescription = stringResource(R.string.not_selected),
-												tint = MaterialTheme.colorScheme.onSurfaceVariant
-											)
-										}
-									},
-									onClick = {
-										viewModel.setDndOffFlashlightPattern(pattern)
-										viewModel.playSelectedFlashlightPattern(pattern)
-										dndOffFlashlightExpanded = false
-									}
-								)
-							}
-						}
-						Spacer(modifier = Modifier.height(20.dp))
-					}
-				}
-
-				Spacer(modifier = Modifier.height(12.dp))
-
-				ScheduleSection(
-					title = null,
-					enabled = flashlightScheduleEnabled,
-					onEnabledChange = { 
-						if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) {
-							viewModel.setFlashlightScheduleEnabled(it) 
-						} else {
-							showUpgradeDialog = true
-						}
-					},
-					description = stringResource(id = R.string.flashlight_schedule_description),
-					startTime = flashlightScheduleStartTime,
-					onStartTimeChange = { viewModel.setFlashlightScheduleStartTime(it) },
-					endTime = flashlightScheduleEndTime,
-					onEndTimeChange = { viewModel.setFlashlightScheduleEndTime(it) },
-					selectedDays = flashlightScheduleDays,
-					onDaysChange = { viewModel.setFlashlightScheduleDays(it) },
-					alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.scheduleEnabled()) 1f else 0.5f
-				)
-			}
-		}
-	}
-}
 
 	item {
 		Column {
@@ -1190,7 +1220,7 @@ fun SettingsScreen(
 						tint = MaterialTheme.colorScheme.primary
 					)
 				},
-				onClick = onDonateClick
+				onClick = { showSupportDialog = true }
 			)
 
 			SettingsClickableItem(
@@ -1234,8 +1264,59 @@ fun SettingsScreen(
 					}
 				}
 			}
-		}
-	}
+			if (showSupportDialog) {
+				AlertDialog(
+					onDismissRequest = { showSupportDialog = false },
+					title = {
+						Text(
+							text = stringResource(R.string.support_dialog_title),
+							style = MaterialTheme.typography.headlineSmall,
+							fontWeight = FontWeight.Bold
+						)
+					},
+					text = {
+						Text(
+							text = stringResource(R.string.support_dialog_message),
+							style = MaterialTheme.typography.bodyMedium
+						)
+					},
+					confirmButton = {
+						Button(
+							onClick = {
+								showSupportDialog = false
+								val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://patreon.com/AbulKalamRobin369"))
+								try {
+									context.startActivity(intent)
+								} catch (e: ActivityNotFoundException) {
+									Toast.makeText(context, context.getString(R.string.error_no_app_found), Toast.LENGTH_SHORT).show()
+								}
+							},
+							modifier = Modifier.fillMaxWidth(),
+							shape = RoundedCornerShape(12.dp),
+							colors = ButtonDefaults.buttonColors(
+								containerColor = MaterialTheme.colorScheme.primary
+							)
+						) {
+							Icon(Icons.Default.Favorite, contentDescription = null)
+							Spacer(Modifier.width(8.dp))
+							Text(stringResource(R.string.patreon))
+						}
+					},
+					dismissButton = {
+						TextButton(
+							onClick = {
+								showSupportDialog = false
+								onDonateClick()
+							},
+							modifier = Modifier.fillMaxWidth()
+						) {
+							Text(stringResource(R.string.crypto))
+						}
+					}
+				)
+			}
+}
+}
 }
 }
 }
@@ -1587,5 +1668,47 @@ fun ProBadge(modifier: Modifier = Modifier) {
 			fontWeight = FontWeight.ExtraBold,
 			modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
 		)
+	}
+}
+@Composable
+fun SettingsSubsectionHeader(
+	title: String,
+	expanded: Boolean,
+	onExpandedChange: (Boolean) -> Unit,
+	modifier: Modifier = Modifier
+) {
+	Surface(
+		modifier = modifier
+			.padding(vertical = 4.dp)
+			.clip(RoundedCornerShape(12.dp))
+			.clickable { onExpandedChange(!expanded) },
+		color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+	) {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 16.dp, vertical = 8.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.SpaceBetween
+		) {
+			Text(
+				text = title,
+				style = MaterialTheme.typography.titleMedium,
+				fontWeight = FontWeight.Bold,
+				color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+				modifier = Modifier.weight(1f)
+			)
+			
+			Switch(
+				checked = expanded,
+				onCheckedChange = onExpandedChange,
+				colors = SwitchDefaults.colors(
+					checkedThumbColor = MaterialTheme.colorScheme.primary,
+					checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+					uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+					uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+				)
+			)
+		}
 	}
 }

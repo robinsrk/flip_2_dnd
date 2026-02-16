@@ -9,7 +9,7 @@
 	<string name="sound">Sound</string>
 	<string name="vibration">Vibration</string>
 	<string name="support">Support</string>
-	<string name="donate">Donate</string>"
+	<string name="donate">Donate</string>
 	<string name="dnd_off">DND is OFF</string>
 	<string name="dnd_on">DND is ON</string>
 	<string name="service_running">Service is running</string>
@@ -134,6 +134,27 @@
 	<string name="dnd_mode_all">All Notifications</string>
 	<string name="dnd_mode_unknown">Unknown Mode</string>
 
+	<!-- Activation Modes -->
+	<string name="flip_behavior">Flip Behavior</string>
+	<string name="feedback">Feedback</string>
+	<string name="advanced_filters">Advanced Filters</string>
+	<string name="app_settings">App Settings</string>
+	<string name="activation_mode">Activation Mode</string>
+	<string name="activation_mode_description">Choose what happens when you flip your phone</string>
+	<string name="mode_dnd">Do Not Disturb</string>
+	<string name="mode_ringer">Mobile Ringer</string>
+	<string name="dnd_sub_mode">DND Mode</string>
+	<string name="ringer_sub_mode">Ringer Mode</string>
+	<string name="ringer_silent">Silent</string>
+	<string name="ringer_vibrate">Vibrate</string>
+	<string name="ringer_normal">Normal</string>
+	<string name="sound_feedback">Sound Feedback</string>
+	<string name="vibration_feedback">Vibration Feedback</string>
+	<string name="flashlight_feedback">Flashlight Feedback</string>
+	<string name="ringer_active">Ringer Mode Active</string>
+	<string name="status_ringer_silent">Ringer: Silent</string>
+	<string name="status_ringer_vibrate">Ringer: Vibrate</string>
+
 	<!-- Onboarding -->
 	<string name="onboarding_welcome_title">Welcome to Flip 2 DND</string>
 	<string name="onboarding_welcome_desc">Control your phone\'s Do Not Disturb mode by simply flipping it face down.</string>
@@ -242,4 +263,10 @@
 	<string name="permission_notification">Notification Permission</string>
 	<string name="grant">Grant</string>
 	<string name="check_again">Check Again</string>
+	<string name="collapse">Collapse</string>
+	<string name="expand">Expand</string>
+	<string name="support_dialog_title">Support the Developer</string>
+	<string name="support_dialog_message">Thank you for using Flip 2 DND! Your support helps me keep the app free and continuously improving. If you find the app useful, please consider supporting my work.</string>
+	<string name="patreon">Patreon</string>
+	<string name="crypto">Crypto</string>
 </resources>

@@ -39,6 +39,15 @@ android {
 		}
 	}
 
+	variantFilter {
+		if (name.contains("pro", ignoreCase = true)) {
+			val isProRequested = gradle.startParameter.taskNames.any { it.contains("pro", ignoreCase = true) }
+			if (!isProRequested) {
+				ignore = true
+			}
+		}
+	}
+
 	lint {
 		baseline = file("lint-baseline.xml")
 		abortOnError = false

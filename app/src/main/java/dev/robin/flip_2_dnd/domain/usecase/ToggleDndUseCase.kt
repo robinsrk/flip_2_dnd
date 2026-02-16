@@ -7,6 +7,6 @@ class ToggleDndUseCase @Inject constructor(
     private val dndRepository: DndRepository
 ) {
     suspend operator fun invoke() {
-        dndRepository.toggleDnd()
+        dndRepository.toggle()
     }
 }

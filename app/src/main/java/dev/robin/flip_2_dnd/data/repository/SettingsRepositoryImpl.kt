@@ -6,6 +6,9 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.robin.flip_2_dnd.domain.repository.ActivationMode
+import dev.robin.flip_2_dnd.domain.repository.DndMode
+import dev.robin.flip_2_dnd.domain.repository.RingerMode
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
 import dev.robin.flip_2_dnd.presentation.settings.Sound
@@ -73,6 +76,10 @@ private const val KEY_HIGH_SENSITIVITY_SCHEDULE_START_TIME = "high_sensitivity_s
 private const val KEY_HIGH_SENSITIVITY_SCHEDULE_END_TIME = "high_sensitivity_schedule_end_time"
 private const val KEY_HIGH_SENSITIVITY_SCHEDULE_DAYS = "high_sensitivity_schedule_days"
 private const val KEY_AUTO_START = "auto_start"
+private const val KEY_ACTIVATION_MODE = "activation_mode"
+private const val KEY_DND_MODE = "dnd_mode"
+private const val KEY_RINGER_MODE = "ringer_mode"
+private const val KEY_PREVIOUS_RINGER_MODE = "previous_ringer_mode"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -184,6 +191,23 @@ class SettingsRepositoryImpl @Inject constructor(
 	)
 
 	private val autoStartEnabled = MutableStateFlow(prefs.getBoolean(KEY_AUTO_START, false))
+
+	private val activationMode = MutableStateFlow(
+		ActivationMode.valueOf(
+			prefs.getString(KEY_ACTIVATION_MODE, ActivationMode.DND.name) ?: ActivationMode.DND.name
+		)
+	)
+	private val dndMode = MutableStateFlow(
+		DndMode.valueOf(
+			prefs.getString(KEY_DND_MODE, DndMode.TOTAL_SILENCE.name) ?: DndMode.TOTAL_SILENCE.name
+		)
+	)
+	private val ringerMode = MutableStateFlow(
+		RingerMode.valueOf(
+			prefs.getString(KEY_RINGER_MODE, RingerMode.SILENT.name) ?: RingerMode.SILENT.name
+		)
+	)
+	private val previousRingerMode = MutableStateFlow(prefs.getInt(KEY_PREVIOUS_RINGER_MODE, 2)) // Default to NORMAL (2)
 
 	private fun restartFlipDetectorService() {
 		restartJob?.cancel()
@@ -583,4 +607,35 @@ class SettingsRepositoryImpl @Inject constructor(
 	}
 
 	override fun getVibrationScheduleDays(): Flow<Set<Int>> = vibrationScheduleDays
+
+	override fun getActivationMode(): Flow<ActivationMode> = activationMode
+
+	override suspend fun setActivationMode(mode: ActivationMode) {
+		prefs.edit().putString(KEY_ACTIVATION_MODE, mode.name).apply()
+		activationMode.value = mode
+		restartFlipDetectorService()
+	}
+
+	override fun getDndMode(): Flow<DndMode> = dndMode
+
+	override suspend fun setDndMode(mode: DndMode) {
+		prefs.edit().putString(KEY_DND_MODE, mode.name).apply()
+		dndMode.value = mode
+		restartFlipDetectorService()
+	}
+
+	override fun getRingerMode(): Flow<RingerMode> = ringerMode
+
+	override suspend fun setRingerMode(mode: RingerMode) {
+		prefs.edit().putString(KEY_RINGER_MODE, mode.name).apply()
+		ringerMode.value = mode
+		restartFlipDetectorService()
+	}
+
+	override fun getPreviousRingerMode(): Flow<Int> = previousRingerMode
+
+	override suspend fun setPreviousRingerMode(mode: Int) {
+		prefs.edit().putInt(KEY_PREVIOUS_RINGER_MODE, mode).apply()
+		previousRingerMode.value = mode
+	}
 }

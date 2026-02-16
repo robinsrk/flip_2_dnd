@@ -108,7 +108,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             // Combine DND enabled state and mode
             combine(
-                dndRepository.isDndEnabled(),
+                dndRepository.isActivated(),
                 dndRepository.getDndMode()
             ) { enabled, mode ->
                 Log.d("MainViewModel", "DND state changed: $enabled, Mode: $mode")

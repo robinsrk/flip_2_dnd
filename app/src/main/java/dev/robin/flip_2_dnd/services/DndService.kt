@@ -12,8 +12,8 @@ import android.os.VibratorManager
 import android.provider.Settings
 import android.util.Log
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
 import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.domain.repository.DndRepository
 import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import kotlinx.coroutines.delay
@@ -26,7 +26,8 @@ private const val TAG = "DndService"
 
 class DndService(
 	private val context: Context,
-	private val settingsRepository: SettingsRepository
+	private val settingsRepository: SettingsRepository,
+	private val dndRepository: DndRepository
 ) {
 	private val notificationManager =
 		context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -57,6 +58,7 @@ class DndService(
 	val isAppEnabledDnd: StateFlow<Boolean> = _isAppEnabledDnd
 
 	init {
+		// We can still use updateDndStatus for local state if needed, but repository is the source of truth
 		updateDndStatus()
 	}
 
@@ -149,50 +151,21 @@ class DndService(
     }
 
     fun toggleDnd() {
-        if (!checkDndPermission()) {
-            Log.e(TAG, "No DND permission, opening settings")
-            openDndSettings()
-            return
-        }
-
         try {
-            val currentFilter = notificationManager.currentInterruptionFilter
-            Log.d(TAG, "Current DND filter: $currentFilter")
+            val isCurrentlyActivated = runBlocking { dndRepository.isActivated().first() }
+            val willBeActivated = !isCurrentlyActivated
 
-            // INTERRUPTION_FILTER_ALL means DND is OFF
-            // Any other value means DND is ON with different levels
-            val isDndCurrentlyOn = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
-
-            // Determine the new filter first
-            val newFilter = if (!isDndCurrentlyOn) {
-                // If DND is currently OFF, turn it ON with appropriate mode
-                runBlocking {
-                    if (settingsRepository.getPriorityDndEnabled().first()) {
-                        Log.d(TAG, "Using Priority DND mode")
-                        NotificationManager.INTERRUPTION_FILTER_PRIORITY
-                    } else {
-                        Log.d(TAG, "Using Total Silence DND mode")
-                        NotificationManager.INTERRUPTION_FILTER_NONE
-                    }
-                }
-            } else {
-                // If DND is currently ON (any mode), turn it OFF
-                NotificationManager.INTERRUPTION_FILTER_ALL
-            }
-
-            // Play feedback BEFORE setting the filter
-            val willBeDndEnabled = newFilter != NotificationManager.INTERRUPTION_FILTER_ALL
-            playSound(willBeDndEnabled)
+            // Play feedback BEFORE setting the filter/ringer
+            playSound(willBeActivated)
 
             // Get the appropriate vibration pattern from settings
             runBlocking {
-                val pattern = if (willBeDndEnabled) {
+                val pattern = if (willBeActivated) {
                     settingsRepository.getDndOnVibration().first()
                 } else {
                     settingsRepository.getDndOffVibration().first()
                 }
                 
-                // Convert the pattern to timing array
                 val timings = if (pattern == VibrationPattern.NONE) {
                     longArrayOf()
                 } else {
@@ -206,7 +179,7 @@ class DndService(
 
             // Get the appropriate flashlight pattern from settings
             runBlocking {
-                val flashlightPattern = if (willBeDndEnabled) {
+                val flashlightPattern = if (willBeActivated) {
                     settingsRepository.getDndOnFlashlightPattern().first()
                 } else {
                     settingsRepository.getDndOffFlashlightPattern().first()
@@ -214,56 +187,59 @@ class DndService(
                 flashFlashlight(flashlightPattern)
             }
 
-            // Add 2-second delay only when turning on Total Silence DND
-            if (willBeDndEnabled && newFilter == NotificationManager.INTERRUPTION_FILTER_NONE) {
+            // Handle delay for Total Silence DND if applicable
+            val activationMode = runBlocking { settingsRepository.getActivationMode().first() }
+            val dndMode = runBlocking { settingsRepository.getDndMode().first() }
+            
+            if (willBeActivated && 
+                activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND && 
+                dndMode == dev.robin.flip_2_dnd.domain.repository.DndMode.TOTAL_SILENCE) {
                 runBlocking {
                     Log.d(TAG, "Waiting 2 seconds before setting Total Silence DND")
                     delay(2000)
                 }
             }
 
-            // Now set the interruption filter
-            Log.d(TAG, "Setting DND filter from $currentFilter to $newFilter")
-            notificationManager.setInterruptionFilter(newFilter)
-
-            // Update our state flow
-            _isDndEnabled.value = newFilter != NotificationManager.INTERRUPTION_FILTER_ALL
-            Log.d(TAG, "Previous app-enabled state: ${_isAppEnabledDnd.value}")
-            if (newFilter != NotificationManager.INTERRUPTION_FILTER_ALL) {
-                _isAppEnabledDnd.value = true
-                Log.d(TAG, "Setting app-enabled DND to true")
-            } else {
-                _isAppEnabledDnd.value = false
-                Log.d(TAG, "Setting app-enabled DND to false")
+            // Now set the activation state in the repository
+            runBlocking {
+                dndRepository.setActivated(willBeActivated)
             }
-            Log.d(
-                TAG,
-                "DND ${if (_isDndEnabled.value) "enabled" else "disabled"} by ${if (_isAppEnabledDnd.value) "app" else "user"}"
-            )
 
-        } catch (e: SecurityException) {
-            Log.e(TAG, "SecurityException toggling DND: ${e.message}", e)
-            openDndSettings()
+            // Update local state flows for UI sync
+            _isDndEnabled.value = willBeActivated
+            _isAppEnabledDnd.value = willBeActivated
+
         } catch (e: Exception) {
-            Log.e(TAG, "Error toggling DND: ${e.message}", e)
+            Log.e(TAG, "Error toggling activation state: ${e.message}", e)
         }
     }
 
     fun updateDndStatus() {
         try {
-            val currentFilter = notificationManager.currentInterruptionFilter
-            val isDndOn = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
-            _isDndEnabled.value = isDndOn
-            // Only reset app-enabled state if DND is turned off
-            if (!isDndOn) {
-                _isAppEnabledDnd.value = false
+            val activationMode = runBlocking { settingsRepository.getActivationMode().first() }
+            val isActivated = runBlocking { dndRepository.isActivated().first() }
+            
+            if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+                val currentFilter = notificationManager.currentInterruptionFilter
+                val isDndOn = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
+                _isDndEnabled.value = isDndOn
+                if (!isDndOn) {
+                    _isAppEnabledDnd.value = false
+                }
+            } else {
+                // In Ringer mode, we rely on the repository's activation state
+                _isDndEnabled.value = isActivated
+                if (!isActivated) {
+                    _isAppEnabledDnd.value = false
+                }
             }
+            
             Log.d(
                 TAG,
-                "Updated DND status: isDndEnabled=${_isDndEnabled.value}, isAppEnabled=${_isAppEnabledDnd.value} (filter: $currentFilter)"
+                "Updated status: isActivated=$isActivated, mode=$activationMode, isDndEnabled=${_isDndEnabled.value}, isAppEnabled=${_isAppEnabledDnd.value}"
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating DND status: ${e.message}", e)
+            Log.e(TAG, "Error updating status: ${e.message}", e)
         }
     }
 

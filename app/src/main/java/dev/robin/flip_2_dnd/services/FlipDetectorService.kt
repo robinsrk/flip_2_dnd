@@ -144,7 +144,7 @@ class FlipDetectorService : Service() {
         
         try {
             sensorService = SensorService(this, settingsRepository)
-            dndService = DndService(this, settingsRepository)
+            dndService = DndService(this, settingsRepository, dndRepository)
             // settingsRepository is now injected by Hilt
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             cameraManager = getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager

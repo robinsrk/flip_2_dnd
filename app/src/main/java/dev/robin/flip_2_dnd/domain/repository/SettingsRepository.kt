@@ -5,6 +5,22 @@ import dev.robin.flip_2_dnd.presentation.settings.Sound
 import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
 import kotlinx.coroutines.flow.Flow
 
+enum class ActivationMode {
+    DND, RINGER
+}
+
+enum class DndMode(val filter: Int) {
+    PRIORITY(android.app.NotificationManager.INTERRUPTION_FILTER_PRIORITY),
+    TOTAL_SILENCE(android.app.NotificationManager.INTERRUPTION_FILTER_NONE),
+    ALARMS_ONLY(android.app.NotificationManager.INTERRUPTION_FILTER_ALARMS)
+}
+
+enum class RingerMode(val value: Int) {
+    SILENT(android.media.AudioManager.RINGER_MODE_SILENT),
+    VIBRATE(android.media.AudioManager.RINGER_MODE_VIBRATE),
+    NORMAL(android.media.AudioManager.RINGER_MODE_NORMAL)
+}
+
 interface SettingsRepository {
     fun getScreenOffOnlyEnabled(): Flow<Boolean>
     suspend fun setScreenOffOnlyEnabled(enabled: Boolean)
@@ -108,4 +124,16 @@ interface SettingsRepository {
 
     fun getAutoStartEnabled(): Flow<Boolean>
     suspend fun setAutoStartEnabled(enabled: Boolean)
+
+    fun getActivationMode(): Flow<ActivationMode>
+    suspend fun setActivationMode(mode: ActivationMode)
+
+    fun getDndMode(): Flow<DndMode>
+    suspend fun setDndMode(mode: DndMode)
+
+    fun getRingerMode(): Flow<RingerMode>
+    suspend fun setRingerMode(mode: RingerMode)
+
+    fun getPreviousRingerMode(): Flow<Int>
+    suspend fun setPreviousRingerMode(mode: Int)
 }

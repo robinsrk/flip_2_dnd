@@ -1,0 +1,3 @@
+• Refactored settings UI headers with explicit toggles
+• Added "Support Developer" popup with Patreon and Crypto options
+• Reconfigure gradlew

@@ -1,3 +1,8 @@
+[v10.1.7]
+• Refactored settings UI headers with explicit toggles
+• Added "Support Developer" popup with Patreon and Crypto options
+• Reconfigure gradlew
+
 [v10.1.6]
 • Added schedule support for High Sensitivity Mode (Start Time, End Time, and Days)
 • Added smooth animations when toggling settings sections

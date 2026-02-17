@@ -1,3 +1,8 @@
+[v10.1.8]
+• Added "Feedback even if Flashlight is ON" setting in Flashlight Feedback
+• Fixed flashlight state not restoring correctly after feedback
+• Improved flashlight detection logic
+
 [v10.1.7]
 • Refactored settings UI headers with explicit toggles
 • Added "Support Developer" popup with Patreon and Crypto options

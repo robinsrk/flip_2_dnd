@@ -1,0 +1,3 @@
+• Added "Feedback even if Flashlight is ON" setting in Flashlight Feedback
+• Fixed flashlight state not restoring correctly after feedback
+• Improved flashlight detection logic

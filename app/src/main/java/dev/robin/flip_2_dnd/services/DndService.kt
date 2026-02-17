@@ -57,9 +57,35 @@ class DndService(
 	private val _isAppEnabledDnd = MutableStateFlow(false)
 	val isAppEnabledDnd: StateFlow<Boolean> = _isAppEnabledDnd
 
+	var isFlashlightOn = false
+		private set
+
+	private val torchCallback = object : CameraManager.TorchCallback() {
+		override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+			super.onTorchModeChanged(cameraId, enabled)
+			if (cameraId == this@DndService.cameraId) {
+				isFlashlightOn = enabled
+				Log.d(TAG, "Flashlight state changed: $isFlashlightOn")
+			}
+		}
+	}
+
 	init {
 		// We can still use updateDndStatus for local state if needed, but repository is the source of truth
 		updateDndStatus()
+		try {
+			cameraManager.registerTorchCallback(torchCallback, null)
+		} catch (e: Exception) {
+			Log.e(TAG, "Error registering torch callback: ${e.message}")
+		}
+	}
+
+	fun cleanup() {
+		try {
+			cameraManager.unregisterTorchCallback(torchCallback)
+		} catch (e: Exception) {
+			Log.e(TAG, "Error unregistering torch callback: ${e.message}")
+		}
 	}
 
 	private fun vibrate(pattern: LongArray) {
@@ -243,7 +269,7 @@ class DndService(
         }
     }
 
-    private fun flashFlashlight(pattern: FlashlightPattern) {
+	private fun flashFlashlight(pattern: FlashlightPattern) {
 		if (cameraId == null || pattern == FlashlightPattern.NONE) return
 
 		runBlocking {
@@ -253,7 +279,18 @@ class DndService(
 			// Check if Pro feature
 			if (!dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) return@runBlocking
 
-			// Check if schedule enabled
+			val feedbackWithFlashlightOn = settingsRepository.getFeedbackWithFlashlightOn().first()
+
+			// Logic for existing flashlight state
+			if (isFlashlightOn) {
+				if (!feedbackWithFlashlightOn) {
+					Log.d(TAG, "Flashlight is already ON and feedbackWithFlashlightOn is FALSE - Skipping feedback")
+					return@runBlocking
+				}
+				// If we proceed, we must restore to ON
+			}
+
+			// Check schedule
 			val scheduleEnabled = settingsRepository.getFlashlightScheduleEnabled().first()
 			if (scheduleEnabled) {
 				val startTime = settingsRepository.getFlashlightScheduleStartTime().first()
@@ -266,17 +303,23 @@ class DndService(
 			}
 
 			try {
+				// We rely on the tracked 'isFlashlightOn' state for restoration
+				val originalState = isFlashlightOn
+				
 				pattern.pattern.forEachIndexed { index, duration ->
 					if (index == 0) {
 						if (duration > 0) delay(duration)
 					} else {
-						val isOn = index % 2 != 0
-						cameraManager.setTorchMode(cameraId, isOn)
+						val turnOn = index % 2 != 0
+						cameraManager.setTorchMode(cameraId, turnOn)
 						delay(duration)
 					}
 				}
-				// Ensure it's off at the end
-				cameraManager.setTorchMode(cameraId, false)
+				
+				// Restore original state
+				Log.d(TAG, "Restoring flashlight state to: $originalState")
+				cameraManager.setTorchMode(cameraId, originalState)
+				
 			} catch (e: Exception) {
 				Log.e(TAG, "Error flashing flashlight: ${e.message}")
 			}

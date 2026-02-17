@@ -57,20 +57,13 @@ class FlipDetectorService : Service() {
     private var dndScheduleDays = setOf(1, 2, 3, 4, 5, 6, 7)
 
     // Helper vars
-    private var isFlashlightOn = false
     private var flashlightDetectionEnabled = false
     private var mediaPlaybackDetectionEnabled = false
     private var headphoneDetectionEnabled = false
     private var proximityDetectionEnabled = false
 
     private lateinit var cameraManager: android.hardware.camera2.CameraManager
-    private val torchCallback = object : android.hardware.camera2.CameraManager.TorchCallback() {
-        override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
-            super.onTorchModeChanged(cameraId, enabled)
-            isFlashlightOn = enabled
-            Log.d(TAG, "Torch mode changed: $enabled")
-        }
-    }
+
 
     private val screenStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -148,8 +141,6 @@ class FlipDetectorService : Service() {
             // settingsRepository is now injected by Hilt
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             cameraManager = getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
-
-            cameraManager.registerTorchCallback(torchCallback, null)
             
             // Initialize screen state
             _isScreenOff.value = !powerManager.isInteractive
@@ -296,7 +287,7 @@ class FlipDetectorService : Service() {
                         }
                         
                          // Check Detection Settings
-                        if (flashlightDetectionEnabled && isFlashlightOn) {
+                        if (flashlightDetectionEnabled && dndService.isFlashlightOn) {
                             Log.d(TAG, "Flashlight is ON - Ignoring face down")
                             return
                         }
@@ -388,8 +379,10 @@ class FlipDetectorService : Service() {
             // Unregister screen state receiver
             unregisterReceiver(screenStateReceiver)
             
-             // Unregister torch callback
-            cameraManager.unregisterTorchCallback(torchCallback)
+             // Unregister torch callback and cleanup DndService
+            if (::dndService.isInitialized) {
+                dndService.cleanup()
+            }
             
             // Stop sensor monitoring
             sensorService.stopMonitoring()

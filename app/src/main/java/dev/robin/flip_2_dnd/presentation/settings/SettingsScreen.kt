@@ -43,6 +43,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.rememberTopAppBarState
@@ -934,6 +935,15 @@ fun SettingsScreen(
 
 					AnimatedVisibility(visible = flashlightFeedbackEnabled) {
 						Column {
+							val feedbackWithFlashlightOn by viewModel.feedbackWithFlashlightOn.collectAsState()
+
+							SettingsSwitchItem(
+								title = stringResource(id = R.string.feedback_with_flashlight_on),
+								description = "",
+								checked = feedbackWithFlashlightOn,
+								onCheckedChange = { viewModel.setFeedbackWithFlashlightOn(it) }
+							)
+
 							var dndOnFlashlightExpanded by remember { mutableStateOf(false) }
 							var dndOffFlashlightExpanded by remember { mutableStateOf(false) }
 							val flashlightSheetState = rememberModalBottomSheetState()

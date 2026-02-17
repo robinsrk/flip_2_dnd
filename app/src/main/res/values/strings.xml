@@ -273,6 +273,7 @@
 	<string name="check_for_updates_description">Check for the latest version of Flip 2 DND (Requires Pro)</string>
 	<string name="update_check_dialog_title">Check for Updates</string>
 	<string name="update_check_dialog_message">Where did you purchase Flip 2 DND Pro? We will redirect you to the respective platform to check for updates.</string>
+	<string name="feedback_with_flashlight_on">Feedback even if Flashlight is ON</string>
 	<string name="gumroad">Gumroad</string>
 	<string name="cancel">Cancel</string>
 </resources>

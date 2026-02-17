@@ -100,6 +100,9 @@ class SettingsViewModel @Inject constructor(
 	private val _flashlightFeedbackEnabled = MutableStateFlow(false)
 	val flashlightFeedbackEnabled = _flashlightFeedbackEnabled.asStateFlow()
 
+	private val _feedbackWithFlashlightOn = MutableStateFlow(true)
+	val feedbackWithFlashlightOn = _feedbackWithFlashlightOn.asStateFlow()
+
 	private val _dndOnFlashlightPattern = MutableStateFlow(FlashlightPattern.DOUBLE_BLINK)
 	val dndOnFlashlightPattern = _dndOnFlashlightPattern.asStateFlow()
 
@@ -298,6 +301,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getFlashlightFeedbackEnabled().collect { enabled ->
 				_flashlightFeedbackEnabled.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFeedbackWithFlashlightOn().collect { enabled ->
+				_feedbackWithFlashlightOn.value = enabled
 			}
 		}
 		viewModelScope.launch {
@@ -561,6 +569,12 @@ class SettingsViewModel @Inject constructor(
 	fun setFlashlightFeedbackEnabled(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setFlashlightFeedbackEnabled(enabled)
+		}
+	}
+
+	fun setFeedbackWithFlashlightOn(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setFeedbackWithFlashlightOn(enabled)
 		}
 	}
 

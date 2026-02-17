@@ -72,6 +72,10 @@ interface SettingsRepository {
 
     fun getFlashlightFeedbackEnabled(): Flow<Boolean>
     suspend fun setFlashlightFeedbackEnabled(enabled: Boolean)
+
+    fun getFeedbackWithFlashlightOn(): Flow<Boolean>
+    suspend fun setFeedbackWithFlashlightOn(enabled: Boolean)
+
     fun getDndOnFlashlightPattern(): Flow<FlashlightPattern>
     suspend fun setDndOnFlashlightPattern(pattern: FlashlightPattern)
     fun getDndOffFlashlightPattern(): Flow<FlashlightPattern>

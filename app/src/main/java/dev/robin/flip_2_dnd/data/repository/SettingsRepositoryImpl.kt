@@ -51,6 +51,7 @@ private const val KEY_MEDIA_PLAYBACK_DETECTION = "media_playback_detection"
 private const val KEY_HEADPHONE_DETECTION = "headphone_detection"
 private const val KEY_PROXIMITY_DETECTION = "proximity_detection"
 private const val KEY_FLASHLIGHT_FEEDBACK_ENABLED = "flashlight_feedback_enabled"
+private const val KEY_FEEDBACK_WITH_FLASHLIGHT_ON = "feedback_with_flashlight_on"
 private const val KEY_DND_ON_FLASHLIGHT_PATTERN = "dnd_on_flashlight_pattern"
 private const val KEY_DND_OFF_FLASHLIGHT_PATTERN = "dnd_off_flashlight_pattern"
 private const val KEY_DND_SCHEDULE_ENABLED = "schedule_enabled"
@@ -421,6 +422,16 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setFlashlightFeedbackEnabled(enabled: Boolean) {
 		prefs.edit().putBoolean(KEY_FLASHLIGHT_FEEDBACK_ENABLED, enabled).apply()
 		flashlightFeedbackEnabled.value = enabled
+		restartFlipDetectorService()
+	}
+
+	private val feedbackWithFlashlightOn = MutableStateFlow(prefs.getBoolean(KEY_FEEDBACK_WITH_FLASHLIGHT_ON, true))
+
+	override fun getFeedbackWithFlashlightOn(): Flow<Boolean> = feedbackWithFlashlightOn
+
+	override suspend fun setFeedbackWithFlashlightOn(enabled: Boolean) {
+		prefs.edit().putBoolean(KEY_FEEDBACK_WITH_FLASHLIGHT_ON, enabled).apply()
+		feedbackWithFlashlightOn.value = enabled
 		restartFlipDetectorService()
 	}
 

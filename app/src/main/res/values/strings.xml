@@ -269,4 +269,10 @@
 	<string name="support_dialog_message">Thank you for using Flip 2 DND! Your support helps me keep the app free and continuously improving. If you find the app useful, please consider supporting my work.</string>
 	<string name="patreon">Patreon</string>
 	<string name="crypto">Crypto</string>
+	<string name="check_for_updates">Check for Updates</string>
+	<string name="check_for_updates_description">Check for the latest version of Flip 2 DND (Requires Pro)</string>
+	<string name="update_check_dialog_title">Check for Updates</string>
+	<string name="update_check_dialog_message">Where did you purchase Flip 2 DND Pro? We will redirect you to the respective platform to check for updates.</string>
+	<string name="gumroad">Gumroad</string>
+	<string name="cancel">Cancel</string>
 </resources>

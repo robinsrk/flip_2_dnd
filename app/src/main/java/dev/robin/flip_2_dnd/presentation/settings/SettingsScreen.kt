@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -42,6 +43,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -150,11 +152,66 @@ fun SettingsScreen(
 	var showAdbDialog by remember { mutableStateOf(false) }
 	var showUpgradeDialog by remember { mutableStateOf(false) }
 	var showSupportDialog by remember { mutableStateOf(false) }
+	var showUpdateCheckDialog by remember { mutableStateOf(false) }
 	var showChangelogSheet by remember { mutableStateOf(false) }
 	val changelogSheetState = rememberModalBottomSheetState()
 
 	if (showUpgradeDialog) {
 		UpgradeDialog(onDismiss = { showUpgradeDialog = false })
+	}
+
+	if (showUpdateCheckDialog) {
+		AlertDialog(
+			onDismissRequest = { showUpdateCheckDialog = false },
+			title = {
+				Text(
+					text = stringResource(R.string.update_check_dialog_title),
+					style = MaterialTheme.typography.headlineSmall,
+					fontWeight = FontWeight.Bold
+				)
+			},
+			text = {
+				Text(
+					text = stringResource(R.string.update_check_dialog_message),
+					style = MaterialTheme.typography.bodyMedium
+				)
+			},
+			confirmButton = {
+				Column(
+					modifier = Modifier.fillMaxWidth(),
+					verticalArrangement = Arrangement.spacedBy(8.dp)
+				) {
+					Button(
+						onClick = {
+							showUpdateCheckDialog = false
+							val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.patreon.com/posts/flip-2-dnd-150924870"))
+							context.startActivity(intent)
+						},
+						modifier = Modifier.fillMaxWidth(),
+						shape = RoundedCornerShape(12.dp)
+					) {
+						Text(stringResource(R.string.patreon))
+					}
+					OutlinedButton(
+						onClick = {
+							showUpdateCheckDialog = false
+							val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://robinsrk.netlify.app/buyflip2dnd"))
+							context.startActivity(intent)
+						},
+						modifier = Modifier.fillMaxWidth(),
+						shape = RoundedCornerShape(12.dp)
+					) {
+						Text(stringResource(R.string.gumroad))
+					}
+					TextButton(
+						onClick = { showUpdateCheckDialog = false },
+						modifier = Modifier.fillMaxWidth()
+					) {
+						Text(stringResource(R.string.cancel))
+					}
+				}
+			}
+		)
 	}
 
 	val packageInfo = remember {
@@ -1234,6 +1291,27 @@ fun SettingsScreen(
 					)
 				},
 				onClick = { showChangelogSheet = true }
+			)
+
+			SettingsClickableItem(
+				title = stringResource(R.string.check_for_updates),
+				description = stringResource(R.string.check_for_updates_description),
+				leadingIcon = {
+					Icon(
+						imageVector = Icons.Default.Refresh,
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.primary
+					)
+				},
+				onClick = {
+					if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) {
+						showUpdateCheckDialog = true
+					} else {
+						showUpgradeDialog = true
+					}
+				},
+				alpha = if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) 1f else 0.5f,
+				isPro = true
 			)
 
 			if (showChangelogSheet) {

@@ -81,9 +81,9 @@ Choose your preferred platform to download the latest version:
   <a href="https://apt.izzysoft.de/fdroid/index/apk/dev.robin.flip_2_dnd">
     <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="160"/>
   </a>
-  <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
+  <!-- <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
     <img src="./assets/images/getItf-droid.png" alt="F-Droid" width="160"/>
-  </a>
+  </a> -->
   <a href="https://github.com/robinsrk/Flip_2_DND/releases/">
     <img src="./assets/images/getItGithub.png" alt="GitHub" width="160"/>
   </a>

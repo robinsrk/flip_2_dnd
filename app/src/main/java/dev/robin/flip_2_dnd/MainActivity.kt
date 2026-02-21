@@ -44,7 +44,7 @@ import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
 import dev.robin.flip_2_dnd.presentation.main.ChangelogBottomSheet
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
-import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
+
 import dev.robin.flip_2_dnd.presentation.navigation.AppNavigation
 import dev.robin.flip_2_dnd.presentation.onboarding.OnboardingScreen
 import dev.robin.flip_2_dnd.services.FlipDetectorService

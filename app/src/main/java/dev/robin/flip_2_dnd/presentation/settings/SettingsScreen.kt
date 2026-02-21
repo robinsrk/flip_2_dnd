@@ -94,9 +94,8 @@ import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun SettingsContent(
 	viewModel: SettingsViewModel = hiltViewModel(),
-	navController: NavController? = null,
 	onDonateClick: () -> Unit,
 ) {
 	val context = LocalContext.current
@@ -262,56 +261,10 @@ fun SettingsScreen(
 		}
 	}
 
-	val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
-	Scaffold(
-		topBar = {
-			LargeTopAppBar(
-				title = {
-					val expandedTextStyle =
-						MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.ExtraBold)
-					val collapsedTextStyle =
-						MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
-
-
-					val fraction = scrollBehavior.state.collapsedFraction
-					val currentFontSize =
-						lerp(expandedTextStyle.fontSize.value, collapsedTextStyle.fontSize.value, fraction).sp
-					val currentFontWeight = FontWeight.ExtraBold
-
-					Text(
-						text = stringResource(id = R.string.settings),
-						style = MaterialTheme.typography.headlineSmall.copy(
-							fontSize = currentFontSize,
-							fontWeight = currentFontWeight
-						),
-						maxLines = 1,
-						overflow = TextOverflow.Ellipsis,
-					)
-				},
-				navigationIcon = {
-					IconButton(onClick = { navController?.popBackStack() }) {
-						Icon(
-							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-							contentDescription = stringResource(R.string.back)
-						)
-					}
-				},
-				colors = TopAppBarDefaults.topAppBarColors(
-					containerColor = MaterialTheme.colorScheme.background,
-					scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-				),
-				scrollBehavior = scrollBehavior
-			)
-		},
-	) { paddingValues ->
 		LazyColumn(
-			modifier =
-				Modifier
-					.fillMaxSize()
-					.padding(paddingValues)
-					.padding(horizontal = 24.dp)
-					.nestedScroll(scrollBehavior.nestedScrollConnection)
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 24.dp)
 		) {
 			item {
 				Column {
@@ -1403,7 +1356,6 @@ fun SettingsScreen(
 					}
 				)
 			}
-}
 }
 }
 }

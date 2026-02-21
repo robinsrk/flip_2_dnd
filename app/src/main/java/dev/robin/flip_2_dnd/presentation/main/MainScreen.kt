@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ScreenRotation
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,8 +23,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.robin.flip_2_dnd.R
+import dev.robin.flip_2_dnd.BuildConfig
 import dev.robin.flip_2_dnd.presentation.settings.SettingsContent
 import dev.robin.flip_2_dnd.presentation.settings.SettingsViewModel
+import dev.robin.flip_2_dnd.presentation.settings.UpgradeDialog
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,6 +42,8 @@ fun MainScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val dynamicPeekHeight = screenHeight / 3
+    
+    var showUpgradeDialog by remember { mutableStateOf(false) }
 
 	val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded
@@ -66,6 +71,18 @@ fun MainScreen(
 					)
 				},
                 actions = {
+                    // Show Pro button only for free flavor
+                    if (BuildConfig.FLAVOR == "free") {
+                        IconButton(onClick = { showUpgradeDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = stringResource(id = R.string.upgrade_to_pro),
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                    
                     IconButton(onClick = onHistoryClick) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_history),
@@ -154,4 +171,8 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(32.dp))
 		}
 	}
+    
+    if (showUpgradeDialog) {
+        UpgradeDialog(onDismiss = { showUpgradeDialog = false })
+    }
 }

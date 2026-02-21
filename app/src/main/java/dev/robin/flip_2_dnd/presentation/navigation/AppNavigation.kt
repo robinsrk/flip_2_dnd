@@ -1,30 +1,12 @@
 package dev.robin.flip_2_dnd.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,12 +17,10 @@ import dev.robin.flip_2_dnd.presentation.history.HistoryScreen
 import dev.robin.flip_2_dnd.presentation.history.HistoryViewModel
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
-import dev.robin.flip_2_dnd.presentation.settings.SettingsScreen
 
 sealed class Screen(val route: String, val icon: Int, val labelResId: Int) {
 	object Home : Screen("home", R.drawable.ic_home, R.string.home)
 	object History : Screen("history", R.drawable.ic_history, R.string.history)
-	object Settings : Screen("settings", R.drawable.ic_settings, R.string.settings)
 	object Donation : Screen("donation", R.drawable.ic_coin, R.string.support)
 }
 
@@ -48,90 +28,32 @@ sealed class Screen(val route: String, val icon: Int, val labelResId: Int) {
 @Composable
 fun AppNavigation() {
 	val navController = rememberNavController()
-	val navBackStackEntry by navController.currentBackStackEntryAsState()
-	val currentDestination = navBackStackEntry?.destination
 
-	val items = listOf(Screen.Home, Screen.History, Screen.Settings)
-
-	Scaffold(
-		bottomBar = {
-			NavigationBar(
-				modifier = Modifier
-					.height(105.dp)
-					.navigationBarsPadding(),
-				containerColor = MaterialTheme.colorScheme.surfaceContainer,
-				tonalElevation = 0.dp
-			) {
-				items.forEach { screen ->
-					val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-					NavigationBarItem(
-						icon = {
-							Icon(
-								painter = painterResource(screen.icon),
-								contentDescription = stringResource(id = screen.labelResId),
-								modifier = Modifier.size(28.dp)
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(id = screen.labelResId),
-								style = MaterialTheme.typography.labelLarge,
-								fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Bold
-							)
-						},
-						selected = selected,
-						colors = NavigationBarItemDefaults.colors(
-							selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-							unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-							selectedTextColor = MaterialTheme.colorScheme.onSurface,
-							unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-							indicatorColor = MaterialTheme.colorScheme.primaryContainer
-						),
-						onClick = {
-							navController.navigate(screen.route) {
-								popUpTo(navController.graph.findStartDestination().id) {
-									saveState = true
-								}
-								launchSingleTop = true
-								restoreState = true
-							}
-						}
-					)
-				}
-			}
+	NavHost(
+		navController = navController,
+		startDestination = Screen.Home.route,
+		modifier = Modifier,
+	) {
+		composable(Screen.Home.route) {
+			val mainViewModel: MainViewModel = hiltViewModel()
+			val state by mainViewModel.state.collectAsState()
+			MainScreen(
+				state = state,
+				onDonateClick = { navController.navigate(Screen.Donation.route) },
+				onToggleService = { mainViewModel.toggleService() },
+				onHistoryClick = { navController.navigate(Screen.History.route) }
+			)
 		}
-	) { innerPadding ->
-		NavHost(
-			navController = navController,
-			startDestination = Screen.Home.route,
-			modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-		) {
-			composable(Screen.Home.route) {
-				val mainViewModel: MainViewModel = hiltViewModel()
-				val state by mainViewModel.state.collectAsState()
-				MainScreen(
-					state = state,
-					onDonateClick = { navController.navigate(Screen.Donation.route) },
-					onToggleService = { mainViewModel.toggleService() }
-				)
-			}
-			composable(Screen.History.route) {
-				val historyViewModel: HistoryViewModel = hiltViewModel()
-				val state by historyViewModel.state.collectAsState()
-				HistoryScreen(
-					state = state,
-					onClearHistory = { historyViewModel.clearHistory() }
-				)
-			}
-			composable(Screen.Settings.route) {
-				SettingsScreen(
-					navController = navController,
-					onDonateClick = { navController.navigate(Screen.Donation.route) }
-				)
-			}
-			composable(Screen.Donation.route) {
-				DonationScreen(navController = navController)
-			}
+		composable(Screen.History.route) {
+			val historyViewModel: HistoryViewModel = hiltViewModel()
+			val state by historyViewModel.state.collectAsState()
+			HistoryScreen(
+				state = state,
+				onClearHistory = { historyViewModel.clearHistory() }
+			)
+		}
+		composable(Screen.Donation.route) {
+			DonationScreen(navController = navController)
 		}
 	}
 }

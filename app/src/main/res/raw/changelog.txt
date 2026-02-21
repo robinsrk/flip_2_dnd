@@ -1,3 +1,11 @@
+[v11.0.0]
+• Redesigned Home Screen with a modern, single-page layout.
+• Integrated Settings into a sleek Bottom Sheet.
+• Added a "Pro" upgrade button to the top bar for easy access to premium features.
+• Simplified navigation system for a faster and more intuitive experience.
+• Refined UI with improved spacing, icons, and contrast.
+• Resolved various layout and scrolling issues.
+
 [v10.1.8]
 • Added "Feedback even if Flashlight is ON" setting in Flashlight Feedback
 • Fixed flashlight state not restoring correctly after feedback

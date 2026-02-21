@@ -1,0 +1,6 @@
+• Redesigned Home Screen with a modern, single-page layout.
+• Integrated Settings into a sleek Bottom Sheet.
+• Added a "Pro" upgrade button to the top bar for easy access to premium features.
+• Simplified navigation system for a faster and more intuitive experience.
+• Refined UI with improved spacing, icons, and contrast.
+• Resolved various layout and scrolling issues.

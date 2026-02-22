@@ -1,0 +1,5 @@
+• Optimized background battery usage by reducing sensor polling frequency.
+• Improved sensor lifecycle management to save power when the screen is on.
+• Celebrate Ramadan with a special celebratory popup for free users!
+• Exclusive 40% discount for Flip 2 DND Pro users with coupon: RAMADANKARIM.
+• Fixed various minor bugs and improved app stability.

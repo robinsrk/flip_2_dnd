@@ -1,3 +1,10 @@
+[v11.0.1]
+• Optimized background battery usage and sensor polling.
+• Smart sensor management to save battery when screen is ON.
+• Ramadan celebration popup for free users.
+• Exclusive 40% discount for Pro upgrade (Coupon: RAMADANKARIM).
+• Fixed various minor bugs and stability issues.
+
 [v11.0.0]
 • Redesigned Home Screen with a modern, single-page layout.
 • Integrated Settings into a sleek Bottom Sheet.

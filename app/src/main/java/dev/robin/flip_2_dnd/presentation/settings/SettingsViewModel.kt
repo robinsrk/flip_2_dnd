@@ -3,6 +3,7 @@ package dev.robin.flip_2_dnd.presentation.settings
 import android.app.Application
 import android.content.Context
 import android.hardware.camera2.CameraManager
+import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -870,7 +871,10 @@ class SettingsViewModel @Inject constructor(
 							if (duration > 0) delay(duration)
 						} else {
 							val isOn = index % 2 != 0
-							cameraManager.setTorchMode(cameraId, isOn)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                cameraManager.turnOnTorchWithStrengthLevel(cameraId, 1)
+                            }
+                            cameraManager.setTorchMode(cameraId, isOn)
 							delay(duration)
 						}
 					}

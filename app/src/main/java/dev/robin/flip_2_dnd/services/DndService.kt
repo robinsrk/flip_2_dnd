@@ -311,7 +311,10 @@ class DndService(
 						if (duration > 0) delay(duration)
 					} else {
 						val turnOn = index % 2 != 0
-						cameraManager.setTorchMode(cameraId, turnOn)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            cameraManager.turnOnTorchWithStrengthLevel(cameraId, 1)
+                        }
+                        cameraManager.setTorchMode(cameraId, turnOn)
 						delay(duration)
 					}
 				}

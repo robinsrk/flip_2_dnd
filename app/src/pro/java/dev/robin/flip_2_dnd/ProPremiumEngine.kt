@@ -10,4 +10,5 @@ class ProPremiumEngine : PremiumEngine {
 	override fun detectionFiltersEnabled() = true
 	override fun telegramSupportEnabled() = true
 	override fun flashlightFeedbackEnabled() = true
+	override fun isPro() = true
 }

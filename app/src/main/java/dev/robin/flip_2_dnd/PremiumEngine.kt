@@ -10,4 +10,5 @@ interface PremiumEngine {
 	fun detectionFiltersEnabled(): Boolean
 	fun telegramSupportEnabled(): Boolean
 	fun flashlightFeedbackEnabled(): Boolean
+	fun isPro(): Boolean
 }

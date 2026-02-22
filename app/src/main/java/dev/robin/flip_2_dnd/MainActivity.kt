@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,6 +46,17 @@ import dev.robin.flip_2_dnd.presentation.donation.DonationScreen
 import dev.robin.flip_2_dnd.presentation.main.ChangelogBottomSheet
 import dev.robin.flip_2_dnd.presentation.main.MainScreen
 import dev.robin.flip_2_dnd.presentation.main.MainViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.foundation.clickable
+import android.content.ClipData
+import androidx.compose.ui.platform.ClipEntry
 
 import dev.robin.flip_2_dnd.presentation.navigation.AppNavigation
 import dev.robin.flip_2_dnd.presentation.onboarding.OnboardingScreen
@@ -107,6 +120,13 @@ class MainActivity : ComponentActivity() {
       var showChangelog by remember { 
         mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion) 
       }
+      var showRamadanPopup by remember { mutableStateOf(false) }
+
+      LaunchedEffect(Unit) {
+        if (!PremiumProvider.engine.isPro() && !showOnboarding) {
+          showRamadanPopup = true
+        }
+      }
 
       Flip_2_DNDTheme {
         val isDarkTheme = isSystemInDarkTheme()
@@ -138,6 +158,10 @@ class MainActivity : ComponentActivity() {
               // so changelog doesn't show immediately after onboarding
               prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
               
+              if (!PremiumProvider.engine.isPro()) {
+                showRamadanPopup = true
+              }
+
               checkAndStartService()
             }
           )
@@ -150,6 +174,12 @@ class MainActivity : ComponentActivity() {
                 showChangelog = false
                 prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
               }
+            )
+          }
+
+          if (showRamadanPopup) {
+            RamadanPopup(
+              onDismiss = { showRamadanPopup = false }
             )
           }
         }
@@ -271,5 +301,87 @@ class MainActivity : ComponentActivity() {
 
   private fun startFlipDetectorService() {
     Intent(this, FlipDetectorService::class.java).also { intent -> startForegroundService(intent) }
+  }
+
+  @Composable
+  private fun RamadanPopup(onDismiss: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val clipboard = LocalClipboard.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val gumroadUrl = "https://robinsrk.netlify.app/buyflip2dnd"
+    val couponCode = stringResource(id = R.string.ramadan_coupon)
+
+    AlertDialog(
+      onDismissRequest = onDismiss,
+      shape = RoundedCornerShape(28.dp),
+      icon = {
+        Icon(
+          imageVector = Icons.Default.Star,
+          contentDescription = null,
+          modifier = Modifier.size(40.dp),
+          tint = MaterialTheme.colorScheme.primary
+        )
+      },
+      title = {
+        Text(
+          text = stringResource(id = R.string.ramadan_kareem),
+          style = MaterialTheme.typography.headlineSmall,
+          fontWeight = FontWeight.Bold,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
+      },
+      text = {
+        Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+          Text(
+            text = stringResource(id = R.string.ramadan_message),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+          )
+          
+          Surface(
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.clickable {
+              scope.launch {
+                clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("coupon", couponCode)))
+              }
+              Toast.makeText(context, context.getString(R.string.coupon_copied), Toast.LENGTH_SHORT).show()
+            }
+          ) {
+            Text(
+              text = stringResource(id = R.string.ramadan_coupon_code, couponCode),
+              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+              style = MaterialTheme.typography.titleMedium,
+              fontWeight = FontWeight.ExtraBold,
+              color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+          }
+        }
+      },
+      confirmButton = {
+        Button(
+          onClick = {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gumroadUrl))
+            context.startActivity(intent)
+            onDismiss()
+          },
+          modifier = Modifier.fillMaxWidth()
+        ) {
+          Text(stringResource(id = R.string.get_pro))
+        }
+      },
+      dismissButton = {
+        TextButton(
+          onClick = onDismiss,
+          modifier = Modifier.fillMaxWidth()
+        ) {
+          Text(stringResource(id = R.string.maybe_later))
+        }
+      }
+    )
   }
 }

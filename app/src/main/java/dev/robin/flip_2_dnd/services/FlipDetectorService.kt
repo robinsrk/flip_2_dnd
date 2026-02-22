@@ -73,12 +73,24 @@ class FlipDetectorService : Service() {
                     _isScreenOff.value = true
                     // Ensure wake lock is held when screen is off
                     acquireWakeLock()
+                    
+                    // Ensure sensors are monitoring when screen is off
+                    if (!sensorService.isRegistered) {
+                        Log.d(TAG, "Starting sensor monitoring because screen is OFF")
+                        sensorService.startMonitoring()
+                    }
                 }
                 Intent.ACTION_SCREEN_ON -> {
                     Log.d(TAG, "Screen turned ON")
                     _isScreenOff.value = false
                     // Release wake lock when screen is on to save battery
                     releaseWakeLock()
+                    
+                    // Optimization: if 'Only when screen off' is enabled, stop sensors when screen is on
+                    if (onlyWhenScreenOff) {
+                        Log.d(TAG, "Stopping sensor monitoring because screen is ON and 'onlyWhenScreenOff' is enabled")
+                        sensorService.stopMonitoring()
+                    }
                 }
                 Intent.ACTION_SHUTDOWN -> {
                     Log.d(TAG, "System shutdown - Stopping sensor monitoring")
@@ -172,6 +184,14 @@ class FlipDetectorService : Service() {
                 settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
                     onlyWhenScreenOff = enabled
                     Log.d(TAG, "Settings updated - Only when screen off: $enabled")
+                    
+                    if (enabled && !isScreenOff.value) {
+                        Log.d(TAG, "Stopping sensors because screen is ON and 'onlyWhenScreenOff' was just enabled")
+                        sensorService.stopMonitoring()
+                    } else if (!enabled && !sensorService.isRegistered) {
+                        Log.d(TAG, "Starting sensors because 'onlyWhenScreenOff' was just disabled")
+                        sensorService.startMonitoring()
+                    }
                 }
             }
 

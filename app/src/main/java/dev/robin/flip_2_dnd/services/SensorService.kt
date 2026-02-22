@@ -44,7 +44,8 @@ class SensorService(
 	private var filteredAccel = FloatArray(3)
 	private val alpha = 0.15f // Smoothing factor for low-pass filter
 	private var isProcessing = false
-	private var isRegistered = false
+	private var _isRegistered = false
+	val isRegistered: Boolean get() = _isRegistered
 	private var sensitivity = 0.5f
 	private var highSensitivityMode = false
 	private var highSensitivityScheduleEnabled = false
@@ -134,7 +135,7 @@ class SensorService(
 	}
 
 	fun startMonitoring() {
-		if (isRegistered) {
+		if (_isRegistered) {
 			Log.d(TAG, "Sensors already registered")
 			return
 		}
@@ -152,7 +153,7 @@ class SensorService(
 		success = success && sensorManager.registerListener(
 			sensorListener,
 			accelerometer,
-			SensorManager.SENSOR_DELAY_GAME
+			SensorManager.SENSOR_DELAY_UI
 		)
 		if (!success) {
 			Log.e(TAG, "Failed to register accelerometer")
@@ -162,7 +163,7 @@ class SensorService(
 		success = success && sensorManager.registerListener(
 			sensorListener,
 			gyroscope,
-			SensorManager.SENSOR_DELAY_GAME
+			SensorManager.SENSOR_DELAY_UI
 		)
 		if (!success) {
 			Log.e(TAG, "Failed to register gyroscope")
@@ -183,17 +184,17 @@ class SensorService(
 			Log.w(TAG, "Proximity sensor not available")
 		}
 
-		isRegistered = true
+		_isRegistered = true
 		Log.d(TAG, "Successfully registered sensor listeners")
 	}
 
 	fun stopMonitoring() {
-		if (!isRegistered) {
+		if (!_isRegistered) {
 			Log.d(TAG, "Sensors not registered")
 			return
 		}
 		sensorManager.unregisterListener(sensorListener)
-		isRegistered = false
+		_isRegistered = false
 		Log.d(TAG, "Unregistered sensor listeners")
 	}
 

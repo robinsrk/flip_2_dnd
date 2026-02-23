@@ -138,6 +138,7 @@ fun SettingsContent(
 	val flashlightScheduleStartTime by viewModel.flashlightScheduleStartTime.collectAsState()
 	val flashlightScheduleEndTime by viewModel.flashlightScheduleEndTime.collectAsState()
 	val flashlightScheduleDays by viewModel.flashlightScheduleDays.collectAsState()
+	val flashlightIntensity by viewModel.flashlightIntensity.collectAsState()
 
 	val highSensitivityScheduleEnabled by viewModel.highSensitivityScheduleEnabled.collectAsState()
 	val highSensitivityScheduleStartTime by viewModel.highSensitivityScheduleStartTime.collectAsState()
@@ -989,6 +990,30 @@ fun SettingsContent(
 									}
 									Spacer(modifier = Modifier.height(20.dp))
 								}
+							}
+
+							AnimatedVisibility(visible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+								SettingsSliderItem(
+									title = stringResource(id = R.string.flashlight_intensity),
+									description = stringResource(id = R.string.flashlight_intensity_description),
+									sliderContent = {
+										var sliderPosition by remember { mutableStateOf(flashlightIntensity.toFloat()) }
+										LaunchedEffect(flashlightIntensity) {
+											sliderPosition = flashlightIntensity.toFloat()
+										}
+										Slider(
+											value = sliderPosition,
+											onValueChange = { sliderPosition = it },
+											onValueChangeFinished = {
+												viewModel.setFlashlightIntensity(sliderPosition.toInt())
+												viewModel.playSelectedFlashlightPattern(dndOnFlashlightPattern)
+											},
+											valueRange = 1f..10f,
+											steps = 8,
+											modifier = Modifier.width(200.dp)
+										)
+									}
+								)
 							}
 
 							ScheduleSection(

@@ -2,8 +2,10 @@ package dev.robin.flip_2_dnd.presentation.settings
 
 import android.app.Application
 import android.content.Context
+import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -181,6 +183,9 @@ class SettingsViewModel @Inject constructor(
 
 	private val _ringerMode = MutableStateFlow(RingerMode.SILENT)
 	val ringerMode = _ringerMode.asStateFlow()
+
+	private val _flashlightIntensity = MutableStateFlow(1)
+	val flashlightIntensity = _flashlightIntensity.asStateFlow()
 
 	init {
 		checkSecureSettingsPermission()
@@ -437,6 +442,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getRingerMode().collect { mode ->
 				_ringerMode.value = mode
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getFlashlightIntensity().collect { intensity ->
+				_flashlightIntensity.value = intensity
 			}
 		}
 	}
@@ -705,6 +715,12 @@ class SettingsViewModel @Inject constructor(
 		}
 	}
 
+	fun setFlashlightIntensity(intensity: Int) {
+		viewModelScope.launch {
+			settingsRepository.setFlashlightIntensity(intensity)
+		}
+	}
+
 	fun checkSecureSettingsPermission() {
 		val permission = android.Manifest.permission.WRITE_SECURE_SETTINGS
 		val isGranted = getApplication<Application>().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -854,7 +870,7 @@ class SettingsViewModel @Inject constructor(
 		val cameraId = try {
 			cameraManager.cameraIdList.firstOrNull { id ->
 				val characteristics = cameraManager.getCameraCharacteristics(id)
-				characteristics.get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+				characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
 			}
 		} catch (e: Exception) {
 			null
@@ -871,10 +887,28 @@ class SettingsViewModel @Inject constructor(
 							if (duration > 0) delay(duration)
 						} else {
 							val isOn = index % 2 != 0
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                cameraManager.turnOnTorchWithStrengthLevel(cameraId, 1)
-                            }
-                            cameraManager.setTorchMode(cameraId, isOn)
+							if (isOn) {
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+									val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+									val maxLevel: Int? = try {
+										val key = CameraCharacteristics.Key("android.flash.info.strengthMaximumLevel", Int::class.java)
+										characteristics.get(key)
+									} catch (e: Exception) {
+										null
+									}
+									
+									if (maxLevel != null && maxLevel > 1) {
+										val level = ((flashlightIntensity.value.toFloat() / 10f) * maxLevel.toFloat()).toInt().coerceIn(1, maxLevel)
+										cameraManager.turnOnTorchWithStrengthLevel(cameraId, level)
+									} else {
+										cameraManager.setTorchMode(cameraId, true)
+									}
+								} else {
+									cameraManager.setTorchMode(cameraId, true)
+								}
+							} else {
+								cameraManager.setTorchMode(cameraId, false)
+							}
 							delay(duration)
 						}
 					}

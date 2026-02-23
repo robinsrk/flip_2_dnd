@@ -140,4 +140,7 @@ interface SettingsRepository {
 
     fun getPreviousRingerMode(): Flow<Int>
     suspend fun setPreviousRingerMode(mode: Int)
+
+    fun getFlashlightIntensity(): Flow<Int>
+    suspend fun setFlashlightIntensity(intensity: Int)
 }

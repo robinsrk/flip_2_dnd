@@ -81,6 +81,7 @@ private const val KEY_ACTIVATION_MODE = "activation_mode"
 private const val KEY_DND_MODE = "dnd_mode"
 private const val KEY_RINGER_MODE = "ringer_mode"
 private const val KEY_PREVIOUS_RINGER_MODE = "previous_ringer_mode"
+private const val KEY_FLASHLIGHT_INTENSITY = "flashlight_intensity"
 
 @Singleton
 class SettingsRepositoryImpl @Inject constructor(
@@ -209,6 +210,7 @@ class SettingsRepositoryImpl @Inject constructor(
 		)
 	)
 	private val previousRingerMode = MutableStateFlow(prefs.getInt(KEY_PREVIOUS_RINGER_MODE, 2)) // Default to NORMAL (2)
+	private val flashlightIntensity = MutableStateFlow(prefs.getInt(KEY_FLASHLIGHT_INTENSITY, 1))
 
 	private fun restartFlipDetectorService() {
 		restartJob?.cancel()
@@ -648,5 +650,13 @@ class SettingsRepositoryImpl @Inject constructor(
 	override suspend fun setPreviousRingerMode(mode: Int) {
 		prefs.edit().putInt(KEY_PREVIOUS_RINGER_MODE, mode).apply()
 		previousRingerMode.value = mode
+	}
+
+	override fun getFlashlightIntensity(): Flow<Int> = flashlightIntensity
+
+	override suspend fun setFlashlightIntensity(intensity: Int) {
+		prefs.edit().putInt(KEY_FLASHLIGHT_INTENSITY, intensity).apply()
+		flashlightIntensity.value = intensity
+		restartFlipDetectorService()
 	}
 }

@@ -3,6 +3,7 @@ package dev.robin.flip_2_dnd.services
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.MediaPlayer
 import android.os.Build
@@ -45,7 +46,7 @@ class DndService(
 	private val cameraId = try {
 		cameraManager.cameraIdList.firstOrNull { id ->
 			val characteristics = cameraManager.getCameraCharacteristics(id)
-			characteristics.get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+			characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
 		}
 	} catch (e: Exception) {
 		null
@@ -71,7 +72,7 @@ class DndService(
 	}
 
 	init {
-		// We can still use updateDndStatus for local state if needed, but repository is the source of truth
+		// Update local state flows for UI sync
 		updateDndStatus()
 		try {
 			cameraManager.registerTorchCallback(torchCallback, null)
@@ -302,6 +303,8 @@ class DndService(
 				}
 			}
 
+			val flashlightIntensity = settingsRepository.getFlashlightIntensity().first()
+
 			try {
 				// We rely on the tracked 'isFlashlightOn' state for restoration
 				val originalState = isFlashlightOn
@@ -311,10 +314,32 @@ class DndService(
 						if (duration > 0) delay(duration)
 					} else {
 						val turnOn = index % 2 != 0
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            cameraManager.turnOnTorchWithStrengthLevel(cameraId, 1)
+                        cameraId?.let { id ->
+                            if (turnOn) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    val characteristics = cameraManager.getCameraCharacteristics(id)
+                                    val maxLevel: Int? = try {
+                                        val key = CameraCharacteristics.Key("android.flash.info.strengthMaximumLevel", Int::class.java)
+                                        characteristics.get(key)
+                                    } catch (e: Exception) {
+                                        null
+                                    }
+                                    
+                                    if (maxLevel != null && maxLevel > 1) {
+                                        val level = ((flashlightIntensity.toFloat() / 10f) * maxLevel.toFloat()).toInt().coerceIn(1, maxLevel)
+                                        Log.d(TAG, "Setting torch level: $level (intensity: $flashlightIntensity, max: $maxLevel)")
+                                        cameraManager.turnOnTorchWithStrengthLevel(id, level)
+                                    } else {
+                                        Log.d(TAG, "Strength level not supported or max level <= 1, using setTorchMode")
+                                        cameraManager.setTorchMode(id, true)
+                                    }
+                                } else {
+                                    cameraManager.setTorchMode(id, true)
+                                }
+                            } else {
+                                cameraManager.setTorchMode(id, false)
+                            }
                         }
-                        cameraManager.setTorchMode(cameraId, turnOn)
 						delay(duration)
 					}
 				}

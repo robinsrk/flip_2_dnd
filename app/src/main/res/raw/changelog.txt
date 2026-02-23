@@ -1,3 +1,6 @@
+[v11.0.2]
+• Changed flashlight intensity to lowest for flashlight feedback.
+
 [v11.0.1]
 • Optimized background battery usage and sensor polling.
 • Smart sensor management to save battery when screen is ON.

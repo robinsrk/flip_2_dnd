@@ -1,0 +1,1 @@
+• Changed flashlight intensity to lowest for flashlight feedback.

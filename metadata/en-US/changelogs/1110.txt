@@ -1,0 +1,2 @@
+• Add sliding animations in homepage
+• UI optimizations

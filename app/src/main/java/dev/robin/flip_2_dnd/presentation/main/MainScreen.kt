@@ -21,9 +21,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.lerp
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.Spring
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.robin.flip_2_dnd.R
@@ -34,6 +31,7 @@ import dev.robin.flip_2_dnd.presentation.settings.UpgradeDialog
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,15 +54,31 @@ fun MainScreen(
         bottomSheetState = sheetState
     )
 
-    val animatedProgress by animateFloatAsState(
-        targetValue = if (sheetState.targetValue == SheetValue.Expanded) 1f else 0f,
-        animationSpec = spring(stiffness = Spring.StiffnessLow),
-        label = "sheetProgress"
-    )
+    var sheetOffsetPx by remember { mutableFloatStateOf(Float.NaN) }
+    
+    LaunchedEffect(sheetState) {
+        snapshotFlow { sheetState.requireOffset() }
+            .collect { offset ->
+                sheetOffsetPx = offset
+            }
+    }
 
-    val cardSize = lerp(260.dp, 120.dp, animatedProgress)
-    val iconFraction = lerp(0.4f, 0.5f, animatedProgress)
-    val verticalBias = lerp(0.5f, 0.1f, animatedProgress)
+    val density = LocalDensity.current
+    val sheetOffset = if (sheetOffsetPx.isNaN()) {
+        screenHeight - dynamicPeekHeight
+    } else {
+        with(density) { sheetOffsetPx.toDp() }
+    }
+    val maxOffset = screenHeight - dynamicPeekHeight
+    val animatedProgress = 1f - (sheetOffset / maxOffset).coerceIn(0f, 1f)
+
+    val availableHeight = screenHeight - dynamicPeekHeight - 180.dp
+    val maxCardSize = minOf(availableHeight * 0.8f, 280.dp)
+    val minCardSize = 20.dp
+
+    val cardSize = lerp(maxCardSize, minCardSize, animatedProgress)
+    val iconFraction = lerp(0.55f, 0.35f, animatedProgress)
+    val topPadding = lerp(dynamicPeekHeight * 0.2f, 32.dp, animatedProgress)
 
 	BottomSheetScaffold(
 	    scaffoldState = scaffoldState,
@@ -116,7 +130,7 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.8f) 
+                    .fillMaxHeight(0.7f) 
                     .padding(bottom = 24.dp)
             ) {
                 SettingsContent(
@@ -126,69 +140,70 @@ fun MainScreen(
             }
         }
 	) { paddingValues ->
-		Box(
+		Column(
 			modifier = Modifier
 				.fillMaxSize()
 				.padding(paddingValues)
 				.padding(horizontal = 24.dp)
+				.padding(top = topPadding),
+			horizontalAlignment = Alignment.CenterHorizontally,
+			verticalArrangement = Arrangement.Top
 		) {
-			Column(
+			Card(
 				modifier = Modifier
-					.fillMaxSize()
-                    .align(Alignment.TopCenter),
-				horizontalAlignment = Alignment.CenterHorizontally,
-				verticalArrangement = Arrangement.spacedBy(lerp(32.dp, 16.dp, animatedProgress))
+					.size(cardSize)
+					.aspectRatio(1f),
+				shape = CircleShape,
+				colors = CardDefaults.cardColors(
+					containerColor = if (state.isServiceRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+				),
+				elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+				onClick = onToggleService
 			) {
-                Spacer(modifier = Modifier.weight(verticalBias))
-
-				Card(
-					modifier = Modifier
-						.size(cardSize)
-						.aspectRatio(1f),
-					shape = CircleShape,
-					colors = CardDefaults.cardColors(
-						containerColor = if (state.isServiceRunning) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-					),
-					elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-					onClick = onToggleService
+				Box(
+					modifier = Modifier.fillMaxSize(),
+					contentAlignment = Alignment.Center
 				) {
-					Box(
-						modifier = Modifier.fillMaxSize(),
-						contentAlignment = Alignment.Center
-					) {
-						Icon(
-							imageVector = Icons.Default.ScreenRotation,
-							contentDescription = if (state.isServiceRunning) stringResource(id = R.string.stop_service) else stringResource(id = R.string.start_service),
-							modifier = Modifier.fillMaxSize(iconFraction),
-							tint = if (state.isServiceRunning) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-						)
-					}
+					Icon(
+						imageVector = Icons.Default.ScreenRotation,
+						contentDescription = if (state.isServiceRunning) stringResource(id = R.string.stop_service) else stringResource(id = R.string.start_service),
+						modifier = Modifier.fillMaxSize(iconFraction),
+						tint = if (state.isServiceRunning) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+					)
 				}
+			}
 
-				Column(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.spacedBy(lerp(8.dp, 4.dp, animatedProgress))
-				) {
+			Spacer(modifier = Modifier.height(lerp(24.dp, 12.dp, animatedProgress)))
+
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(lerp(8.dp, 4.dp, animatedProgress))
+			) {
+				Text(
+					text = if (state.isServiceRunning) stringResource(id = R.string.service_running).uppercase() else stringResource(id = R.string.service_not_running).uppercase(),
+					style = when {
+						animatedProgress > 0.7f -> MaterialTheme.typography.titleLarge
+						animatedProgress > 0.4f -> MaterialTheme.typography.headlineSmall
+						else -> MaterialTheme.typography.headlineMedium
+					},
+					fontWeight = FontWeight.ExtraBold,
+					color = if (state.isServiceRunning) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+					textAlign = TextAlign.Center
+				)
+				
+				if (state.isServiceRunning) {
 					Text(
-						text = if (state.isServiceRunning) stringResource(id = R.string.service_running).uppercase() else stringResource(id = R.string.service_not_running).uppercase(),
-						style = if (animatedProgress > 0.5f) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.headlineMedium,
-						fontWeight = FontWeight.ExtraBold,
-						color = if (state.isServiceRunning) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+						text = stringResource(id = state.dndMode),
+						style = when {
+							animatedProgress > 0.7f -> MaterialTheme.typography.bodyMedium
+							animatedProgress > 0.4f -> MaterialTheme.typography.bodyLarge
+							else -> MaterialTheme.typography.titleMedium
+						},
+						fontWeight = FontWeight.Medium,
+						color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
 						textAlign = TextAlign.Center
 					)
-					
-					if (state.isServiceRunning) {
-					    Text(
-						    text = stringResource(id = state.dndMode),
-						    style = if (animatedProgress > 0.5f) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.titleMedium,
-						    fontWeight = FontWeight.Medium,
-						    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
-						    textAlign = TextAlign.Center
-					    )
-					}
 				}
-                
-                Spacer(modifier = Modifier.weight(1f - verticalBias))
 			}
 		}
 	}

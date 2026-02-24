@@ -108,7 +108,10 @@
 	<string name="changelog">Changelog</string>
 	<string name="unable_to_load_changelog">Unable to load changelog</string>
 	<string name="error_no_app_found">No app found to open link</string>
-	<string name="adb_command">ADB Command</string>
+	<string name="adb_permission_dialog_title">ADB Permission Required</string>
+	<string name="adb_permission_dialog_message">To automatically toggle Battery Saver with DND, you need to grant the WRITE_SECURE_SETTINGS permission via ADB. This is a one-time setup that allows the app to control system settings.</string>
+	<string name="adb_permission_code">ADB Command</string>
+	<string name="copy">Copy</string>
 	<string name="command_copied">Command copied to clipboard</string>
 	<string name="coupon_copied">Coupon copied to clipboard</string>
 	<string name="select_sound">Select sound</string>

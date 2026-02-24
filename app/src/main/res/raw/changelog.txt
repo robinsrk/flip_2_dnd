@@ -1,3 +1,8 @@
+[v11.0.3]
+• Add flashlight intensity controller in settings
+• Add flashlight feedback for slider
+• Fix flashlight not blinking respecting the settings
+
 [v11.0.2]
 • Changed flashlight intensity to lowest for flashlight feedback.
 

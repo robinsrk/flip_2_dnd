@@ -7,10 +7,12 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
 import dev.robin.flip_2_dnd.domain.repository.DndRepository
 import dev.robin.flip_2_dnd.domain.repository.FeedbackRepository
 import dev.robin.flip_2_dnd.domain.repository.ScreenStateRepository
+import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
 import dev.robin.flip_2_dnd.domain.usecase.GetOrientationUseCase
 import dev.robin.flip_2_dnd.domain.usecase.GetSettingsUseCase
 import dev.robin.flip_2_dnd.domain.usecase.ToggleDndUseCase
@@ -27,6 +29,7 @@ class MainViewModel @Inject constructor(
     private val getSettingsUseCase: GetSettingsUseCase,
     private val toggleDndUseCase: ToggleDndUseCase,
     private val dndRepository: DndRepository,
+    private val settingsRepository: SettingsRepository,
     private val feedbackRepository: FeedbackRepository,
     private val screenStateRepository: ScreenStateRepository,
     @param:ApplicationContext private val context: Context
@@ -106,16 +109,31 @@ class MainViewModel @Inject constructor(
 
     private fun observeDndState() {
         viewModelScope.launch {
-            // Combine DND enabled state and mode
+            // Combine DND enabled state, activation mode, and specific modes
             combine(
                 dndRepository.isActivated(),
-                dndRepository.getDndMode()
-            ) { enabled, mode ->
-                Log.d("MainViewModel", "DND state changed: $enabled, Mode: $mode")
-                _state.update { 
+                settingsRepository.getActivationMode(),
+                settingsRepository.getDndMode(),
+                settingsRepository.getRingerMode()
+            ) { isActivated, activationMode, dndMode, ringerMode ->
+                val modeResId = if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+                    when (dndMode) {
+                        dev.robin.flip_2_dnd.domain.repository.DndMode.PRIORITY -> R.string.dnd_mode_priority
+                        dev.robin.flip_2_dnd.domain.repository.DndMode.TOTAL_SILENCE -> R.string.dnd_mode_total_silence
+                        dev.robin.flip_2_dnd.domain.repository.DndMode.ALARMS_ONLY -> R.string.dnd_mode_alarms_only
+                    }
+                } else {
+                    when (ringerMode) {
+                        dev.robin.flip_2_dnd.domain.repository.RingerMode.SILENT -> R.string.status_ringer_silent
+                        dev.robin.flip_2_dnd.domain.repository.RingerMode.VIBRATE -> R.string.status_ringer_vibrate
+                        dev.robin.flip_2_dnd.domain.repository.RingerMode.NORMAL -> R.string.dnd_mode_all
+                    }
+                }
+
+                _state.update {
                     it.copy(
-                        isDndEnabled = enabled,
-                        dndMode = mode
+                        isDndEnabled = isActivated,
+                        dndMode = modeResId
                     )
                 }
             }.collect()

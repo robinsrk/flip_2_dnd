@@ -1,51 +1,63 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
+import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import dev.robin.flip_2_dnd.domain.repository.ActivationMode
-import dev.robin.flip_2_dnd.domain.repository.DndMode
-import dev.robin.flip_2_dnd.domain.repository.RingerMode
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,44 +65,35 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.compose.animation.AnimatedVisibility
 import androidx.navigation.NavController
-import android.os.Build
-import android.provider.Settings
-import android.app.TimePickerDialog
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.Alignment
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
-import android.content.ClipData
-import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.foundation.layout.Spacer
 import dev.robin.flip_2_dnd.R
+import dev.robin.flip_2_dnd.PremiumProvider
+import dev.robin.flip_2_dnd.domain.repository.ActivationMode
+import dev.robin.flip_2_dnd.domain.repository.DndMode
+import dev.robin.flip_2_dnd.domain.repository.RingerMode
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +102,54 @@ fun SettingsContent(
 	onDonateClick: () -> Unit,
 ) {
 	val context = LocalContext.current
+	val adbCommand = "adb shell pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS"
 	val clipboard = LocalClipboard.current
+	val packageInfo = remember {
+		try {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+				context.packageManager.getPackageInfo(
+					context.packageName,
+					android.content.pm.PackageManager.PackageInfoFlags.of(0)
+				)
+			} else {
+				@Suppress("DEPRECATION")
+				context.packageManager.getPackageInfo(context.packageName, 0)
+			}
+		} catch (e: Exception) {
+			null
+		}
+	}
+
+	val versionName = packageInfo?.versionName ?: stringResource(id = R.string.unknown)
+	val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+		packageInfo?.longVersionCode ?: 0L
+	} else {
+		@Suppress("DEPRECATION")
+		packageInfo?.versionCode?.toLong() ?: 0L
+	}
+
+	val isBeta = versionName.contains("pre", ignoreCase = true) || 
+				 versionName.contains("beta", ignoreCase = true)
+
+	val changelogText = remember(versionName) {
+		try {
+			val rawContent = context.resources.openRawResource(R.raw.changelog).bufferedReader().use { it.readText() }
+			val sections = rawContent.split("\n\n").filter { it.isNotBlank() }
+			
+			sections.filter { section ->
+				val firstLine = section.lines().firstOrNull() ?: ""
+				val isSectionBeta = firstLine.contains("(BETA)", ignoreCase = true)
+				
+				if (isSectionBeta) {
+					isBeta // Only include beta sections if current app is beta
+				} else {
+					true // Always include stable sections
+				}
+			}.joinToString("\n\n")
+		} catch (e: Exception) {
+			context.getString(R.string.unable_to_load_changelog)
+		}
+	}
 	val scope = rememberCoroutineScope()
 	val soundEnabled by viewModel.soundEnabled.collectAsState()
 	val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
@@ -161,6 +211,147 @@ fun SettingsContent(
 		UpgradeDialog(onDismiss = { showUpgradeDialog = false })
 	}
 
+	if (showChangelogSheet) {
+		ModalBottomSheet(
+			onDismissRequest = { showChangelogSheet = false },
+			sheetState = changelogSheetState,
+			containerColor = MaterialTheme.colorScheme.surface,
+			tonalElevation = 8.dp
+		) {
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(24.dp)
+			) {
+				Text(
+					text = stringResource(R.string.changelog),
+					style = MaterialTheme.typography.headlineSmall,
+					fontWeight = FontWeight.Bold,
+					color = MaterialTheme.colorScheme.primary
+				)
+				Spacer(modifier = Modifier.height(16.dp))
+				Text(
+					text = changelogText,
+					style = MaterialTheme.typography.bodyLarge,
+					lineHeight = 24.sp
+				)
+				Spacer(modifier = Modifier.height(24.dp))
+			}
+		}
+	}
+
+	if (showSupportDialog) {
+		AlertDialog(
+			onDismissRequest = { showSupportDialog = false },
+			title = {
+				Text(
+					text = stringResource(R.string.support_dialog_title),
+					style = MaterialTheme.typography.headlineSmall,
+					fontWeight = FontWeight.Bold
+				)
+			},
+			text = {
+				Text(
+					text = stringResource(R.string.support_dialog_message),
+					style = MaterialTheme.typography.bodyMedium
+				)
+			},
+			confirmButton = {
+				Button(
+					onClick = {
+						showSupportDialog = false
+						val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://patreon.com/AbulKalamRobin369"))
+						try {
+							context.startActivity(intent)
+						} catch (e: ActivityNotFoundException) {
+							Toast.makeText(context, context.getString(R.string.error_no_app_found), Toast.LENGTH_SHORT).show()
+						}
+					},
+					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
+					colors = ButtonDefaults.buttonColors(
+						containerColor = MaterialTheme.colorScheme.primary
+					)
+				) {
+					Icon(Icons.Default.Favorite, contentDescription = null)
+					Spacer(Modifier.width(8.dp))
+					Text(stringResource(R.string.patreon))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = {
+						showSupportDialog = false
+						onDonateClick()
+					},
+					modifier = Modifier.fillMaxWidth()
+				) {
+					Text(stringResource(R.string.crypto))
+				}
+			}
+		)
+	}
+
+	if (showAdbDialog) {
+		AlertDialog(
+			onDismissRequest = { showAdbDialog = false },
+			title = {
+				Text(
+					text = stringResource(R.string.adb_permission_dialog_title),
+					style = MaterialTheme.typography.headlineSmall,
+					fontWeight = FontWeight.Bold
+				)
+			},
+			text = {
+				Column {
+					Text(
+						text = stringResource(R.string.adb_permission_dialog_message),
+						style = MaterialTheme.typography.bodyMedium
+					)
+					Spacer(modifier = Modifier.height(16.dp))
+					Text(
+						text = stringResource(R.string.adb_permission_code),
+						style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+						modifier = Modifier.padding(horizontal = 16.dp)
+					)
+					Spacer(modifier = Modifier.height(8.dp))
+					Text(
+						text = adbCommand,
+						style = MaterialTheme.typography.bodySmall,
+						modifier = Modifier.padding(horizontal = 16.dp)
+					)
+				}
+			},
+			confirmButton = {
+				Button(
+					onClick = {
+						showAdbDialog = false
+						val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+						clipboardManager.setPrimaryClip(ClipData.newPlainText("ADB Command", adbCommand))
+						Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
+					},
+					modifier = Modifier.fillMaxWidth(),
+					shape = RoundedCornerShape(12.dp),
+					colors = ButtonDefaults.buttonColors(
+						containerColor = MaterialTheme.colorScheme.primary
+					)
+				) {
+					Icon(Icons.Default.ContentCopy, contentDescription = null)
+					Spacer(Modifier.width(8.dp))
+					Text(stringResource(R.string.copy))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = { showAdbDialog = false },
+					modifier = Modifier.fillMaxWidth()
+				) {
+					Text(stringResource(R.string.close))
+				}
+			}
+		)
+	}
+
 	if (showUpdateCheckDialog) {
 		AlertDialog(
 			onDismissRequest = { showUpdateCheckDialog = false },
@@ -215,58 +406,11 @@ fun SettingsContent(
 		)
 	}
 
-	val packageInfo = remember {
-		try {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-				context.packageManager.getPackageInfo(
-					context.packageName,
-					android.content.pm.PackageManager.PackageInfoFlags.of(0)
-				)
-			} else {
-				@Suppress("DEPRECATION")
-				context.packageManager.getPackageInfo(context.packageName, 0)
-			}
-		} catch (e: Exception) {
-			null
-		}
-	}
-
-	val versionName = packageInfo?.versionName ?: stringResource(id = R.string.unknown)
-	val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-		packageInfo?.longVersionCode ?: 0L
-	} else {
-		@Suppress("DEPRECATION")
-		packageInfo?.versionCode?.toLong() ?: 0L
-	}
-
-	val isBeta = versionName.contains("pre", ignoreCase = true) || 
-				 versionName.contains("beta", ignoreCase = true)
-
-	val changelogText = remember(versionName) {
-		try {
-			val rawContent = context.resources.openRawResource(R.raw.changelog).bufferedReader().use { it.readText() }
-			val sections = rawContent.split("\n\n").filter { it.isNotBlank() }
-			
-			sections.filter { section ->
-				val firstLine = section.lines().firstOrNull() ?: ""
-				val isSectionBeta = firstLine.contains("(BETA)", ignoreCase = true)
-				
-				if (isSectionBeta) {
-					isBeta // Only include beta sections if current app is beta
-				} else {
-					true // Always include stable sections
-				}
-			}.joinToString("\n\n")
-		} catch (e: Exception) {
-			context.getString(R.string.unable_to_load_changelog)
-		}
-	}
-
-		LazyColumn(
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(horizontal = 24.dp)
-		) {
+	LazyColumn(
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(horizontal = 24.dp)
+	) {
 			item {
 				Column {
 					Text(
@@ -1302,88 +1446,9 @@ fun SettingsContent(
 				isPro = true
 			)
 
-			if (showChangelogSheet) {
-				ModalBottomSheet(
-					onDismissRequest = { showChangelogSheet = false },
-					sheetState = changelogSheetState,
-					containerColor = MaterialTheme.colorScheme.surface,
-					tonalElevation = 8.dp
-				) {
-					Column(
-						modifier = Modifier
-							.fillMaxWidth()
-							.padding(24.dp)
-					) {
-						Text(
-							text = stringResource(R.string.changelog),
-							style = MaterialTheme.typography.headlineSmall,
-							fontWeight = FontWeight.Bold,
-							color = MaterialTheme.colorScheme.primary
-						)
-						Spacer(modifier = Modifier.height(16.dp))
-						Text(
-							text = changelogText,
-							style = MaterialTheme.typography.bodyLarge,
-							lineHeight = 24.sp
-						)
-						Spacer(modifier = Modifier.height(24.dp))
-					}
-				}
 			}
-			if (showSupportDialog) {
-				AlertDialog(
-					onDismissRequest = { showSupportDialog = false },
-					title = {
-						Text(
-							text = stringResource(R.string.support_dialog_title),
-							style = MaterialTheme.typography.headlineSmall,
-							fontWeight = FontWeight.Bold
-						)
-					},
-					text = {
-						Text(
-							text = stringResource(R.string.support_dialog_message),
-							style = MaterialTheme.typography.bodyMedium
-						)
-					},
-					confirmButton = {
-						Button(
-							onClick = {
-								showSupportDialog = false
-								val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://patreon.com/AbulKalamRobin369"))
-								try {
-									context.startActivity(intent)
-								} catch (e: ActivityNotFoundException) {
-									Toast.makeText(context, context.getString(R.string.error_no_app_found), Toast.LENGTH_SHORT).show()
-								}
-							},
-							modifier = Modifier.fillMaxWidth(),
-							shape = RoundedCornerShape(12.dp),
-							colors = ButtonDefaults.buttonColors(
-								containerColor = MaterialTheme.colorScheme.primary
-							)
-						) {
-							Icon(Icons.Default.Favorite, contentDescription = null)
-							Spacer(Modifier.width(8.dp))
-							Text(stringResource(R.string.patreon))
-						}
-					},
-					dismissButton = {
-						TextButton(
-							onClick = {
-								showSupportDialog = false
-								onDonateClick()
-							},
-							modifier = Modifier.fillMaxWidth()
-						) {
-							Text(stringResource(R.string.crypto))
-						}
-					}
-				)
-			}
-}
-}
-}
+		}
+	}
 }
 
 @Composable

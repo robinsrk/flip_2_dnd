@@ -1,3 +1,8 @@
+[v11.1.1]
+• Improve home screen animations
+• Fix home screen icon layout
+• Fix battery saver command dialog popup
+
 [v11.1.0]
 • Add sliding animations in home page
 • UI optimizations

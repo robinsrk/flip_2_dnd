@@ -425,7 +425,7 @@ fun SettingsContent(
 						title = stringResource(id = R.string.activation_mode),
 						description = stringResource(id = R.string.activation_mode_description),
 						sliderContent = {
-							Column(modifier = Modifier.width(200.dp)) {
+							Column(modifier = Modifier.fillMaxWidth()) {
 								Row(
 									modifier = Modifier.fillMaxWidth(),
 									horizontalArrangement = Arrangement.SpaceBetween

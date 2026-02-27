@@ -220,4 +220,31 @@
     <string name="unknown">未知</string>
     <string name="orientation_face_up">面朝上</string>
     <string name="orientation_face_down">面朝下</string>
+    <!-- Activation Modes -->
+    <string name="flip_behavior">翻转行为</string>
+    <string name="feedback">反馈</string>
+    <string name="advanced_filters">高级筛选</string>
+    <string name="app_settings">应用设置</string>
+    <string name="activation_mode">激活模式</string>
+    <string name="activation_mode_description">选择翻转手机后会发生什么</string>
+    <string name="mode_dnd">勿扰模式</string>
+    <string name="mode_ringer">手机铃声</string>
+    <string name="dnd_sub_mode">勿扰子模式</string>
+    <string name="ringer_sub_mode">铃声模式</string>
+    <string name="ringer_silent">静音</string>
+    <string name="ringer_vibrate">震动</string>
+    <string name="ringer_normal">标准</string>
+    <string name="sound_feedback">声音反馈</string>
+    <string name="vibration_feedback">震动反馈</string>
+    <string name="flashlight_feedback">手电筒反馈</string>
+    <string name="ringer_active">铃声模式已启用</string>
+    <string name="status_ringer_silent">铃声：静音</string>
+    <string name="status_ringer_vibrate">铃声：震动</string>
+    <!-- History -->
+    <string name="history">历史</string>
+    <string name="clear_history">清除历史</string>
+    <string name="history_empty">还没有记录历史事件</string>
+    <string name="dnd_activated_at">勿扰已启用</string>
+    <string name="dnd_deactivated_at">勿扰已停用</string>
+    <string name="history_icon">历史图标</string>
 </resources>

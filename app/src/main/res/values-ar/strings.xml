@@ -221,4 +221,31 @@
     <string name="unknown">غير معروف</string>
     <string name="orientation_face_up">الوجه للأعلى</string>
     <string name="orientation_face_down">الوجه للأسفل</string>
+    <!-- Activation Modes -->
+    <string name="flip_behavior">سلوك القلب</string>
+    <string name="feedback">الملاحظات</string>
+    <string name="advanced_filters">فلاتر متقدمة</string>
+    <string name="app_settings">إعدادات التطبيق</string>
+    <string name="activation_mode">وضع التفعيل</string>
+    <string name="activation_mode_description">اختر ما يحدث عند قلب الهاتف</string>
+    <string name="mode_dnd">عدم الإزعاج</string>
+    <string name="mode_ringer">رنين الهاتف</string>
+    <string name="dnd_sub_mode">وضع عدم الإزعاج</string>
+    <string name="ringer_sub_mode">وضع الرنين</string>
+    <string name="ringer_silent">صامت</string>
+    <string name="ringer_vibrate">اهتزاز</string>
+    <string name="ringer_normal">عادي</string>
+    <string name="sound_feedback">ملاحظات الصوت</string>
+    <string name="vibration_feedback">ملاحظات الاهتزاز</string>
+    <string name="flashlight_feedback">ملاحظات المصباح</string>
+    <string name="ringer_active">وضع الرنين مفعل</string>
+    <string name="status_ringer_silent">الرنين: صامت</string>
+    <string name="status_ringer_vibrate">الرنين: اهتزاز</string>
+    <!-- History -->
+    <string name="history">السجل</string>
+    <string name="clear_history">مسح السجل</string>
+    <string name="history_empty">لا توجد أحداث في السجل بعد</string>
+    <string name="dnd_activated_at">تم تفعيل وضع عدم الإزعاج</string>
+    <string name="dnd_deactivated_at">تم إلغاء وضع عدم الإزعاج</string>
+    <string name="history_icon">أيقونة السجل</string>
 </resources>

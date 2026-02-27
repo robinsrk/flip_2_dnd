@@ -220,4 +220,31 @@
     <string name="unknown">نامعلوم</string>
     <string name="orientation_face_up">سیدھا (Face up)</string>
     <string name="orientation_face_down">الٹا (Face down)</string>
+    <!-- Activation Modes -->
+    <string name="flip_behavior">پلٹنے کا برتاؤ</string>
+    <string name="feedback">فیڈ بیک</string>
+    <string name="advanced_filters">جدید فلٹرز</string>
+    <string name="app_settings">ایپ کی ترتیبات</string>
+    <string name="activation_mode">ایکٹیویشن موڈ</string>
+    <string name="activation_mode_description">فون پلٹنے پر کیا ہو گا منتخب کریں</string>
+    <string name="mode_dnd">ڈو ناٹ ڈسٹرب</string>
+    <string name="mode_ringer">موبائل رِنگر</string>
+    <string name="dnd_sub_mode">DND موڈ</string>
+    <string name="ringer_sub_mode">رِنگر موڈ</string>
+    <string name="ringer_silent">خاموش</string>
+    <string name="ringer_vibrate">وائبریٹ</string>
+    <string name="ringer_normal">نارمل</string>
+    <string name="sound_feedback">آواز کا فیڈ بیک</string>
+    <string name="vibration_feedback">وائبریشن فیڈ بیک</string>
+    <string name="flashlight_feedback">فلیش لائٹ فیڈ بیک</string>
+    <string name="ringer_active">رِنگر موڈ فعال ہے</string>
+    <string name="status_ringer_silent">رِنگر: خاموش</string>
+    <string name="status_ringer_vibrate">رِنگر: وائبریٹ</string>
+    <!-- History -->
+    <string name="history">ہسٹری</string>
+    <string name="clear_history">ہسٹری صاف کریں</string>
+    <string name="history_empty">ابھی تک کوئی ہسٹری ایونٹس محفوظ نہیں ہوئے</string>
+    <string name="dnd_activated_at">DND فعال</string>
+    <string name="dnd_deactivated_at">DND غیر فعال</string>
+    <string name="history_icon">ہسٹری آئیکن</string>
 </resources>

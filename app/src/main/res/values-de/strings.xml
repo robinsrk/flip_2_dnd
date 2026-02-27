@@ -223,4 +223,31 @@
     <string name="unknown">Unbekannt</string>
     <string name="orientation_face_up">Vorderseite oben</string>
     <string name="orientation_face_down">Vorderseite unten</string>
+    <!-- Activation Modes -->
+    <string name="flip_behavior">Flip-Verhalten</string>
+    <string name="feedback">Rückmeldung</string>
+    <string name="advanced_filters">Erweiterte Filter</string>
+    <string name="app_settings">App-Einstellungen</string>
+    <string name="activation_mode">Aktivierungsmodus</string>
+    <string name="activation_mode_description">Wählen Sie, was beim Umdrehen Ihres Telefons passiert</string>
+    <string name="mode_dnd">Nicht stören</string>
+    <string name="mode_ringer">Klingelton</string>
+    <string name="dnd_sub_mode">DND-Modus</string>
+    <string name="ringer_sub_mode">Klingeltonmodus</string>
+    <string name="ringer_silent">Lautlos</string>
+    <string name="ringer_vibrate">Vibrieren</string>
+    <string name="ringer_normal">Normal</string>
+    <string name="sound_feedback">Ton-Rückmeldung</string>
+    <string name="vibration_feedback">Vibrations-Rückmeldung</string>
+    <string name="flashlight_feedback">Taschenlampen-Rückmeldung</string>
+    <string name="ringer_active">Klingeltonmodus aktiv</string>
+    <string name="status_ringer_silent">Klingelton: Lautlos</string>
+    <string name="status_ringer_vibrate">Klingelton: Vibrieren</string>
+    <!-- History -->
+    <string name="history">Verlauf</string>
+    <string name="clear_history">Verlauf löschen</string>
+    <string name="history_empty">Noch keine Verlaufsereignisse aufgezeichnet</string>
+    <string name="dnd_activated_at">DND aktiviert</string>
+    <string name="dnd_deactivated_at">DND deaktiviert</string>
+    <string name="history_icon">Verlaufssymbol</string>
 </resources>

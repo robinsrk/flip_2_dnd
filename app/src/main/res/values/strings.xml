@@ -44,6 +44,7 @@
 	<string name="copy_command">Copy Command</string>
 	<string name="close">Close</string>
 	<string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
+  <string name="adb_command">ADB command</string>
 	<string name="dnd_on_sound_description">Sound to play when DND is enabled</string>
 	<string name="dnd_off_sound_description">Sound to play when DND is disabled</string>
 	<string name="use_custom_volume_description">Use custom volume for DND sounds</string>

@@ -1,0 +1,3 @@
+• Improve UI
+• Fix home screen box layout
+• Add missing translations

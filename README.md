@@ -56,6 +56,9 @@ Get the most out of Flip 2 DND by upgrading to Pro!
   <a href="https://robinsrk.gumroad.com/l/flip_2_dnd">
     <img src="./assets/images/buy_on_gumroad.png" alt="Buy on Gumroad" width="170"/>
   </a>
+  <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
+    <img src="./assets/images/buy_on_patreon.png" alt="Buy on Patreon" width="170"/>
+  </a>
 </p>
 
 ---
@@ -77,6 +80,9 @@ Choose your preferred platform to download the latest version:
 <p align="center">
   <a href="https://robinsrk.gumroad.com/l/flip_2_dnd">
     <img src="./assets/images/buy_on_gumroad.png" alt="Buy on Gumroad" width="160"/>
+  </a>
+  <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
+    <img src="./assets/images/buy_on_patreon.png" alt="Buy on Patreon" width="160"/>
   </a>
   <a href="https://apt.izzysoft.de/fdroid/index/apk/dev.robin.flip_2_dnd">
     <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="160"/>

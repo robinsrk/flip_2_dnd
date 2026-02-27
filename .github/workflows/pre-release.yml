@@ -3,7 +3,7 @@ name: Pre-release Jetpack Compose App
 on:
   push:
     tags:
-      - 'v*-pre*'
+      - "v*-pre*"
   workflow_dispatch:
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
           TAGS=$(git tag --sort=-v:refname | head -n 2)
           LATEST_TAG=$(echo "$TAGS" | sed -n '1p')
           PREVIOUS_TAG=$(echo "$TAGS" | sed -n '2p')
-          
+
           if [ -z "$PREVIOUS_TAG" ]; then
             # If no previous tag, get all commits until latest tag
             CHANGELOG=$(git log --pretty=format:"• %s" "$LATEST_TAG")
@@ -33,7 +33,7 @@ jobs:
             # Get commits between previous and latest tag
             CHANGELOG=$(git log --pretty=format:"• %s" "$PREVIOUS_TAG..$LATEST_TAG")
           fi
-          
+
           # Clean up and format for Telegram (HTML)
           # Join lines with literal \n characters for the output variable
           CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
@@ -42,8 +42,8 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
           cache: gradle
 
       - name: Setup Android SDK
@@ -72,13 +72,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-
-      - name: Build Free release APK
-        run: ./gradlew assembleFreeRelease
-
-
-      - name: Build Pro release APK
-        run: ./gradlew assembleProRelease
+      - name: Build release APK
+        run: ./gradlew assembleRelease
 
       - name: Align and Sign APKs
         env:
@@ -91,36 +86,34 @@ jobs:
             exit 1
           fi
 
-          FLAVORS=("free" "pro")
-          for FLAVOR in "${FLAVORS[@]}"; do
-            echo "Processing $FLAVOR flavor..."
-            UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
-            ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
-            SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-${FLAVOR^}-beta.apk"
+          FLAVOR="free"
+          echo "Processing $FLAVOR flavor..."
+          UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
+          ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
+          SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-${FLAVOR^}-beta.apk"
 
-            if [ ! -f "$UNSIGNED_APK" ]; then
-              echo "Error: Unsigned APK not found for $FLAVOR"
-              exit 1
-            fi
+          if [ ! -f "$UNSIGNED_APK" ]; then
+            echo "Error: Unsigned APK not found for $FLAVOR"
+            exit 1
+          fi
 
-            echo "Aligning $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
+          echo "Aligning $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
 
-            echo "Signing $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
-              --ks release.keystore \
-              --ks-pass pass:"${KEYSTORE_PASSWORD}" \
-              --ks-key-alias "${KEY_ALIAS}" \
-              --key-pass pass:"${KEY_PASSWORD}" \
-              --v2-signing-enabled true \
-              --v3-signing-enabled true \
-              --v4-signing-enabled false \
-              --out "$SIGNED_APK" \
-              "$ALIGNED_APK"
+          echo "Signing $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
+            --ks release.keystore \
+            --ks-pass pass:"${KEYSTORE_PASSWORD}" \
+            --ks-key-alias "${KEY_ALIAS}" \
+            --key-pass pass:"${KEY_PASSWORD}" \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            --v4-signing-enabled false \
+            --out "$SIGNED_APK" \
+            "$ALIGNED_APK"
 
-            echo "Verifying $FLAVOR APK..."
-            ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
-          done
+          echo "Verifying $FLAVOR APK..."
+          ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -130,7 +123,6 @@ jobs:
         with:
           files: |
             app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk
-            app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk
           generate_release_notes: true
           draft: false
           prerelease: true
@@ -141,10 +133,9 @@ jobs:
           name: app-pre-release
           path: |
             app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk
-            app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk
           if-no-files-found: error
 
-      - name: Send APKs to Telegram
+      - name: Send APK to Telegram
         if: startsWith(github.ref, 'refs/tags/')
         env:
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -155,26 +146,18 @@ jobs:
           REAL_CHANGELOG=$(printf "$CHANGELOG")
           cat <<EOF > caption.txt
           <b>✨ Flip 2 DND Update: $TAG_NAME</b>
-          
+
           <b>📝 What's New:</b>
           $REAL_CHANGELOG
-          
+
           🔗 <a href="https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}">View on GitHub</a>
           EOF
 
-          FREE_APK="app/build/outputs/apk/free/release/Flip2DND-Free-beta.apk"
-          PRO_APK="app/build/outputs/apk/pro/release/Flip2DND-Pro-beta.apk"
+          FREE_APK="app/build/outputs/apk/free/release/Flip2DND-Free.apk"
 
           # Send Free APK
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
                -F chat_id="$CHAT_ID" \
                -F document="@$FREE_APK" \
                -F caption="<caption.txt" \
-               -F parse_mode="HTML"
-
-          # Send Pro APK (optional, or just another message)
-          curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-               -F chat_id="$CHAT_ID" \
-               -F document="@$PRO_APK" \
-               -F caption="Flip 2 DND Pro $TAG_NAME" \
                -F parse_mode="HTML"

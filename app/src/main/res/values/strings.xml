@@ -254,13 +254,12 @@
 	<string name="notification_battery_saver_suggested_title">Battery Saver suggested</string>
 	<string name="notification_battery_saver_suggested_text">Tap to enable Battery Saver</string>
 	<string name="notification_monitoring_text">Monitoring phone orientation</string>
-    <string name="address_copied">Address copied to clipboard</string>
-
-    <string name="error_notification_permission_required">Notification permission is required for app functionality</string>
-    <string name="error_grant_all_permissions">Please grant all permissions for full functionality</string>
-    <string name="unknown">Unknown</string>
-    <string name="orientation_face_up">Face up</string>
-    <string name="orientation_face_down">Face down</string>
+  <string name="address_copied">Address copied to clipboard</string>
+  <string name="error_notification_permission_required">Notification permission is required for app functionality</string>
+  <string name="error_grant_all_permissions">Please grant all permissions for full functionality</string>
+  <string name="unknown">Unknown</string>
+  <string name="orientation_face_up">Face up</string>
+  <string name="orientation_face_down">Face down</string>
 	<string name="whats_new">What\'s New</string>
 	<string name="continue_button">Continue</string>
 	<string name="permission_required_title">Permissions Required</string>

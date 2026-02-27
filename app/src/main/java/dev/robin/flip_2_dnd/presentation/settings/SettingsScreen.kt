@@ -450,6 +450,8 @@ fun SettingsContent(
 												modifier = Modifier.padding(8.dp),
 												textAlign = TextAlign.Center,
 												style = MaterialTheme.typography.bodySmall,
+												maxLines = 1,
+												overflow = TextOverflow.Ellipsis,
 												color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
@@ -463,7 +465,7 @@ fun SettingsContent(
 						SettingsSliderItem(
 							title = stringResource(id = R.string.dnd_sub_mode),
 							sliderContent = {
-								Row(modifier = Modifier.width(200.dp)) {
+								Row(modifier = Modifier.fillMaxWidth()) {
 									val modes = listOf(
 										DndMode.PRIORITY to R.string.dnd_mode_priority,
 										DndMode.TOTAL_SILENCE to R.string.dnd_mode_total_silence,
@@ -477,7 +479,7 @@ fun SettingsContent(
 												.weight(1f)
 												.padding(2.dp)
 												.clickable { viewModel.setDndMode(mode) },
-											color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+											color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
 											shape = RoundedCornerShape(8.dp)
 										) {
 											Text(
@@ -485,7 +487,9 @@ fun SettingsContent(
 												modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
 												textAlign = TextAlign.Center,
 												style = MaterialTheme.typography.labelSmall,
-												color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+												maxLines = 1,
+												overflow = TextOverflow.Ellipsis,
+												color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
 									}
@@ -498,7 +502,7 @@ fun SettingsContent(
 						SettingsSliderItem(
 							title = stringResource(id = R.string.ringer_sub_mode),
 							sliderContent = {
-								Row(modifier = Modifier.width(200.dp)) {
+								Row(modifier = Modifier.fillMaxWidth()) {
 									val modes = listOf(
 										RingerMode.SILENT to R.string.ringer_silent,
 										RingerMode.VIBRATE to R.string.ringer_vibrate,
@@ -512,7 +516,7 @@ fun SettingsContent(
 												.weight(1f)
 												.padding(2.dp)
 												.clickable { viewModel.setRingerMode(mode) },
-											color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+											color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
 											shape = RoundedCornerShape(8.dp)
 										) {
 											Text(
@@ -520,7 +524,9 @@ fun SettingsContent(
 												modifier = Modifier.padding(8.dp),
 												textAlign = TextAlign.Center,
 												style = MaterialTheme.typography.labelSmall,
-												color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+												maxLines = 1,
+												overflow = TextOverflow.Ellipsis,
+												color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
 											)
 										}
 									}

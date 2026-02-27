@@ -125,6 +125,24 @@ adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS
 
 ---
 
+## 🎖️ Credits
+
+We are extremely grateful to our supporters on Patreon who help keep this project alive and growing.
+
+<p align="center">
+  <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
+    <img src="./assets/images/becomeAPatronBanner.png" alt="Become a Patron" width="400"/>
+  </a>
+</p>
+
+### 🧡 Patreon Supporters
+- **Martin Buckley**
+- **Michael W Erdely**
+
+Support the development of Flip 2 DND by [becoming a Patron](https://www.patreon.com/posts/flip-2-dnd-150924870).
+
+---
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).

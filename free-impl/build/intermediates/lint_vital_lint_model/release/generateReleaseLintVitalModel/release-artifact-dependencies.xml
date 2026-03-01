@@ -1,9 +1,12 @@
 <dependencies>
   <compile
-      roots=":@@:core::release,org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar,org.jetbrains:annotations:23.0.0@jar">
+      roots=":@@:core::release,org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar,org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar,org.jetbrains:annotations:23.0.0@jar">
     <dependency
         name=":@@:core::release"
         simpleName="artifacts::core"/>
+    <dependency
+        name="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar"
+        simpleName="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"/>
     <dependency
         name="org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar"
         simpleName="org.jetbrains.kotlin:kotlin-stdlib"/>

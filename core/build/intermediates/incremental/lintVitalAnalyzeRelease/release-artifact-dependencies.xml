@@ -1,6 +1,6 @@
 <dependencies>
   <compile
-      roots="androidx.core:core-ktx:1.17.0@aar,androidx.core:core:1.17.0@aar,androidx.lifecycle:lifecycle-runtime:2.6.2@aar,androidx.lifecycle:lifecycle-common:2.6.2@jar,androidx.versionedparcelable:versionedparcelable:1.1.1@aar,androidx.arch.core:core-common:2.2.0@jar,androidx.collection:collection-jvm:1.4.2@jar,androidx.annotation:annotation-jvm:1.8.1@jar,androidx.annotation:annotation-experimental:1.4.1@aar,androidx.core:core-viewtree:1.0.0@aar,org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar,org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1@jar,org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar,org.jetbrains:annotations:23.0.0@jar,com.google.guava:listenablefuture:1.0@jar,org.jspecify:jspecify:1.0.0@jar">
+      roots="androidx.core:core-ktx:1.17.0@aar,androidx.core:core:1.17.0@aar,androidx.lifecycle:lifecycle-runtime:2.6.2@aar,androidx.lifecycle:lifecycle-common:2.6.2@jar,org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1@jar,org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar,androidx.versionedparcelable:versionedparcelable:1.1.1@aar,androidx.arch.core:core-common:2.2.0@jar,androidx.collection:collection-jvm:1.4.2@jar,androidx.annotation:annotation-jvm:1.8.1@jar,androidx.annotation:annotation-experimental:1.4.1@aar,androidx.core:core-viewtree:1.0.0@aar,org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar,org.jetbrains:annotations:23.0.0@jar,com.google.guava:listenablefuture:1.0@jar,org.jspecify:jspecify:1.0.0@jar">
     <dependency
         name="androidx.core:core-ktx:1.17.0@aar"
         simpleName="androidx.core:core-ktx"/>
@@ -13,6 +13,12 @@
     <dependency
         name="androidx.lifecycle:lifecycle-common:2.6.2@jar"
         simpleName="androidx.lifecycle:lifecycle-common"/>
+    <dependency
+        name="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1@jar"
+        simpleName="org.jetbrains.kotlinx:kotlinx-coroutines-android"/>
+    <dependency
+        name="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar"
+        simpleName="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"/>
     <dependency
         name="androidx.versionedparcelable:versionedparcelable:1.1.1@aar"
         simpleName="androidx.versionedparcelable:versionedparcelable"/>
@@ -31,12 +37,6 @@
     <dependency
         name="androidx.core:core-viewtree:1.0.0@aar"
         simpleName="androidx.core:core-viewtree"/>
-    <dependency
-        name="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1@jar"
-        simpleName="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm"/>
-    <dependency
-        name="org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1@jar"
-        simpleName="org.jetbrains.kotlinx:kotlinx-coroutines-android"/>
     <dependency
         name="org.jetbrains.kotlin:kotlin-stdlib:2.2.10@jar"
         simpleName="org.jetbrains.kotlin:kotlin-stdlib"/>

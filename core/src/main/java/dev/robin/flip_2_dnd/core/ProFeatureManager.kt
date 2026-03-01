@@ -11,4 +11,8 @@ interface ProFeatureManager {
     fun telegramSupportEnabled(): Boolean
     fun flashlightFeedbackEnabled(): Boolean
     fun isPro(): Boolean
+
+    fun getUpdateState(): kotlinx.coroutines.flow.StateFlow<UpdateState>
+    fun checkForUpdate(manual: Boolean)
+    fun downloadAndInstall(context: android.content.Context, update: UpdateResponse)
 }

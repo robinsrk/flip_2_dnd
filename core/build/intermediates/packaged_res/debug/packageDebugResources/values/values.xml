@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_sound">Custom Sound</string>
+    <string name="dnd_off_sound_saved">DND OFF custom sound saved</string>
+    <string name="dnd_on_sound_saved">DND ON custom sound saved</string>
+    <string name="error_could_not_get_permission">Could not get permission for the sound file</string>
+    <string name="error_failed_to_get_permission">Failed to get permission for the selected sound</string>
+    <string name="error_no_sound_selected">No sound file was selected</string>
+    <string name="error_opening_sound_picker">Could not open sound picker</string>
+    <string name="error_permission">Permission error: %1$s</string>
+    <string name="error_processing_sound">Error processing selected sound: %1$s</string>
+    <string name="error_saving_sound">Error saving custom sound</string>
+    <string name="error_sound_not_accessible">Selected sound file is not accessible</string>
+    <string name="flashlight_double_blink">Double Blink</string>
+    <string name="flashlight_long_blink">Long Blink</string>
+    <string name="flashlight_rapid_blink">Rapid Blink</string>
+    <string name="flashlight_single_blink">Single Blink</string>
+    <string name="flashlight_triple_blink">Triple Blink</string>
+    <string name="none">None</string>
+    <string name="orientation_face_down">Face down</string>
+    <string name="orientation_face_up">Face up</string>
+    <string name="seconds">%1$d seconds</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_slush">Slush</string>
+    <string name="sound_whistle">Whistle</string>
+    <string name="unknown">Unknown</string>
+    <string name="vibration_double_pulse">Double Pulse</string>
+    <string name="vibration_heartbeat">Heartbeat</string>
+    <string name="vibration_long_pulse">Long Pulse</string>
+    <string name="vibration_rapid_pulse">Rapid Pulse</string>
+    <string name="vibration_single_pulse">Single Pulse</string>
+    <string name="vibration_tick_tock">Tick Tock</string>
+    <string name="vibration_triple_pulse">Triple Pulse</string>
+</resources>

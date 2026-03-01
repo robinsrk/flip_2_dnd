@@ -87,7 +87,7 @@ jobs:
             exit 1
           fi
 
-          UNSIGNED_APK="app/build/outputs/apk/release/app--release-unsigned.apk"
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
           ALIGNED_APK="app/build/outputs/apk/release/app-release-aligned.apk"
           SIGNED_APK="app/build/outputs/apk/release/Flip2DND-Free.apk"
 

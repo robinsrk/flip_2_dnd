@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.BuildConfig
 import dev.robin.flip_2_dnd.presentation.settings.SettingsContent
 import dev.robin.flip_2_dnd.presentation.settings.SettingsViewModel
 import dev.robin.flip_2_dnd.presentation.settings.UpgradeDialog
@@ -99,8 +98,9 @@ fun MainScreen(
 					)
 				},
                 actions = {
-                    // Show Pro button only for free flavor
-                    if (BuildConfig.FLAVOR == "free") {
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    // Show Pro button only if not Pro
+                    if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(context).isPro()) {
                         IconButton(onClick = { showUpgradeDialog = true }) {
                             Icon(
                                 imageVector = Icons.Default.Star,

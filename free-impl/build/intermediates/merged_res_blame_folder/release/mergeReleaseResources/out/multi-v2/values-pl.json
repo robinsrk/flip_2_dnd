@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-release-13:/values-pl/values-pl.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-pl/values-pl.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,451,565,670,792",
+                        "endColumns": "96,101,97,98,113,104,121,100",
+                        "endOffsets": "147,249,347,446,560,665,787,888"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-mergeReleaseResources-11:/values-pl/values-pl.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-pl/values-pl.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,451,565,670,792",
+                        "endColumns": "96,101,97,98,113,104,121,100",
+                        "endOffsets": "147,249,347,446,560,665,787,888"
+                    }
+                }
+            ]
+        }
+    ]
+}

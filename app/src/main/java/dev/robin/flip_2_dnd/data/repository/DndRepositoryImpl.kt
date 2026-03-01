@@ -6,9 +6,9 @@ import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.domain.repository.DndRepository
-import dev.robin.flip_2_dnd.domain.repository.HistoryRepository
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.core.DndRepository
+import dev.robin.flip_2_dnd.core.HistoryRepository
+import dev.robin.flip_2_dnd.core.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -62,7 +62,7 @@ class DndRepositoryImpl @Inject constructor(
 		
 		val activationMode = settingsRepository.getActivationMode().first()
 		
-		if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+		if (activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND) {
 			if (!notificationManager.isNotificationPolicyAccessGranted) {
 				Log.e("DndRepository", "No notification policy access granted")
 				_isActivated.value = false // Revert state
@@ -115,7 +115,7 @@ class DndRepositoryImpl @Inject constructor(
 		
 		val activationMode = runBlocking { settingsRepository.getActivationMode().first() }
 
-		val dndModeText = if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+		val dndModeText = if (activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND) {
 			when (currentFilter) {
 				NotificationManager.INTERRUPTION_FILTER_NONE -> R.string.dnd_mode_total_silence
 				NotificationManager.INTERRUPTION_FILTER_PRIORITY -> R.string.dnd_mode_priority
@@ -127,9 +127,9 @@ class DndRepositoryImpl @Inject constructor(
 			if (_isActivated.value) {
 				val selectedRinger = runBlocking { settingsRepository.getRingerMode().first() }
 				when (selectedRinger) {
-					dev.robin.flip_2_dnd.domain.repository.RingerMode.SILENT -> R.string.status_ringer_silent
-					dev.robin.flip_2_dnd.domain.repository.RingerMode.VIBRATE -> R.string.status_ringer_vibrate
-					dev.robin.flip_2_dnd.domain.repository.RingerMode.NORMAL -> R.string.dnd_mode_all
+					dev.robin.flip_2_dnd.core.RingerMode.SILENT -> R.string.status_ringer_silent
+					dev.robin.flip_2_dnd.core.RingerMode.VIBRATE -> R.string.status_ringer_vibrate
+					dev.robin.flip_2_dnd.core.RingerMode.NORMAL -> R.string.dnd_mode_all
 				}
 			} else {
 				R.string.dnd_mode_all
@@ -141,7 +141,7 @@ class DndRepositoryImpl @Inject constructor(
 		}
 		
 		// Synchronization logic
-		if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+		if (activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND) {
 			// In DND mode, we sync with system DND state
 			if (isDndActive && !_isActivated.value) {
 				_isActivated.value = true

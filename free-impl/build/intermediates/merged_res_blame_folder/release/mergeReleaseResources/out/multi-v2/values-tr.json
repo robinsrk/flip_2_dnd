@@ -1,0 +1,82 @@
+{
+    "logs": [
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-release-13:/values-tr/values-tr.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/packaged_res/release/packageReleaseResources/values-tr/values-tr.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,105,174,240,308,377,445,486,530,572,618,668,731,790,850,912,975,1031",
+                        "endColumns": "49,68,65,67,68,67,40,43,41,45,49,62,58,59,61,62,55,61",
+                        "endOffsets": "100,169,235,303,372,440,481,525,567,613,663,726,785,845,907,970,1026,1088"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "768,818,887,953,1021,1090,1158,1199,1243,1285,1331,1482,1545,1604,1664,1726,1789,1845",
+                        "endColumns": "49,68,65,67,68,67,40,43,41,45,49,62,58,59,61,62,55,61",
+                        "endOffsets": "813,882,948,1016,1085,1153,1194,1238,1280,1326,1376,1540,1599,1659,1721,1784,1840,1902"
+                    }
+                },
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-tr/values-tr.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,449,551,657,768",
+                        "endColumns": "96,101,97,96,101,105,110,100",
+                        "endOffsets": "147,249,347,444,546,652,763,864"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,20",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,449,551,657,1381",
+                        "endColumns": "96,101,97,96,101,105,110,100",
+                        "endOffsets": "147,249,347,444,546,652,763,1477"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-mergeReleaseResources-11:/values-tr/values-tr.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/packaged_res/release/packageReleaseResources/values-tr/values-tr.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,105,174,240,308,377,445,486,530,572,618,668,731,790,850,912,975,1031",
+                        "endColumns": "49,68,65,67,68,67,40,43,41,45,49,62,58,59,61,62,55,61",
+                        "endOffsets": "100,169,235,303,372,440,481,525,567,613,663,726,785,845,907,970,1026,1088"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "768,818,887,953,1021,1090,1158,1199,1243,1285,1331,1482,1545,1604,1664,1726,1789,1845",
+                        "endColumns": "49,68,65,67,68,67,40,43,41,45,49,62,58,59,61,62,55,61",
+                        "endOffsets": "813,882,948,1016,1085,1153,1194,1238,1280,1326,1376,1540,1599,1659,1721,1784,1840,1902"
+                    }
+                },
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-tr/values-tr.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,449,551,657,768",
+                        "endColumns": "96,101,97,96,101,105,110,100",
+                        "endOffsets": "147,249,347,444,546,652,763,864"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,20",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,352,449,551,657,1381",
+                        "endColumns": "96,101,97,96,101,105,110,100",
+                        "endOffsets": "147,249,347,444,546,652,763,1477"
+                    }
+                }
+            ]
+        }
+    ]
+}

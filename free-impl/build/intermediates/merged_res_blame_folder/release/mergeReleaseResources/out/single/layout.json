@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "dev.robin.flip_2_dnd.free.free-impl-release-13:/layout/ime_base_split_test_activity.xml",
+        "source": "dev.robin.flip_2_dnd.free.free-impl-core-1.17.0-0:/layout/ime_base_split_test_activity.xml"
+    },
+    {
+        "merged": "dev.robin.flip_2_dnd.free.free-impl-release-13:/layout/custom_dialog.xml",
+        "source": "dev.robin.flip_2_dnd.free.free-impl-core-1.17.0-0:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "dev.robin.flip_2_dnd.free.free-impl-release-13:/layout/ime_secondary_split_test_activity.xml",
+        "source": "dev.robin.flip_2_dnd.free.free-impl-core-1.17.0-0:/layout/ime_secondary_split_test_activity.xml"
+    },
+    {
+        "merged": "dev.robin.flip_2_dnd.free.free-impl-release-13:/layout/notification_template_part_time.xml",
+        "source": "dev.robin.flip_2_dnd.free.free-impl-core-1.17.0-0:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "dev.robin.flip_2_dnd.free.free-impl-release-13:/layout/notification_template_part_chronometer.xml",
+        "source": "dev.robin.flip_2_dnd.free.free-impl-core-1.17.0-0:/layout/notification_template_part_chronometer.xml"
+    }
+]

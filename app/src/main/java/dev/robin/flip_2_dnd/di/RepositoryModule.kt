@@ -6,7 +6,7 @@ import dev.robin.flip_2_dnd.data.repository.HistoryRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.OrientationRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.ScreenStateRepositoryImpl
 import dev.robin.flip_2_dnd.data.repository.SettingsRepositoryImpl
-import dev.robin.flip_2_dnd.domain.repository.*
+import dev.robin.flip_2_dnd.core.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

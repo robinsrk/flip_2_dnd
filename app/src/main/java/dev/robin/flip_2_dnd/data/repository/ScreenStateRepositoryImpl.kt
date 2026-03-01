@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.PowerManager
 import android.util.Log
-import dev.robin.flip_2_dnd.domain.repository.ScreenStateRepository
+import dev.robin.flip_2_dnd.core.ScreenStateRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

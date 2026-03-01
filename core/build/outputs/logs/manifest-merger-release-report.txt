@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml:2:13-83
+INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml:2:13-83
+	package
+		INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml
+	xmlns:android
+		ADDED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml:2:23-81
+uses-sdk
+INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml reason: use-sdk injection requested
+INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml
+INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml
+	android:targetSdkVersion
+		INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml
+	android:minSdkVersion
+		INJECTED from /Users/robin/AndroidStudioProjects/flip_app/flip_2_dnd_free/core/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest14842327611451164542.xml

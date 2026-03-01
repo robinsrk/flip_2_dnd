@@ -7,6 +7,5 @@ import dagger.hilt.android.HiltAndroidApp
 class FlipDndApp : Application() {
 	override fun onCreate() {
 		super.onCreate()
-		initializePremium()
 	}
 }

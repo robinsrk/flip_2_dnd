@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-mergeReleaseResources-11:/values-pt-rBR/values-pt-rBR.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-pt-rBR/values-pt-rBR.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,353,453,563,673,793",
+                        "endColumns": "96,101,98,99,109,109,119,100",
+                        "endOffsets": "147,249,348,448,558,668,788,889"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "dev.robin.flip_2_dnd.free.free-impl-release-13:/values-pt-rBR/values-pt-rBR.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-pt-rBR/values-pt-rBR.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,152,254,353,453,563,673,793",
+                        "endColumns": "96,101,98,99,109,109,119,100",
+                        "endOffsets": "147,249,348,448,558,668,788,889"
+                    }
+                }
+            ]
+        }
+    ]
+}

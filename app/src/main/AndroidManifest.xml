@@ -50,11 +50,6 @@
 			</intent-filter>
 		</activity>
 
-		<activity
-			android:name=".presentation.settings.SoundPickerActivity"
-			android:exported="false"
-			android:theme="@style/Theme.Flip_2_DND" />
-
 		<receiver
 			android:name=".services.AutoStartService"
 			android:exported="false">

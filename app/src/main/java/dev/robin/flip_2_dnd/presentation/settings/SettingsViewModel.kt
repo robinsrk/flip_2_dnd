@@ -9,20 +9,24 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
-import dev.robin.flip_2_dnd.domain.repository.ActivationMode
-import dev.robin.flip_2_dnd.domain.repository.DndMode
-import dev.robin.flip_2_dnd.domain.repository.RingerMode
+import dev.robin.flip_2_dnd.core.SettingsRepository
+import dev.robin.flip_2_dnd.core.ActivationMode
+import dev.robin.flip_2_dnd.core.DndMode
+import dev.robin.flip_2_dnd.core.RingerMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import dev.robin.flip_2_dnd.core.Sound
+import dev.robin.flip_2_dnd.core.FlashlightPattern
+import dev.robin.flip_2_dnd.core.VibrationPattern
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
 	application: Application,
-	private val settingsRepository: SettingsRepository
+	private val settingsRepository: SettingsRepository,
+	private val soundController: dev.robin.flip_2_dnd.core.SoundController
 ) : AndroidViewModel(application) {
 
 	private val _screenOffOnly = MutableStateFlow(false)
@@ -740,129 +744,17 @@ class SettingsViewModel @Inject constructor(
 	}
 
 	fun playSelectedSound(sound: Sound?, isForDndOn: Boolean = true) {
-		if (sound == null) {
-			android.util.Log.d("SettingsViewModel", "No sound selected")
-			return
-		}
-
-		try {
-			var mediaPlayer: android.media.MediaPlayer? = null
-			
-			if (sound == Sound.CUSTOM) {
-				// For custom sounds, use the URI based on whether it's for DND on or off
-				val uri = if (isForDndOn) {
-					_dndOnCustomSoundUri.value
-				} else {
-					_dndOffCustomSoundUri.value
-				}
-
-				android.util.Log.d("SettingsViewModel", "Using custom sound URI: $uri for ${if (isForDndOn) "DND ON" else "DND OFF"}")
-
-				if (uri.isNullOrEmpty()) {
-					android.util.Log.d("SettingsViewModel", "Custom sound selected but no URI available")
-					return
-				}
-
-				try {
-					val parsedUri = android.net.Uri.parse(uri)
-					
-					// Validate the URI is accessible
-					try {
-						getApplication<Application>().contentResolver.query(parsedUri, null, null, null, null)?.use { cursor ->
-							if (!cursor.moveToFirst()) {
-								android.util.Log.e("SettingsViewModel", "URI exists but content not accessible: $parsedUri")
-							}
-						} ?: run {
-							android.util.Log.e("SettingsViewModel", "URI query returned null cursor: $parsedUri")
-						}
-					} catch (e: Exception) {
-						android.util.Log.e("SettingsViewModel", "Error validating URI accessibility: ${e.message}", e)
-						// Continue anyway - we'll try the direct approach
-					}
-					
-					// Check if we have permission for this URI
-					val persistedUriPermissions = getApplication<Application>().contentResolver.persistedUriPermissions
-					val hasPermission = persistedUriPermissions.any { it.uri.toString() == parsedUri.toString() && it.isReadPermission }
-					
-					if (!hasPermission) {
-						android.util.Log.e("SettingsViewModel", "No persisted permission for URI: $parsedUri")
-						// Try to take permission again as a recovery mechanism
-						try {
-							getApplication<Application>().contentResolver.takePersistableUriPermission(
-								parsedUri, 
-								android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-							)
-							android.util.Log.d("SettingsViewModel", "Successfully re-acquired permission for URI: $parsedUri")
-						} catch (e: SecurityException) {
-							android.util.Log.e("SettingsViewModel", "Failed to re-acquire permission: ${e.message}", e)
-							// Continue anyway and try to play the sound
-							android.util.Log.d("SettingsViewModel", "Attempting to play sound without explicit permission")
-						}
-					}
-					
-					// Try to create the MediaPlayer with the URI
-					try {
-						mediaPlayer = android.media.MediaPlayer().apply {
-							setDataSource(getApplication(), parsedUri)
-							prepare()
-						}
-					} catch (e: Exception) {
-						android.util.Log.e("SettingsViewModel", "Error creating MediaPlayer: ${e.message}", e)
-						// If this fails, try an alternative approach with content resolver
-						try {
-							val fileDescriptor = getApplication<Application>().contentResolver.openFileDescriptor(parsedUri, "r")?.fileDescriptor
-							if (fileDescriptor != null) {
-								android.util.Log.d("SettingsViewModel", "Using file descriptor approach for URI: $parsedUri")
-								mediaPlayer = android.media.MediaPlayer().apply {
-									setDataSource(fileDescriptor)
-									prepare()
-								}
-							} else {
-								android.util.Log.e("SettingsViewModel", "Failed to get file descriptor for URI: $parsedUri")
-								return
-							}
-						} catch (e2: Exception) {
-							android.util.Log.e("SettingsViewModel", "All approaches failed for URI: $parsedUri - ${e2.message}", e2)
-							return
-						}
-					}
-				} catch (e: SecurityException) {
-					android.util.Log.e("SettingsViewModel", "Security exception accessing URI: ${e.message}", e)
-					return
-				} catch (e: IllegalStateException) {
-					android.util.Log.e("SettingsViewModel", "IllegalStateException with MediaPlayer: ${e.message}", e)
-					return
-				} catch (e: IllegalArgumentException) {
-					android.util.Log.e("SettingsViewModel", "IllegalArgumentException with URI: ${e.message}", e)
-					return
-				} catch (e: Exception) {
-					android.util.Log.e("SettingsViewModel", "Error creating MediaPlayer for custom sound: ${e.message}", e)
-					return
-				}
-			} else if (sound.soundResId == 0) {
-				android.util.Log.d("SettingsViewModel", "Sound has no resource ID: ${sound.name}")
-				return
-			} else {
-				mediaPlayer = android.media.MediaPlayer.create(getApplication(), sound.soundResId)
-			}
-
-			if (mediaPlayer == null) {
-				android.util.Log.e(
-					"SettingsViewModel",
-					"Failed to create MediaPlayer for sound: ${sound.name}"
-				)
-				return
-			}
-
-			mediaPlayer.setVolume(
-				if (useCustomVolume.value) customVolume.value else 1f,
-				if (useCustomVolume.value) customVolume.value else 1f
-			)
-			mediaPlayer.setOnCompletionListener { mp -> mp.release() }
-			mediaPlayer.start()
-		} catch (e: Exception) {
-			android.util.Log.e("SettingsViewModel", "Error playing sound: ${e.message}", e)
-		}
+		if (sound == null) return
+		
+		val uri = if (isForDndOn) _dndOnCustomSoundUri.value else _dndOffCustomSoundUri.value
+		val volume = if (useCustomVolume.value) customVolume.value else 1f
+		
+		soundController.previewSound(
+			sound = sound,
+			uri = uri,
+			volume = volume,
+			useCustomVolume = useCustomVolume.value
+		)
 	}
 
 	fun playSelectedFlashlightPattern(pattern: FlashlightPattern) {

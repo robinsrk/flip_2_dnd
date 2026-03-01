@@ -8,11 +8,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
-import dev.robin.flip_2_dnd.domain.repository.DndRepository
-import dev.robin.flip_2_dnd.domain.repository.FeedbackRepository
-import dev.robin.flip_2_dnd.domain.repository.ScreenStateRepository
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.core.PhoneOrientation
+import dev.robin.flip_2_dnd.core.DndRepository
+import dev.robin.flip_2_dnd.core.FeedbackRepository
+import dev.robin.flip_2_dnd.core.ScreenStateRepository
+import dev.robin.flip_2_dnd.core.SettingsRepository
 import dev.robin.flip_2_dnd.domain.usecase.GetOrientationUseCase
 import dev.robin.flip_2_dnd.domain.usecase.GetSettingsUseCase
 import dev.robin.flip_2_dnd.domain.usecase.ToggleDndUseCase
@@ -116,17 +116,17 @@ class MainViewModel @Inject constructor(
                 settingsRepository.getDndMode(),
                 settingsRepository.getRingerMode()
             ) { isActivated, activationMode, dndMode, ringerMode ->
-                val modeResId = if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+                val modeResId = if (activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND) {
                     when (dndMode) {
-                        dev.robin.flip_2_dnd.domain.repository.DndMode.PRIORITY -> R.string.dnd_mode_priority
-                        dev.robin.flip_2_dnd.domain.repository.DndMode.TOTAL_SILENCE -> R.string.dnd_mode_total_silence
-                        dev.robin.flip_2_dnd.domain.repository.DndMode.ALARMS_ONLY -> R.string.dnd_mode_alarms_only
+                        dev.robin.flip_2_dnd.core.DndMode.PRIORITY -> R.string.dnd_mode_priority
+                        dev.robin.flip_2_dnd.core.DndMode.TOTAL_SILENCE -> R.string.dnd_mode_total_silence
+                        dev.robin.flip_2_dnd.core.DndMode.ALARMS_ONLY -> R.string.dnd_mode_alarms_only
                     }
                 } else {
                     when (ringerMode) {
-                        dev.robin.flip_2_dnd.domain.repository.RingerMode.SILENT -> R.string.status_ringer_silent
-                        dev.robin.flip_2_dnd.domain.repository.RingerMode.VIBRATE -> R.string.status_ringer_vibrate
-                        dev.robin.flip_2_dnd.domain.repository.RingerMode.NORMAL -> R.string.dnd_mode_all
+                        dev.robin.flip_2_dnd.core.RingerMode.SILENT -> R.string.status_ringer_silent
+                        dev.robin.flip_2_dnd.core.RingerMode.VIBRATE -> R.string.status_ringer_vibrate
+                        dev.robin.flip_2_dnd.core.RingerMode.NORMAL -> R.string.dnd_mode_all
                     }
                 }
 

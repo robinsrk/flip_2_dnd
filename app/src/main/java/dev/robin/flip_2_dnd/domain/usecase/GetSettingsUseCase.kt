@@ -1,6 +1,6 @@
 package dev.robin.flip_2_dnd.domain.usecase
 
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.core.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

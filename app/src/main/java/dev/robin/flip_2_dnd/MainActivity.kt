@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
       var showRamadanPopup by remember { mutableStateOf(false) }
 
       LaunchedEffect(Unit) {
-        if (!PremiumProvider.engine.isPro() && !showOnboarding) {
+        if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this@MainActivity).isPro() && !showOnboarding) {
           showRamadanPopup = true
         }
       }
@@ -158,7 +158,7 @@ class MainActivity : ComponentActivity() {
               // so changelog doesn't show immediately after onboarding
               prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
               
-              if (!PremiumProvider.engine.isPro()) {
+              if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this@MainActivity).isPro()) {
                 showRamadanPopup = true
               }
 
@@ -303,6 +303,7 @@ class MainActivity : ComponentActivity() {
     Intent(this, FlipDetectorService::class.java).also { intent -> startForegroundService(intent) }
   }
 
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   private fun RamadanPopup(onDismiss: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -311,77 +312,85 @@ class MainActivity : ComponentActivity() {
     val gumroadUrl = "https://robinsrk.netlify.app/buyflip2dnd"
     val couponCode = stringResource(id = R.string.ramadan_coupon)
 
-    AlertDialog(
+    ModalBottomSheet(
       onDismissRequest = onDismiss,
-      shape = RoundedCornerShape(28.dp),
-      icon = {
+      containerColor = MaterialTheme.colorScheme.surface,
+      tonalElevation = 8.dp,
+    ) {
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(24.dp)
+          .padding(bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+      ) {
         Icon(
           imageVector = Icons.Default.Star,
           contentDescription = null,
-          modifier = Modifier.size(40.dp),
+          modifier = Modifier
+            .size(48.dp)
+            .padding(bottom = 16.dp),
           tint = MaterialTheme.colorScheme.primary
         )
-      },
-      title = {
         Text(
           text = stringResource(id = R.string.ramadan_kareem),
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.Bold,
           textAlign = TextAlign.Center,
-          modifier = Modifier.fillMaxWidth()
+          color = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.padding(bottom = 16.dp)
         )
-      },
-      text = {
-        Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(16.dp)
+        Text(
+          text = stringResource(id = R.string.ramadan_message),
+          style = MaterialTheme.typography.bodyLarge,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.padding(bottom = 24.dp)
+        )
+          
+        Surface(
+          color = MaterialTheme.colorScheme.primaryContainer,
+          shape = RoundedCornerShape(16.dp),
+          modifier = Modifier.clickable {
+            scope.launch {
+              clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("coupon", couponCode)))
+            }
+            Toast.makeText(context, context.getString(R.string.coupon_copied), Toast.LENGTH_SHORT).show()
+          }
         ) {
           Text(
-            text = stringResource(id = R.string.ramadan_message),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center
+            text = stringResource(id = R.string.ramadan_coupon_code, couponCode),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
           )
-          
-          Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.clickable {
-              scope.launch {
-                clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("coupon", couponCode)))
-              }
-              Toast.makeText(context, context.getString(R.string.coupon_copied), Toast.LENGTH_SHORT).show()
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+              onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gumroadUrl))
+                context.startActivity(intent)
+                onDismiss()
+              },
+              modifier = Modifier.fillMaxWidth().height(56.dp),
+              shape = RoundedCornerShape(16.dp),
+            ) {
+              Text(stringResource(id = R.string.get_pro), style = MaterialTheme.typography.titleMedium)
             }
-          ) {
-            Text(
-              text = stringResource(id = R.string.ramadan_coupon_code, couponCode),
-              modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-              style = MaterialTheme.typography.titleMedium,
-              fontWeight = FontWeight.ExtraBold,
-              color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-          }
-        }
-      },
-      confirmButton = {
-        Button(
-          onClick = {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gumroadUrl))
-            context.startActivity(intent)
-            onDismiss()
-          },
-          modifier = Modifier.fillMaxWidth()
-        ) {
-          Text(stringResource(id = R.string.get_pro))
-        }
-      },
-      dismissButton = {
-        TextButton(
-          onClick = onDismiss,
-          modifier = Modifier.fillMaxWidth()
-        ) {
-          Text(stringResource(id = R.string.maybe_later))
+            TextButton(
+              onClick = onDismiss,
+              modifier = Modifier.fillMaxWidth().height(56.dp)
+            ) {
+              Text(stringResource(id = R.string.maybe_later), style = MaterialTheme.typography.titleMedium)
+            }
         }
       }
-    )
+    }
   }
 }

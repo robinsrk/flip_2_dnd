@@ -9,8 +9,8 @@ class AutoStartService : BroadcastReceiver() {
 
 	override fun onReceive(context: Context?, intent: Intent?) {
 		if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-			if (dev.robin.flip_2_dnd.PremiumProvider.engine.autoStartEnabled()) {
-				context?.let {
+			context?.let {
+				if (dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(it).autoStartEnabled()) {
 					val prefs = it.getSharedPreferences("flip_2_dnd_settings", Context.MODE_PRIVATE)
 					val autoStartEnabled = prefs.getBoolean("auto_start", false)
 					if (autoStartEnabled) {

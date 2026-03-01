@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -13,10 +12,10 @@ import android.os.VibratorManager
 import android.provider.Settings
 import android.util.Log
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
-import dev.robin.flip_2_dnd.domain.repository.DndRepository
-import dev.robin.flip_2_dnd.presentation.settings.FlashlightPattern
-import dev.robin.flip_2_dnd.presentation.settings.VibrationPattern
+import dev.robin.flip_2_dnd.core.SettingsRepository
+import dev.robin.flip_2_dnd.core.DndRepository
+import dev.robin.flip_2_dnd.core.FlashlightPattern
+import dev.robin.flip_2_dnd.core.VibrationPattern
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -219,8 +218,8 @@ class DndService(
             val dndMode = runBlocking { settingsRepository.getDndMode().first() }
             
             if (willBeActivated && 
-                activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND && 
-                dndMode == dev.robin.flip_2_dnd.domain.repository.DndMode.TOTAL_SILENCE) {
+                activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND && 
+                dndMode == dev.robin.flip_2_dnd.core.DndMode.TOTAL_SILENCE) {
                 runBlocking {
                     Log.d(TAG, "Waiting 2 seconds before setting Total Silence DND")
                     delay(2000)
@@ -246,7 +245,7 @@ class DndService(
             val activationMode = runBlocking { settingsRepository.getActivationMode().first() }
             val isActivated = runBlocking { dndRepository.isActivated().first() }
             
-            if (activationMode == dev.robin.flip_2_dnd.domain.repository.ActivationMode.DND) {
+            if (activationMode == dev.robin.flip_2_dnd.core.ActivationMode.DND) {
                 val currentFilter = notificationManager.currentInterruptionFilter
                 val isDndOn = currentFilter != NotificationManager.INTERRUPTION_FILTER_ALL
                 _isDndEnabled.value = isDndOn
@@ -278,17 +277,14 @@ class DndService(
 			if (!isFlashlightEnabled) return@runBlocking
 
 			// Check if Pro feature
-			if (!dev.robin.flip_2_dnd.PremiumProvider.engine.flashlightFeedbackEnabled()) return@runBlocking
+			val context = this@DndService.context
+			if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(context).flashlightFeedbackEnabled()) return@runBlocking
 
 			val feedbackWithFlashlightOn = settingsRepository.getFeedbackWithFlashlightOn().first()
+			val flashController = dev.robin.flip_2_dnd.core.ServiceLocator.getFlashController(context)
 
-			// Logic for existing flashlight state
-			if (isFlashlightOn) {
-				if (!feedbackWithFlashlightOn) {
-					Log.d(TAG, "Flashlight is already ON and feedbackWithFlashlightOn is FALSE - Skipping feedback")
-					return@runBlocking
-				}
-				// If we proceed, we must restore to ON
+			if (flashController.shouldSkipFeedback(isFlashlightOn, feedbackWithFlashlightOn)) {
+				return@runBlocking
 			}
 
 			// Check schedule
@@ -297,85 +293,20 @@ class DndService(
 				val startTime = settingsRepository.getFlashlightScheduleStartTime().first()
 				val endTime = settingsRepository.getFlashlightScheduleEndTime().first()
 				val days = settingsRepository.getFlashlightScheduleDays().first()
-				if (!isWithinSchedule(startTime, endTime, days)) {
+				val scheduleManager = dev.robin.flip_2_dnd.core.ServiceLocator.getScheduleManager(context)
+				if (!scheduleManager.isWithinSchedule(startTime, endTime, days)) {
 					Log.d(TAG, "Current time is outside flashlight schedule. Skipping flashlight blink.")
 					return@runBlocking
 				}
 			}
 
 			val flashlightIntensity = settingsRepository.getFlashlightIntensity().first()
-
-			try {
-				// We rely on the tracked 'isFlashlightOn' state for restoration
-				val originalState = isFlashlightOn
-				
-				pattern.pattern.forEachIndexed { index, duration ->
-					if (index == 0) {
-						if (duration > 0) delay(duration)
-					} else {
-						val turnOn = index % 2 != 0
-                        cameraId?.let { id ->
-                            if (turnOn) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    val characteristics = cameraManager.getCameraCharacteristics(id)
-                                    val maxLevel: Int? = try {
-                                        val key = CameraCharacteristics.Key("android.flash.info.strengthMaximumLevel", Int::class.java)
-                                        characteristics.get(key)
-                                    } catch (e: Exception) {
-                                        null
-                                    }
-                                    
-                                    if (maxLevel != null && maxLevel > 1) {
-                                        val level = ((flashlightIntensity.toFloat() / 10f) * maxLevel.toFloat()).toInt().coerceIn(1, maxLevel)
-                                        Log.d(TAG, "Setting torch level: $level (intensity: $flashlightIntensity, max: $maxLevel)")
-                                        cameraManager.turnOnTorchWithStrengthLevel(id, level)
-                                    } else {
-                                        Log.d(TAG, "Strength level not supported or max level <= 1, using setTorchMode")
-                                        cameraManager.setTorchMode(id, true)
-                                    }
-                                } else {
-                                    cameraManager.setTorchMode(id, true)
-                                }
-                            } else {
-                                cameraManager.setTorchMode(id, false)
-                            }
-                        }
-						delay(duration)
-					}
-				}
-				
-				// Restore original state
-				Log.d(TAG, "Restoring flashlight state to: $originalState")
-				cameraManager.setTorchMode(cameraId, originalState)
-				
-			} catch (e: Exception) {
-				Log.e(TAG, "Error flashing flashlight: ${e.message}")
-			}
+			flashController.flashFlashlight(pattern.pattern, flashlightIntensity)
 		}
 	}
 
 	private fun isWithinSchedule(startTime: String, endTime: String, days: Set<Int>): Boolean {
-        try {
-            val now = java.util.Calendar.getInstance()
-            val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
-            
-            if (!days.contains(dayOfWeek)) {
-                return false
-            }
-
-            val currentTime = String.format("%02d:%02d", 
-                now.get(java.util.Calendar.HOUR_OF_DAY), 
-                now.get(java.util.Calendar.MINUTE))
-            
-            return if (startTime <= endTime) {
-                currentTime in startTime..endTime
-            } else {
-                // Overnight schedule
-                currentTime >= startTime || currentTime <= endTime
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking schedule: ${e.message}")
-            return true
-        }
-    }
+		return dev.robin.flip_2_dnd.core.ServiceLocator.getScheduleManager(context)
+			.isWithinSchedule(startTime, endTime, days)
+	}
 }

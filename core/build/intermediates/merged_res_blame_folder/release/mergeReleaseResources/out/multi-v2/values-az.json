@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "dev.robin.flip_2_dnd.core-mergeReleaseResources-10:/values-az/values-az.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-az/values-az.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,156,258,361,465,566,671,782",
+                        "endColumns": "100,101,102,103,100,104,110,100",
+                        "endOffsets": "151,253,356,460,561,666,777,878"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "dev.robin.flip_2_dnd.core-release-12:/values-az/values-az.xml",
+            "map": [
+                {
+                    "source": "/Users/robin/.gradle/caches/9.2.0/transforms/1bd0a150ff3e6b61feacc3df2ff4f4da/transformed/core-1.17.0/res/values-az/values-az.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,156,258,361,465,566,671,782",
+                        "endColumns": "100,101,102,103,100,104,110,100",
+                        "endOffsets": "151,253,356,460,561,666,777,878"
+                    }
+                }
+            ]
+        }
+    ]
+}

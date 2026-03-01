@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="custom_sound">Özel Ses</string>
+    <string name="flashlight_double_blink">İkili Göz Kırpma</string>
+    <string name="flashlight_long_blink">Uzun Göz Kırpma</string>
+    <string name="flashlight_rapid_blink">Hızlı Göz Kırpma</string>
+    <string name="flashlight_single_blink">Tekli Göz Kırpma</string>
+    <string name="flashlight_triple_blink">Üçlü Göz Kırpma</string>
+    <string name="none">Hiçbiri</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_slush">Slush</string>
+    <string name="sound_whistle">Whistle</string>
+    <string name="vibration_double_pulse">İkili Darbe</string>
+    <string name="vibration_heartbeat">Kalp Atışı</string>
+    <string name="vibration_long_pulse">Uzun Darbe</string>
+    <string name="vibration_rapid_pulse">Hızlı Darbe</string>
+    <string name="vibration_single_pulse">Tekli Darbe</string>
+    <string name="vibration_tick_tock">Tik Tak</string>
+    <string name="vibration_triple_pulse">Üçlü Darbe</string>
+</resources>

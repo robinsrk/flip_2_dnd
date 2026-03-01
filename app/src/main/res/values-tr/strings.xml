@@ -280,7 +280,7 @@
     <string name="whats_new">Yenilikler</string>
     <string name="ramadan_kareem">Ramazan Mübarek!</string>
     <string name="ramadan_message">Huzurlu ve bereketli bir ay dileriz! Ramazan ruhuyla, Flip 2 DND Pro da özel 40%% indirim sunuyoruz. Odağınızı kişiselleştirin ve geliştiriciyi özel bir fiyatla destekleyin.</string>
-    <string name="ramadan_coupon_code">%40 indirim için kupon kullanın: %1$s</string>
+    <string name="ramadan_coupon_code">40%% indirim için kupon kullanın: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">Yakınlık sensörü algılama</string>
     <string name="proximity_detection">Yakınlık algılama</string>

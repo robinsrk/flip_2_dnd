@@ -1,7 +1,7 @@
 package dev.robin.flip_2_dnd.presentation.history
 
-import dev.robin.flip_2_dnd.data.local.entity.HistoryEntity
+import dev.robin.flip_2_dnd.core.HistoryItem
 
 data class HistoryState(
-    val historyItems: List<HistoryEntity> = emptyList()
+    val historyItems: List<HistoryItem> = emptyList()
 )

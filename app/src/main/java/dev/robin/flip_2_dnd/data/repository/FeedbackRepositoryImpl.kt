@@ -1,19 +1,19 @@
 package dev.robin.flip_2_dnd.data.repository
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.RingtoneManager
 import android.os.VibrationEffect
 import android.os.Vibrator
-import dev.robin.flip_2_dnd.domain.repository.FeedbackRepository
+import dev.robin.flip_2_dnd.core.FeedbackRepository
+import dev.robin.flip_2_dnd.core.Sound
+import dev.robin.flip_2_dnd.core.SoundController
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FeedbackRepositoryImpl @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    private val soundController: SoundController
 ) : FeedbackRepository {
 
     private val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -30,22 +30,11 @@ class FeedbackRepositoryImpl @Inject constructor(
     }
 
     override fun playSound() {
-        try {
-            val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .build()
-                )
-                setDataSource(context, notification)
-                prepare()
-                setOnCompletionListener { release() }
-            }
-            mediaPlayer.start()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        soundController.playSound(
+            sound = Sound.SYSTEM_DEFAULT,
+            uri = null,
+            volume = 1.0f,
+            useCustomVolume = false
+        )
     }
 }

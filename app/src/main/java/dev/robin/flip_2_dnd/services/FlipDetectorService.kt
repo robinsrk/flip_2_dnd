@@ -14,9 +14,9 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.robin.flip_2_dnd.MainActivity
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
-import dev.robin.flip_2_dnd.domain.repository.DndRepository
-import dev.robin.flip_2_dnd.domain.repository.SettingsRepository
+import dev.robin.flip_2_dnd.core.PhoneOrientation
+import dev.robin.flip_2_dnd.core.DndRepository
+import dev.robin.flip_2_dnd.core.SettingsRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -46,6 +46,8 @@ class FlipDetectorService : Service() {
     
     private val _isScreenOff = MutableStateFlow(false)
     private val isScreenOff = _isScreenOff.asStateFlow()
+    private val _isProximityCovered = MutableStateFlow(false)
+    private val isProximityCovered = _isProximityCovered.asStateFlow()
     private var onlyWhenScreenOff = false
     private var activationDelaySeconds = 0
     private var orientationJob: Job? = null
@@ -179,6 +181,24 @@ class FlipDetectorService : Service() {
                 acquireWakeLock()
             }
             
+            // Observe proximity setting
+            serviceScope.launch {
+                settingsRepository.getProximityDetectionEnabled().collect { enabled ->
+                    proximityDetectionEnabled = enabled
+                    Log.d(TAG, "Settings updated - Proximity detection: $enabled")
+                    
+                    val detectionManager = dev.robin.flip_2_dnd.core.ServiceLocator.getDetectionManager(this@FlipDetectorService)
+                    if (enabled) {
+                        detectionManager.registerProximityListener { covered ->
+                            _isProximityCovered.value = covered
+                        }
+                    } else {
+                        detectionManager.unregisterProximityListener()
+                        _isProximityCovered.value = false
+                    }
+                }
+            }
+            
             // Observe settings changes
             serviceScope.launch {
                 settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
@@ -224,12 +244,6 @@ class FlipDetectorService : Service() {
                 }
             }
 
-            serviceScope.launch {
-                settingsRepository.getProximityDetectionEnabled().collect { enabled ->
-                    proximityDetectionEnabled = enabled
-                    Log.d(TAG, "Settings updated - Proximity detection: $enabled")
-                }
-            }
 
             // Observe DND activation schedule settings
             serviceScope.launch {
@@ -294,9 +308,12 @@ class FlipDetectorService : Service() {
             when (orientation) {
                 PhoneOrientation.FACE_DOWN -> {
                     // Check DND schedule if enabled
-                    if (dndScheduleEnabled && !isWithinDndSchedule()) {
-                        Log.d(TAG, "Current time is outside DND schedule - Ignoring face down")
-                        return
+                    if (dndScheduleEnabled) {
+                        val scheduleManager = dev.robin.flip_2_dnd.core.ServiceLocator.getScheduleManager(this@FlipDetectorService)
+                        if (!scheduleManager.isWithinSchedule(dndScheduleStartTime, dndScheduleEndTime, dndScheduleDays)) {
+                            Log.d(TAG, "Current time is outside DND schedule - Ignoring face down")
+                            return
+                        }
                     }
 
                     if (!currentDndState) {
@@ -312,17 +329,19 @@ class FlipDetectorService : Service() {
                             return
                         }
 
-                        if (mediaPlaybackDetectionEnabled && isMediaPlaying()) {
+                        val detectionManager = dev.robin.flip_2_dnd.core.ServiceLocator.getDetectionManager(this@FlipDetectorService)
+
+                        if (mediaPlaybackDetectionEnabled && detectionManager.isMediaPlaying()) {
                             Log.d(TAG, "Media is playing - Ignoring face down")
                             return
                         }
 
-                        if (headphoneDetectionEnabled && areHeadphonesConnected()) {
+                        if (headphoneDetectionEnabled && detectionManager.areHeadphonesConnected()) {
                             Log.d(TAG, "Headphones are connected - Ignoring face down")
                             return
                         }
 
-                        if (proximityDetectionEnabled && !sensorService.isProximityCovered.value) {
+                        if (proximityDetectionEnabled && !detectionManager.isProximityCovered()) {
                             Log.d(TAG, "Proximity is NOT covered - Ignoring face down")
                             return
                         }
@@ -336,7 +355,7 @@ class FlipDetectorService : Service() {
                                 Log.d(TAG, "Screen turned ON during delay - Cancelling DND toggle")
                                 return@launch
                             }
-                            if (proximityDetectionEnabled && !sensorService.isProximityCovered.value) {
+                            if (proximityDetectionEnabled && !_isProximityCovered.value) {
                                 Log.d(TAG, "Proximity uncovered during delay - Cancelling DND toggle")
                                 return@launch
                             }
@@ -349,7 +368,8 @@ class FlipDetectorService : Service() {
                                 try {
                                     val enableBatterySaver = settingsRepository.getBatterySaverOnFlipEnabled().first()
                                     if (enableBatterySaver) {
-                                        setBatterySaverEnabled(true)
+                                        dev.robin.flip_2_dnd.core.ServiceLocator.getPowerController(this@FlipDetectorService)
+                                            .setBatterySaverEnabled(true)
                                     }
                                 } catch (e: Exception) {
                                     Log.e(TAG, "Error handling battery saver: ${e.message}", e)
@@ -374,7 +394,8 @@ class FlipDetectorService : Service() {
                             try {
                                 val enableBatterySaver = settingsRepository.getBatterySaverOnFlipEnabled().first()
                                 if (enableBatterySaver) {
-                                    setBatterySaverEnabled(false)
+                                    dev.robin.flip_2_dnd.core.ServiceLocator.getPowerController(this@FlipDetectorService)
+                                        .setBatterySaverEnabled(false)
                                 }
                             } catch (e: Exception) {
                                 Log.e(TAG, "Error disabling battery saver: ${e.message}", e)
@@ -422,28 +443,8 @@ class FlipDetectorService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun isWithinDndSchedule(): Boolean {
-        try {
-            val now = java.util.Calendar.getInstance()
-            val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
-            
-            if (!dndScheduleDays.contains(dayOfWeek)) {
-                return false
-            }
-
-            val currentTime = String.format("%02d:%02d", 
-                now.get(java.util.Calendar.HOUR_OF_DAY), 
-                now.get(java.util.Calendar.MINUTE))
-            
-            return if (dndScheduleStartTime <= dndScheduleEndTime) {
-                currentTime in dndScheduleStartTime..dndScheduleEndTime
-            } else {
-                // Overnight schedule (e.g., 22:00 to 07:00)
-                currentTime >= dndScheduleStartTime || currentTime <= dndScheduleEndTime
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking DND schedule: ${e.message}")
-            return true // Default to true if error
-        }
+        return dev.robin.flip_2_dnd.core.ServiceLocator.getScheduleManager(this)
+            .isWithinSchedule(dndScheduleStartTime, dndScheduleEndTime, dndScheduleDays)
     }
 
     private fun createNotificationChannels() {
@@ -526,61 +527,7 @@ class FlipDetectorService : Service() {
         }
     }
 
-    private fun setBatterySaverEnabled(enabled: Boolean) {
-        try {
-            val isPowerSaveMode = powerManager.isPowerSaveMode
-            if (enabled == isPowerSaveMode) {
-                Log.d(TAG, "Battery Saver is already ${if (enabled) "enabled" else "disabled"}")
-                return
-            }
-
-            // Attempt to toggle battery saver directly
-            // This requires WRITE_SECURE_SETTINGS permission granted via ADB
-            val value = if (enabled) 1 else 0
-            val success = Settings.Global.putInt(contentResolver, "low_power", value)
-            
-            if (success) {
-                Log.d(TAG, "Battery Saver ${if (enabled) "enabled" else "disabled"} via Secure Settings")
-            } else {
-                Log.w(TAG, "Failed to set Battery Saver via Secure Settings - Falling back to prompt")
-                if (enabled) promptEnableBatterySaver()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error toggling Battery Saver: ${e.message}")
-            // Fallback to notification prompt if we're trying to enable it
-            if (enabled) promptEnableBatterySaver()
-        }
-    }
-
-    private fun promptEnableBatterySaver() {
-        try {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            val intent = Intent(android.provider.Settings.ACTION_BATTERY_SAVER_SETTINGS).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            val pendingIntent = PendingIntent.getActivity(
-                this, 100,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val notification = NotificationCompat.Builder(this@FlipDetectorService, FLIP_CHANNEL_ID)
-                .setContentTitle(getString(R.string.notification_battery_saver_suggested_title))
-                .setContentText(getString(R.string.notification_battery_saver_suggested_text))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setSilent(true)
-                .build()
-
-            notificationManager.notify(FLIP_NOTIFICATION_ID + 100, notification)
-            Log.d(TAG, "Battery Saver prompt notification shown")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error prompting Battery Saver: ${e.message}", e)
-        }
-    }
+    // Moved to PowerController
 
     private fun createServiceNotification(): Notification {
         val channelName = getString(R.string.notification_service_channel_name)
@@ -609,28 +556,5 @@ class FlipDetectorService : Service() {
             .setContentIntent(pendingIntent)
             .build()
     }
-    private fun isMediaPlaying(): Boolean {
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
-        return audioManager.isMusicActive
-    }
-
-    private fun areHeadphonesConnected(): Boolean {
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            val devices = audioManager.getDevices(android.media.AudioManager.GET_DEVICES_OUTPUTS)
-            for (device in devices) {
-                if (device.type == android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET ||
-                    device.type == android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
-                    device.type == android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
-                    device.type == android.media.AudioDeviceInfo.TYPE_USB_HEADSET
-                ) {
-                    return true
-                }
-            }
-            return false
-        } else {
-            @Suppress("DEPRECATION")
-            return audioManager.isWiredHeadsetOn || audioManager.isBluetoothA2dpOn
-        }
-    }
+    // Moved to DetectionManager
 }

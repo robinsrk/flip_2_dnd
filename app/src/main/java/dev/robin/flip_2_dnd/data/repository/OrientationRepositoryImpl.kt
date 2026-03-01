@@ -6,8 +6,8 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
-import dev.robin.flip_2_dnd.domain.repository.OrientationRepository
+import dev.robin.flip_2_dnd.core.PhoneOrientation
+import dev.robin.flip_2_dnd.core.OrientationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.data.local.entity.HistoryEntity
+import dev.robin.flip_2_dnd.core.HistoryItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +111,7 @@ fun HistoryScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(state.historyItems) { item ->
-                    HistoryItem(item)
+                    HistoryItemView(item)
                 }
             }
         }
@@ -119,7 +119,7 @@ fun HistoryScreen(
 }
 
 @Composable
-fun HistoryItem(item: HistoryEntity) {
+fun HistoryItemView(item: HistoryItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),

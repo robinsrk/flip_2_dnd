@@ -1,4 +1,3 @@
-
 plugins {
 	id("com.android.application")
 	id("org.jetbrains.kotlin.android")
@@ -20,31 +19,15 @@ android {
 		vectorDrawables {
 			useSupportLibrary = true
 		}
-	}
 
-	flavorDimensions += "tier"
-
-	productFlavors {
-		create("free") {
-			dimension = "tier"
-			versionNameSuffix = "-free"
-			resValue("string", "app_name", "Flip 2 DND")
-		}
-
-		create("pro") {
-			dimension = "tier"
+		val isPro = findProject(":pro-impl") != null
+		if (isPro) {
 			applicationIdSuffix = ".pro"
 			versionNameSuffix = "-pro"
 			resValue("string", "app_name", "Flip 2 DND Pro")
-		}
-	}
-
-	variantFilter {
-		if (name.contains("pro", ignoreCase = true)) {
-			val isProRequested = gradle.startParameter.taskNames.any { it.contains("pro", ignoreCase = true) }
-			if (!isProRequested) {
-				ignore = true
-			}
+		} else {
+			versionNameSuffix = "-free"
+			resValue("string", "app_name", "Flip 2 DND")
 		}
 	}
 
@@ -113,4 +96,10 @@ dependencies {
 	implementation(libs.androidx.room.runtime)
 	implementation(libs.androidx.room.ktx)
 	ksp(libs.androidx.room.compiler)
+
+	implementation(project(":core"))
+	runtimeOnly(project(":free-impl"))
+	if (findProject(":pro-impl") != null) {
+		runtimeOnly(project(":pro-impl"))
+	}
 }

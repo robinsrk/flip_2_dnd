@@ -1,7 +1,7 @@
 package dev.robin.flip_2_dnd.presentation.main
 
 import dev.robin.flip_2_dnd.R
-import dev.robin.flip_2_dnd.domain.model.PhoneOrientation
+import dev.robin.flip_2_dnd.core.PhoneOrientation
 
 data class MainState(
     val orientation: PhoneOrientation = PhoneOrientation.UNKNOWN,

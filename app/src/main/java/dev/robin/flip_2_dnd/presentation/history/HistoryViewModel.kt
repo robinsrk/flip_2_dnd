@@ -2,7 +2,7 @@ package dev.robin.flip_2_dnd.presentation.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.robin.flip_2_dnd.domain.repository.HistoryRepository
+import dev.robin.flip_2_dnd.core.HistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

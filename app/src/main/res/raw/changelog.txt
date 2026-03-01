@@ -1,3 +1,7 @@
+[v12.0.0]
+• Added credits section for patreon members
+• UI Optimizations
+• Battery optimizations
 [v11.1.2]
 • Fix home screen cards width
 • Optimized UI

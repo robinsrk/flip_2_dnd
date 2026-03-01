@@ -10,10 +10,10 @@
 	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
 
-	<uses-feature
-		android:name="android.hardware.sensor.accelerometer"
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
 		android:required="false" />
 	<uses-feature
 		android:name="android.hardware.sensor.gyroscope"
@@ -79,6 +79,7 @@
 			<intent-filter>
 				<action android:name="android.service.quicksettings.action.QS_TILE" />
 			</intent-filter>
-		</service>
-	</application>
+        </service>
+
+    </application>
 </manifest>

@@ -98,6 +98,10 @@ import dev.robin.flip_2_dnd.core.VibrationPattern
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 import kotlinx.coroutines.launch
 
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
+import dev.robin.flip_2_dnd.core.UpdateState
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsContent(
@@ -222,6 +226,41 @@ fun SettingsContent(
     var showChangelogSheet by remember { mutableStateOf(false) }
     var showCreditsDialog by remember { mutableStateOf(false) }
     val changelogSheetState = rememberModalBottomSheetState()
+    
+    val updateState by viewModel.updateState.collectAsState()
+    var showUpdateDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(updateState) {
+        if (updateState is UpdateState.Available) {
+            showUpdateDialog = true
+        } else if (updateState is UpdateState.Error) {
+             Toast.makeText(context, (updateState as UpdateState.Error).message, Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    if (showUpdateDialog && updateState is UpdateState.Available) {
+        val update = (updateState as UpdateState.Available).update
+        AlertDialog(
+            onDismissRequest = { showUpdateDialog = false },
+            title = { Text("New Version Available") },
+            text = { Text("Version: ${update.versionName}\n\nA new version of Flip 2 DND Pro is available. Do you want to download and install it now?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showUpdateDialog = false
+                    viewModel.downloadAndInstall(context, update)
+                }) {
+                    Text("Update")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showUpdateDialog = false
+                }) {
+                    Text("Later")
+                }
+            }
+        )
+    }
 
     if (showUpgradeDialog) {
         UpgradeDialog(onDismiss = { showUpgradeDialog = false })
@@ -1717,7 +1756,8 @@ fun SettingsContent(
                         if (ServiceLocator.getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
-                            showUpdateCheckDialog = true
+                            viewModel.checkForUpdate(true)
+                            Toast.makeText(context, "Checking for updates...", Toast.LENGTH_SHORT).show()
                         } else {
                             showUpgradeDialog = true
                         }

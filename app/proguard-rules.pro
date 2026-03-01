@@ -16,6 +16,21 @@
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep Pro and Free implementations as they are accessed via reflection
+-keep class dev.robin.flip_2_dnd.pro.** { *; }
+-keep class dev.robin.flip_2_dnd.free.** { *; }
+-keep class dev.robin.flip_2_dnd.core.ServiceLocator { *; }
+
+# Keep Dagger/Hilt
+-keep class dev.robin.flip_2_dnd.di.** { *; }
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keep class javax.annotation.** { *; }
+
+# Retrofit
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**

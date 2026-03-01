@@ -97,6 +97,9 @@ class MainActivity : ComponentActivity() {
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    // Check for updates (Pro version only)
+    dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this).checkForUpdate(false)
     
     // Load onboarding state from SharedPreferences
     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)

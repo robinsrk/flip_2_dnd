@@ -26,10 +26,21 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
 	application: Application,
 	private val settingsRepository: SettingsRepository,
-	private val soundController: dev.robin.flip_2_dnd.core.SoundController
+	private val soundController: dev.robin.flip_2_dnd.core.SoundController,
+    private val featureManager: dev.robin.flip_2_dnd.core.ProFeatureManager
 ) : AndroidViewModel(application) {
 
-	private val _screenOffOnly = MutableStateFlow(false)
+    val updateState = featureManager.getUpdateState()
+
+    fun checkForUpdate(manual: Boolean = false) {
+        featureManager.checkForUpdate(manual)
+    }
+
+    fun downloadAndInstall(context: Context, update: dev.robin.flip_2_dnd.core.UpdateResponse) {
+        featureManager.downloadAndInstall(context, update)
+    }
+
+    private val _screenOffOnly = MutableStateFlow(false)
 	val screenOffOnly = _screenOffOnly.asStateFlow()
 
 	private val _soundEnabled = MutableStateFlow(true)

@@ -92,14 +92,14 @@ jobs:
           SIGNED_APK="app/build/outputs/apk/release/Flip2DND-Free.apk"
 
           if [ ! -f "$UNSIGNED_APK" ]; then
-            echo "Error: Unsigned APK not found for $FLAVOR"
+            echo "Error: Unsigned APK not found"
             exit 1
           fi
 
           echo "Aligning APK..."
           ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
 
-          echo "Signing $FLAVOR APK..."
+          echo "Signing APK..."
           ${ANDROID_HOME}/build-tools/30.0.3/apksigner sign \
             --ks release.keystore \
             --ks-pass pass:"${KEYSTORE_PASSWORD}" \
@@ -111,7 +111,7 @@ jobs:
             --out "$SIGNED_APK" \
             "$ALIGNED_APK"
 
-          echo "Verifying $FLAVOR APK..."
+          echo "Verifying APK..."
           ${ANDROID_HOME}/build-tools/30.0.3/apksigner verify --verbose "$SIGNED_APK"
 
       - name: Create GitHub Release

@@ -142,7 +142,8 @@ jobs:
           TAG_NAME: ${{ github.ref_name }}
           CHANGELOG: ${{ steps.changelog.outputs.changelog }}
         run: |
-          REAL_CHANGELOG=$(printf "$CHANGELOG")
+          REAL_CHANGELOG=$(printf "%b" "$CHANGELOG")
+
           cat <<EOF > caption.txt
           <b>✨ Flip 2 DND Update: $TAG_NAME</b>
 
@@ -152,11 +153,11 @@ jobs:
           🔗 <a href="https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}">View on GitHub</a>
           EOF
 
-          APK="app/build/outputs/apkrelease/Flip2DND.apk"
+          APK="app/build/outputs/apk/release/Flip2DND.apk"
 
           # Send APK
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
                -F chat_id="$CHAT_ID" \
                -F document="@$APK" \
-               -F caption="<caption.txt" \
+               -F caption="$(cat caption.txt)" \
                -F parse_mode="HTML"

@@ -1,4 +1,4 @@
-[v12.0.0]
+[v12.0.1]
 • Added credits section for patreon members
 • UI Optimizations
 • Battery optimizations

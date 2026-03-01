@@ -1,0 +1,3 @@
+• Added credits section for patreon members
+• UI Optimizations
+• Battery optimizations

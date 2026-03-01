@@ -89,7 +89,7 @@ jobs:
 
           UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
           ALIGNED_APK="app/build/outputs/apk/release/app-release-aligned.apk"
-          SIGNED_APK="app/build/outputs/apk/release/Flip2DND-Free.apk"
+          SIGNED_APK="app/build/outputs/apk/release/Flip2DND.apk"
 
           if [ ! -f "$UNSIGNED_APK" ]; then
             echo "Error: Unsigned APK not found"
@@ -121,7 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            app/build/outputs/apk/free/release/Flip2DND-Free.apk
+            app/build/outputs/apk/release/Flip2DND.apk
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -131,7 +131,7 @@ jobs:
         with:
           name: app-release
           path: |
-            app/build/outputs/apk/free/release/Flip2DND-Free.apk
+            app/build/outputs/apk/release/Flip2DND.apk
           if-no-files-found: error
 
       - name: Send APK to Telegram
@@ -152,11 +152,11 @@ jobs:
           🔗 <a href="https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME}">View on GitHub</a>
           EOF
 
-          FREE_APK="app/build/outputs/apk/free/release/Flip2DND-Free.apk"
+          APK="app/build/outputs/apkrelease/Flip2DND.apk"
 
-          # Send Free APK
+          # Send APK
           curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
                -F chat_id="$CHAT_ID" \
-               -F document="@$FREE_APK" \
+               -F document="@$APK" \
                -F caption="<caption.txt" \
                -F parse_mode="HTML"

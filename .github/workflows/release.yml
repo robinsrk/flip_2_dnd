@@ -87,18 +87,16 @@ jobs:
             exit 1
           fi
 
-          FLAVOR="free"
-          echo "Processing $FLAVOR flavor..."
-          UNSIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-unsigned.apk"
-          ALIGNED_APK="app/build/outputs/apk/$FLAVOR/release/app-$FLAVOR-release-aligned.apk"
-          SIGNED_APK="app/build/outputs/apk/$FLAVOR/release/Flip2DND-Free.apk"
+          UNSIGNED_APK="app/build/outputs/apk/release/app--release-unsigned.apk"
+          ALIGNED_APK="app/build/outputs/apk/release/app-release-aligned.apk"
+          SIGNED_APK="app/build/outputs/apk/release/Flip2DND-Free.apk"
 
           if [ ! -f "$UNSIGNED_APK" ]; then
             echo "Error: Unsigned APK not found for $FLAVOR"
             exit 1
           fi
 
-          echo "Aligning $FLAVOR APK..."
+          echo "Aligning APK..."
           ${ANDROID_HOME}/build-tools/30.0.3/zipalign -v -f 4 "$UNSIGNED_APK" "$ALIGNED_APK"
 
           echo "Signing $FLAVOR APK..."

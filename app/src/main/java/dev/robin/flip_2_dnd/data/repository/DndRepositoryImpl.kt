@@ -57,7 +57,7 @@ class DndRepositoryImpl @Inject constructor(
 	override suspend fun setActivated(enabled: Boolean) {
 		if (enabled == _isActivated.value) return
 
-		// Update state immediately to prevent race conditions or duplicate triggers
+		// Update state immediately
 		_isActivated.value = enabled
 		
 		val activationMode = settingsRepository.getActivationMode().first()
@@ -76,6 +76,11 @@ class DndRepositoryImpl @Inject constructor(
 				}
 				notificationManager.setInterruptionFilter(newFilter)
 				Log.d("DndRepository", "DND state changed to: $enabled with filter $newFilter")
+                
+                // Log history for DND mode
+                CoroutineScope(Dispatchers.IO).launch {
+                    historyRepository.addHistory(enabled, newFilter)
+                }
 			} catch (e: Exception) {
 				Log.e("DndRepository", "Error setting DND state", e)
 			}
@@ -90,18 +95,28 @@ class DndRepositoryImpl @Inject constructor(
 					val targetMode = settingsRepository.getRingerMode().first().value
 					audioManager.ringerMode = targetMode
 					Log.d("DndRepository", "Ringer mode changed from $currentMode to $targetMode")
+                    
+                    // Log history for Ringer mode (using 0 or specific int for ringer)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        historyRepository.addHistory(true, targetMode)
+                    }
 				} else {
 					// Restore previous mode
 					val restoredMode = settingsRepository.getPreviousRingerMode().first()
 					audioManager.ringerMode = restoredMode
 					Log.d("DndRepository", "Ringer mode restored to: $restoredMode")
+                    
+                    CoroutineScope(Dispatchers.IO).launch {
+                        historyRepository.addHistory(false, restoredMode)
+                    }
 				}
 			} catch (e: Exception) {
 				Log.e("DndRepository", "Error setting Ringer mode", e)
 			}
 		}
 		
-		updateDndState()
+        // Don't call updateDndState() here to avoid race conditions with system broadcast/latency
+        // The monitoring loop will eventually sync up if there's a discrepancy
 	}
 
 	override suspend fun toggle() {
@@ -145,14 +160,8 @@ class DndRepositoryImpl @Inject constructor(
 			// In DND mode, we sync with system DND state
 			if (isDndActive && !_isActivated.value) {
 				_isActivated.value = true
-				CoroutineScope(Dispatchers.IO).launch {
-					historyRepository.addHistory(true, currentFilter)
-				}
 			} else if (!isDndActive && _isActivated.value) {
 				_isActivated.value = false
-				CoroutineScope(Dispatchers.IO).launch {
-					historyRepository.addHistory(false, currentFilter)
-				}
 			}
 		} else {
 			// In RINGER mode, we don't sync with system DND state because 

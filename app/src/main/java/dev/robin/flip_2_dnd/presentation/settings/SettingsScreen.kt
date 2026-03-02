@@ -98,8 +98,7 @@ import dev.robin.flip_2_dnd.core.VibrationPattern
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 import kotlinx.coroutines.launch
 
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import dev.robin.flip_2_dnd.core.UpdateState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -228,38 +227,130 @@ fun SettingsContent(
     val changelogSheetState = rememberModalBottomSheetState()
     
     val updateState by viewModel.updateState.collectAsState()
-    var showUpdateDialog by remember { mutableStateOf(false) }
+    var showUpdateSheet by remember { mutableStateOf(false) }
+    val updateSheetState = rememberModalBottomSheetState()
+    
+    // Track if the check was initiated manually from this screen
+    var isManualCheck by remember { mutableStateOf(false) }
 
     LaunchedEffect(updateState) {
-        if (updateState is UpdateState.Available) {
-            showUpdateDialog = true
-        } else if (updateState is UpdateState.Error) {
-             Toast.makeText(context, (updateState as UpdateState.Error).message, Toast.LENGTH_LONG).show()
+        when (updateState) {
+            is UpdateState.Checking -> {
+                if (isManualCheck) {
+                    showUpdateSheet = true
+                }
+            }
+            is UpdateState.Available -> {
+                // Always show if update is available, regardless of manual/auto
+                showUpdateSheet = true
+            }
+            is UpdateState.None, is UpdateState.Error -> {
+                if (isManualCheck) {
+                    showUpdateSheet = true
+                }
+            }
+            else -> {
+                // Idle state, do nothing
+            }
         }
     }
     
-    if (showUpdateDialog && updateState is UpdateState.Available) {
-        val update = (updateState as UpdateState.Available).update
-        AlertDialog(
-            onDismissRequest = { showUpdateDialog = false },
-            title = { Text("New Version Available") },
-            text = { Text("Version: ${update.versionName}\n\nA new version of Flip 2 DND Pro is available. Do you want to download and install it now?") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showUpdateDialog = false
-                    viewModel.downloadAndInstall(context, update)
-                }) {
-                    Text("Update")
-                }
+    if (showUpdateSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { 
+                showUpdateSheet = false 
+                isManualCheck = false
             },
-            dismissButton = {
-                TextButton(onClick = { 
-                    showUpdateDialog = false
-                }) {
-                    Text("Later")
+            sheetState = updateSheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                when (val state = updateState) {
+                    is UpdateState.Checking -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Checking for updates...",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    is UpdateState.Available -> {
+                        Text(
+                            text = "New Version Available",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Version: ${state.update.versionName}\n\nA new version of Flip 2 DND Pro is available.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = {
+                                showUpdateSheet = false
+                                viewModel.downloadAndInstall(context, state.update)
+                            },
+                            modifier = Modifier.fillMaxWidth().height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Text("Download & Install")
+                        }
+                    }
+                    is UpdateState.None -> {
+                        Text(
+                            text = "No Updates Available",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "You are using the latest version.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    is UpdateState.Error -> {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Error Checking for Updates",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = state.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    else -> {}
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-        )
+        }
     }
 
     if (showUpgradeDialog) {
@@ -402,6 +493,53 @@ fun SettingsContent(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    text = "For Root Users:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Root Command",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "su -c $adbCommand",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                showAdbDialog = false
+                                val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                clipboardManager.setPrimaryClip(ClipData.newPlainText("Root Command", "su -c $adbCommand"))
+                                Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        ) {
+                            Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text("Copy Root Command", style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+                
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
@@ -419,7 +557,7 @@ fun SettingsContent(
                 ) {
                     Icon(Icons.Default.ContentCopy, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.copy), style = MaterialTheme.typography.titleMedium)
+                    Text("Copy ADB Command", style = MaterialTheme.typography.titleMedium)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 TextButton(
@@ -1756,8 +1894,8 @@ fun SettingsContent(
                         if (ServiceLocator.getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
+                            isManualCheck = true
                             viewModel.checkForUpdate(true)
-                            Toast.makeText(context, "Checking for updates...", Toast.LENGTH_SHORT).show()
                         } else {
                             showUpgradeDialog = true
                         }

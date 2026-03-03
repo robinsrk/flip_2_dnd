@@ -8,6 +8,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/v/release/robinsrk/Flip_2_DND?style=for-the-badge&color=6200EE" alt="Release">
+  <img src="https://img.shields.io/github/downloads/robinsrk/Flip_2_DND/total?style=for-the-badge" alt="Downloads">
   <img src="https://img.shields.io/github/license/robinsrk/Flip_2_DND?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/github/stars/robinsrk/Flip_2_DND?style=for-the-badge" alt="Stars">
 </p>

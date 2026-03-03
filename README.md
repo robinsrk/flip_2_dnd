@@ -97,6 +97,9 @@ Choose your preferred platform to download the latest version:
   <a href="https://www.openapk.net/flip-2-dnd/dev.robin.flip_2_dnd/">
     <img src="./assets/images/getItOpenapk.png" alt="OpenAPK" width="160"/>
   </a>
+  <a href="obtainium://add/https://github.com/robinsrk/Flip_2_DND">
+  <img src="https://img.shields.io/badge/Add%20to-Obtainium-3DDC84?style=for-the-badge&logo=android" alt="Add to Obtainium"/>
+</a>
 </p>
 
 ---

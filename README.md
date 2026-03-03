@@ -97,8 +97,8 @@ Choose your preferred platform to download the latest version:
   <a href="https://www.openapk.net/flip-2-dnd/dev.robin.flip_2_dnd/">
     <img src="./assets/images/getItOpenapk.png" alt="OpenAPK" width="160"/>
   </a>
-  <a href="obtainium://add/https://github.com/robinsrk/Flip_2_DND">
-  <img src="https://img.shields.io/badge/Add%20to-Obtainium-3DDC84?style=for-the-badge&logo=android" alt="Add to Obtainium"/>
+<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22dev.robin.flip_2_dnd%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Frobinsrk%2FFlip_2_DND%22%2C%22author%22%3A%22robinsrk%22%2C%22name%22%3A%22Flip%202%20DND%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22dontSortReleasesList%5C%22%3Afalse%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22Flip%202%20DND%20automatically%20toggles%20Do%20Not%20Disturb%20when%20you%20place%20your%20phone%20face%20down.%5C%22%7D%22%2C%22overrideSource%22%3Anull%7D">
+  <img src="./assets/images/getItObtainium.png" alt="Add to Obtainium" width="160"/>
 </a>
 </p>
 

@@ -5,7 +5,7 @@ enum class Sound(val stringResId: Int, val soundResId: Int, val customSoundUri: 
     HISS(R.string.sound_hiss, R.raw.hiss),
     SHH(R.string.sound_shh, R.raw.shh),
     WHISTLE(R.string.sound_whistle, R.raw.whistle),
-    SYSTEM_DEFAULT(R.string.none, 0), // Uses none as placeholder strings
+    SYSTEM_DEFAULT(R.string.system_default, 0),
     CUSTOM(R.string.custom_sound, 0, null),
     NONE(R.string.none, 0)
 }

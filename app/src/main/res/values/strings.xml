@@ -117,7 +117,8 @@
 	<string name="coupon_copied">Coupon copied to clipboard</string>
 	<string name="select_sound">Select sound</string>
 	<string name="custom_sound">Custom Sound</string>
-	<string name="custom_sound_format">Custom: %1$s</string>
+    <string name="system_default">Default Notification</string>
+    <string name="custom_sound_format">Custom: %1$s</string>
 	<string name="error_opening_sound_picker">Could not open sound picker</string>
 	<string name="select_vibration_pattern">Select vibration pattern</string>
 	<string name="select_flashlight_pattern">Select flashlight pattern</string>

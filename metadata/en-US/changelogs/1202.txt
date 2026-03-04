@@ -1,0 +1,3 @@
+• Fix high sensitivity mode
+• Fix translations for spanish (by robert)
+• Fix pro badge in settings for premium users

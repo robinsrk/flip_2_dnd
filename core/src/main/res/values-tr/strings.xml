@@ -18,4 +18,19 @@
     <string name="flashlight_triple_blink">Üçlü Göz Kırpma</string>
     <string name="flashlight_long_blink">Uzun Göz Kırpma</string>
     <string name="flashlight_rapid_blink">Hızlı Göz Kırpma</string>
+    <string name="seconds">%1$d saniye</string>
+    <string name="error_opening_sound_picker">Ses seçici açılamadı</string>
+    <string name="error_sound_not_accessible">Ses dosyasına erişilemiyor</string>
+    <string name="error_permission">İzin hatası: %1$s</string>
+    <string name="error_could_not_get_permission">İzin alınamadı</string>
+    <string name="error_failed_to_get_permission">Seçilen ses için izin alınamadı</string>
+    <string name="error_processing_sound">Seçilen sesi işlerken hata oluştu: %1$s</string>
+    <string name="error_no_sound_selected">Ses dosyası seçilmedi</string>
+    <string name="unknown">Bilinmiyor</string>
+    <string name="orientation_face_up">Yüz yukarı</string>
+    <string name="orientation_face_down">Yüz aşağı</string>
+    <string name="system_default">Varsayılan Bildirim</string>
+    <string name="dnd_on_sound_saved">DND için özel ses kaydedildi</string>
+    <string name="dnd_off_sound_saved">DND için özel ses kaydedildi</string>
+    <string name="error_saving_sound">Ses kaydedilirken hata oluştu</string>
 </resources>

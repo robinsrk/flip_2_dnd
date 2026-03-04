@@ -32,4 +32,5 @@
     <string name="unknown">Unknown</string>
     <string name="orientation_face_up">Face up</string>
     <string name="orientation_face_down">Face down</string>
+    <string name="system_default">Default Notification</string>
 </resources>

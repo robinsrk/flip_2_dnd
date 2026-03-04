@@ -70,29 +70,29 @@ class MainActivity : ComponentActivity() {
   private val PREFS_NAME = "FlipDndPrefs"
   private val ONBOARDING_COMPLETED = "onboarding_completed"
   private val LAST_SEEN_VERSION = "last_seen_version"
-  
+
   private var isPermissionMissing by mutableStateOf(false)
   private val missingPermissions = mutableStateListOf<String>()
 
   private val dndPermissionLauncher =
-          registerForActivityResult(
-                  ActivityResultContracts.StartActivityForResult(),
-          ) { checkAndStartService() }
+    registerForActivityResult(
+      ActivityResultContracts.StartActivityForResult(),
+    ) { checkAndStartService() }
 
   private val notificationPermissionLauncher =
-          registerForActivityResult(
-                  ActivityResultContracts.RequestPermission(),
-          ) { isGranted ->
-              if (isGranted) {
-                  checkAndStartService()
-              } else {
-                  Toast.makeText(
-                          this,
-                          getString(R.string.error_notification_permission_required),
-                          Toast.LENGTH_LONG
-                  ).show()
-              }
-          }
+    registerForActivityResult(
+      ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+      if (isGranted) {
+        checkAndStartService()
+      } else {
+        Toast.makeText(
+          this,
+          getString(R.string.error_notification_permission_required),
+          Toast.LENGTH_LONG
+        ).show()
+      }
+    }
 
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
 
     // Check for updates (Pro version only)
     dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this).checkForUpdate(false)
-    
+
     // Load onboarding state from SharedPreferences
     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     showOnboarding = !prefs.getBoolean(ONBOARDING_COMPLETED, false)
@@ -120,8 +120,8 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       var showOnboardingState by remember { mutableStateOf(showOnboarding) }
-      var showChangelog by remember { 
-        mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion) 
+      var showChangelog by remember {
+        mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion)
       }
       var showRamadanPopup by remember { mutableStateOf(false) }
 
@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
       Flip_2_DNDTheme {
         val isDarkTheme = isSystemInDarkTheme()
         val surfaceColor = MaterialTheme.colorScheme.surface.toArgb()
-        
+
         remember(isDarkTheme) {
           enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(
@@ -156,11 +156,11 @@ class MainActivity : ComponentActivity() {
               showOnboarding = false
               // Save onboarding completion state
               prefs.edit().putBoolean(ONBOARDING_COMPLETED, true).apply()
-              
+
               // Also update last seen version when onboarding is completed
               // so changelog doesn't show immediately after onboarding
               prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
-              
+
               if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this@MainActivity).isPro()) {
                 showRamadanPopup = true
               }
@@ -170,7 +170,7 @@ class MainActivity : ComponentActivity() {
           )
         } else {
           AppNavigation()
-          
+
           if (showChangelog) {
             ChangelogBottomSheet(
               onDismiss = {
@@ -205,10 +205,10 @@ class MainActivity : ComponentActivity() {
         }
       }
     }
-    
+
     // Check permissions every time the app opens
     if (!showOnboarding) {
-        checkAndStartService()
+      checkAndStartService()
     }
   }
 
@@ -258,9 +258,12 @@ class MainActivity : ComponentActivity() {
     val notificationPolicyGranted = isNotificationPolicyAccessGranted()
     val batteryOptimizationDisabled = isBatteryOptimizationDisabled()
     val notificationPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+      ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS
+      ) == PackageManager.PERMISSION_GRANTED
     } else {
-        true
+      true
     }
 
     // Update missing permissions state
@@ -272,7 +275,7 @@ class MainActivity : ComponentActivity() {
 
     // Start service if mandatory permissions are granted
     if (notificationPolicyGranted && batteryOptimizationDisabled) {
-        startFlipDetectorService()
+      startFlipDetectorService()
     }
 
     // If mandatory permissions are missing, the dialog will be shown via Compose state
@@ -295,10 +298,10 @@ class MainActivity : ComponentActivity() {
 
   private fun requestDisableBatteryOptimization() {
     val intent =
-            Intent().apply {
-              action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-              data = Uri.parse("package:$packageName")
-            }
+      Intent().apply {
+        action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        data = Uri.parse("package:$packageName")
+      }
     startActivity(intent)
   }
 
@@ -312,8 +315,7 @@ class MainActivity : ComponentActivity() {
     val context = androidx.compose.ui.platform.LocalContext.current
     val clipboard = LocalClipboard.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
-    val gumroadUrl = "https://robinsrk.netlify.app/buyflip2dnd"
-    val couponCode = stringResource(id = R.string.ramadan_coupon)
+    val patreonUrl = "https://www.patreon.com/posts/flip-2-dnd-150924870"
 
     ModalBottomSheet(
       onDismissRequest = onDismiss,
@@ -349,49 +351,30 @@ class MainActivity : ComponentActivity() {
           textAlign = TextAlign.Center,
           modifier = Modifier.padding(bottom = 24.dp)
         )
-          
-        Surface(
-          color = MaterialTheme.colorScheme.primaryContainer,
-          shape = RoundedCornerShape(16.dp),
-          modifier = Modifier.clickable {
-            scope.launch {
-              clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("coupon", couponCode)))
-            }
-            Toast.makeText(context, context.getString(R.string.coupon_copied), Toast.LENGTH_SHORT).show()
-          }
-        ) {
-          Text(
-            text = stringResource(id = R.string.ramadan_coupon_code, couponCode),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.ExtraBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-          )
-        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Button(
-              onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gumroadUrl))
-                context.startActivity(intent)
-                onDismiss()
-              },
-              modifier = Modifier.fillMaxWidth().height(56.dp),
-              shape = RoundedCornerShape(16.dp),
-            ) {
-              Text(stringResource(id = R.string.get_pro), style = MaterialTheme.typography.titleMedium)
-            }
-            TextButton(
-              onClick = onDismiss,
-              modifier = Modifier.fillMaxWidth().height(56.dp)
-            ) {
-              Text(stringResource(id = R.string.maybe_later), style = MaterialTheme.typography.titleMedium)
-            }
+          Button(
+            onClick = {
+              val intent = Intent(Intent.ACTION_VIEW, Uri.parse(patreonUrl))
+              context.startActivity(intent)
+              onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+          ) {
+            Text(stringResource(id = R.string.get_pro), style = MaterialTheme.typography.titleMedium)
+          }
+          TextButton(
+            onClick = onDismiss,
+            modifier = Modifier.fillMaxWidth().height(56.dp)
+          ) {
+            Text(stringResource(id = R.string.maybe_later), style = MaterialTheme.typography.titleMedium)
+          }
         }
       }
     }

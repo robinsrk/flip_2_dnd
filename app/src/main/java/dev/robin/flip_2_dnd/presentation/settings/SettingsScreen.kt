@@ -1932,7 +1932,7 @@ fun SettingsContent(
 }
 
 @Composable
-private fun ScheduleSection(
+fun ScheduleSection(
     title: String? = null,
     enabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
@@ -1947,6 +1947,7 @@ private fun ScheduleSection(
     isPro: Boolean = false,
 ) {
     val context = LocalContext.current
+    val featureManager = ServiceLocator.getFeatureManager(context)
 
     Column(modifier = Modifier.alpha(alpha)) {
         if (title != null) {
@@ -1961,9 +1962,9 @@ private fun ScheduleSection(
                     text = title,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.weight(1f, fill = false),
+                     modifier = Modifier.weight(1f, fill = false),
                 )
-                if (isPro) {
+                if (isPro && !featureManager.isPro()) {
                     ProBadge(modifier = Modifier.padding(start = 8.dp))
                 }
             }
@@ -2103,6 +2104,8 @@ fun SettingsSwitchItem(
     alpha: Float = 1f,
     isPro: Boolean = false,
 ) {
+    val context = LocalContext.current
+    val featureManager = ServiceLocator.getFeatureManager(context)
     Card(
         shape = RoundedCornerShape(28.dp),
         colors =
@@ -2137,20 +2140,20 @@ fun SettingsSwitchItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
-                modifier = Modifier.weight(1f),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f, fill = false),
-                    )
-                    if (isPro) {
-                        ProBadge(modifier = Modifier.padding(start = 8.dp))
-                    }
-                }
-                if (description.isNotEmpty()) {
+                 modifier = Modifier.weight(1f),
+             ) {
+                 Row(verticalAlignment = Alignment.CenterVertically) {
+                     Text(
+                         text = title,
+                         style = MaterialTheme.typography.titleLarge,
+                         fontWeight = FontWeight.Bold,
+                         modifier = Modifier.weight(1f, fill = false),
+                     )
+                     if (isPro && !featureManager.isPro()) {
+                         ProBadge(modifier = Modifier.padding(start = 8.dp))
+                     }
+                 }
+                 if (description.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = description,
@@ -2175,6 +2178,8 @@ fun SettingsSliderItem(
     isPro: Boolean = false,
     sliderContent: @Composable () -> Unit,
 ) {
+    val context = LocalContext.current
+    val featureManager = ServiceLocator.getFeatureManager(context)
     Card(
         shape = RoundedCornerShape(28.dp),
         colors =
@@ -2204,7 +2209,7 @@ fun SettingsSliderItem(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f, fill = false),
                 )
-                if (isPro) {
+                if (isPro && !featureManager.isPro()) {
                     ProBadge(modifier = Modifier.padding(start = 8.dp))
                 }
             }
@@ -2233,6 +2238,8 @@ fun SettingsClickableItem(
     alpha: Float = 1f,
     isPro: Boolean = false,
 ) {
+    val context = LocalContext.current
+    val featureManager = ServiceLocator.getFeatureManager(context)
     Card(
         shape = RoundedCornerShape(28.dp),
         colors =
@@ -2274,7 +2281,7 @@ fun SettingsClickableItem(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f, fill = false),
                     )
-                    if (isPro) {
+                    if (isPro && !featureManager.isPro()) {
                         ProBadge(modifier = Modifier.padding(start = 8.dp))
                     }
                 }

@@ -56,7 +56,7 @@
 	<string name="use_custom_vibration_strength">Use custom vibration strength</string>
 	<string name="extras">Extras</string>
 	<string name="join_telegram">Join Telegram</string>
-	<string name="join_telegram_description">Join our Telegram Community (Requires Pro)</string>
+	<string name="join_telegram_description">Join our Telegram Community</string>
 	<string name="support_developer">Support Developer</string>
 	<string name="support_developer_description">Help keep the app free and improving</string>
 	<string name="your_support_helps">Your support helps keep this app free and continuously improving!</string>
@@ -74,7 +74,7 @@
 	<string name="headphone_detection">Headphone Detection</string>
 	<string name="headphone_detection_description">Pause service when headphones are connected</string>
 	<string name="proximity_detection">Proximity Detection</string>
-	<string name="proximity_detection_description">Only enable DND if proximity sensor is also covered (Requires Pro)</string>
+	<string name="proximity_detection_description">Only enable DND if proximity sensor is also covered</string>
 	<string name="dnd_activation_schedule">DND Activation Schedule</string>
 	<string name="sound_schedule">Sound Schedule</string>
 	<string name="vibration_schedule">Vibration Schedule</string>
@@ -86,7 +86,7 @@
 	<string name="end_time">End Time</string>
 	<string name="days">Days</string>
 	<string name="auto_start">Auto Start on Boot</string>
-	<string name="auto_start_description">Automatically start the flip detector service when the device reboots (Requires Pro)</string>
+	<string name="auto_start_description">Automatically start the flip detector service when the device reboots</string>
 	<string name="flashlight">Flashlight</string>
 	<string name="flashlight_enabled">Flashlight Feedback</string>
 	<string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
@@ -277,7 +277,7 @@
 	<string name="patreon">Patreon</string>
 	<string name="crypto">Crypto</string>
 	<string name="check_for_updates">Check for Updates</string>
-	<string name="check_for_updates_description">Check for the latest version of Flip 2 DND (Requires Pro)</string>
+	<string name="check_for_updates_description">Check for the latest version of Flip 2 DND</string>
 	<string name="update_check_dialog_title">Check for Updates</string>
 	<string name="update_check_dialog_message">Where did you purchase Flip 2 DND Pro? We will redirect you to the respective platform to check for updates.</string>
 	<string name="feedback_with_flashlight_on">Feedback even if Flashlight is ON</string>

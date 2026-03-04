@@ -54,9 +54,6 @@ Get the most out of Flip 2 DND by upgrading to Pro!
 - **DND Cancellation Filters**: Flashlight, Media, and Headphone detection.
 
 <p align="center">
-  <a href="https://robinsrk.gumroad.com/l/flip_2_dnd">
-    <img src="./assets/images/buy_on_gumroad.png" alt="Buy on Gumroad" width="170"/>
-  </a>
   <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
     <img src="./assets/images/buy_on_patreon.png" alt="Buy on Patreon" width="170"/>
   </a>
@@ -79,18 +76,15 @@ Get the most out of Flip 2 DND by upgrading to Pro!
 Choose your preferred platform to download the latest version:
 
 <p align="center">
-  <a href="https://robinsrk.gumroad.com/l/flip_2_dnd">
-    <img src="./assets/images/buy_on_gumroad.png" alt="Buy on Gumroad" width="160"/>
-  </a>
   <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
     <img src="./assets/images/buy_on_patreon.png" alt="Buy on Patreon" width="160"/>
   </a>
   <a href="https://apt.izzysoft.de/fdroid/index/apk/dev.robin.flip_2_dnd">
     <img src="./assets/images/getItIzzyOnDroid.png" alt="IzzyOnDroid" width="160"/>
   </a>
-  <!-- <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
+  <a href="https://f-droid.org/en/packages/dev.robin.flip_2_dnd/">
     <img src="./assets/images/getItf-droid.png" alt="F-Droid" width="160"/>
-  </a> -->
+  </a>
   <a href="https://github.com/robinsrk/Flip_2_DND/releases/">
     <img src="./assets/images/getItGithub.png" alt="GitHub" width="160"/>
   </a>
@@ -140,7 +134,7 @@ adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS
 We are extremely grateful to our supporters on Patreon who help keep this project alive and growing.
 
 <p align="center">
-  <a href="https://www.patreon.com/posts/flip-2-dnd-150924870">
+  <a href="https://patreon.com/AbulKalamRobin369">
     <img src="./assets/images/becomeAPatronBanner.png" alt="Become a Patron" width="400"/>
   </a>
 </p>
@@ -149,7 +143,7 @@ We are extremely grateful to our supporters on Patreon who help keep this projec
 - **Martin Buckley**
 - **Michael W Erdely**
 
-Support the development of Flip 2 DND by [becoming a Patron](https://www.patreon.com/posts/flip-2-dnd-150924870).
+Support the development of Flip 2 DND by [becoming a Patron](https://www.patreon.com/AbulKalamRobin369).
 
 ---
 

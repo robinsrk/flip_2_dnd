@@ -109,6 +109,7 @@ fun SettingsContent(
 ) {
     val context = LocalContext.current
     val adbCommand = "adb shell pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS"
+    val rootCommand = "su -c /system/bin/pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS"
     val clipboard = LocalClipboard.current
     val packageInfo =
         remember {
@@ -517,7 +518,7 @@ fun SettingsContent(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "su -c $adbCommand",
+                            text = rootCommand,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -526,7 +527,7 @@ fun SettingsContent(
                             onClick = {
                                 showAdbDialog = false
                                 val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                clipboardManager.setPrimaryClip(ClipData.newPlainText("Root Command", "su -c $adbCommand"))
+                                clipboardManager.setPrimaryClip(ClipData.newPlainText("Root Command", rootCommand))
                                 Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.fillMaxWidth().height(48.dp),

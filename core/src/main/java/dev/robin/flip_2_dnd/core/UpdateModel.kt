@@ -1,5 +1,8 @@
 package dev.robin.flip_2_dnd.core
 
+import androidx.annotation.Keep
+
+@Keep
 data class UpdateResponse(
     val versionName: String,
     val versionCode: Int,

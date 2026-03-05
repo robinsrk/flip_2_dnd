@@ -8,7 +8,8 @@ import androidx.core.content.ContextCompat
 class AutoStartService : BroadcastReceiver() {
 
 	override fun onReceive(context: Context?, intent: Intent?) {
-		if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
+		if (intent?.action == Intent.ACTION_BOOT_COMPLETED ||
+			intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
 			context?.let {
 				if (dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(it).autoStartEnabled()) {
 					val prefs = it.getSharedPreferences("flip_2_dnd_settings", Context.MODE_PRIVATE)

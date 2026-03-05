@@ -19,6 +19,7 @@
 # Keep Pro and Free implementations as they are accessed via reflection
 -keep class dev.robin.flip_2_dnd.pro.** { *; }
 -keep class dev.robin.flip_2_dnd.free.** { *; }
+-keep class dev.robin.flip_2_dnd.core.** { *; }
 -keep class dev.robin.flip_2_dnd.core.ServiceLocator { *; }
 
 # Keep Dagger/Hilt
@@ -30,7 +31,22 @@
 # Retrofit
 -keep class retrofit2.** { *; }
 -keep class okhttp3.** { *; }
--keepattributes Signature
+-keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes *Annotation*
 -dontwarn okhttp3.**
 -dontwarn retrofit2.**
+
+# Retrofit 2.x Coroutines support
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembernames class kotlinx.coroutines.android.HandlerContext {
+    java.lang.String name;
+}
+
+# Preserve Generic Signatures for suspend functions
+-keepclassmembers,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+-keepattributes Signature
+-keep class kotlin.coroutines.Continuation
+

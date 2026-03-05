@@ -1,0 +1,3 @@
+• Fix update checker for pro variant
+• Upgrade strings
+• Fix audio playing attributes (by robert)

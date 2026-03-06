@@ -221,6 +221,7 @@
     <string name="unknown">Desconocido</string>
     <string name="orientation_face_up">Boca arriba</string>
     <string name="orientation_face_down">Boca abajo</string>
+
     <!-- Added missing translations -->
     <string name="activation_mode">Modo de activación</string>
     <string name="activation_mode_description">Elige qué sucede al voltear el teléfono</string>

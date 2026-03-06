@@ -82,8 +82,8 @@
     <string name="start_time">Hora de inicio</string>
     <string name="end_time">Hora de fin</string>
     <string name="days">Días</string>
-    <string name="auto_start">Inicio automático al arrancar</string>
-    <string name="auto_start_description">Iniciar automáticamente el servicio al reiniciar el dispositivo (requiere Pro)</string>
+    <string name="auto_start">Inicio automático</string>
+    <string name="auto_start_description">Iniciar automáticamente el servicio al reiniciar el dispositivo o cuando se actualiza la aplicación.</string>
     <string name="flashlight">Linterna</string>
     <string name="flashlight_enabled">Retroalimentación de linterna</string>
     <string name="flashlight_enabled_description">Habilitar retroalimentación de linterna para DND</string>
@@ -221,6 +221,7 @@
     <string name="unknown">Desconocido</string>
     <string name="orientation_face_up">Boca arriba</string>
     <string name="orientation_face_down">Boca abajo</string>
+
     <!-- Added missing translations -->
     <string name="activation_mode">Modo de activación</string>
     <string name="activation_mode_description">Elige qué sucede al voltear el teléfono</string>

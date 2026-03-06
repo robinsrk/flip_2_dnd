@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Flip 2 DND</string>
+    <string name="app_name">Flip 2 DND</string>
 	<string name="service_description">Uses device sensors to detect phone orientation and automatically enable Do Not Disturb mode when face down</string>
 	<string name="widget_toggle_description">Toggle Flip 2 DND service</string>
 	<string name="home">Home</string>
@@ -44,7 +44,7 @@
 	<string name="copy_command">Copy Command</string>
 	<string name="close">Close</string>
 	<string name="adb_command_text">adb shell pm grant dev.robin.flip_2_dnd android.permission.WRITE_SECURE_SETTINGS</string>
-  <string name="adb_command">ADB command</string>
+    <string name="adb_command">ADB command</string>
 	<string name="dnd_on_sound_description">Sound to play when DND is enabled</string>
 	<string name="dnd_off_sound_description">Sound to play when DND is disabled</string>
 	<string name="use_custom_volume_description">Use custom volume for DND sounds</string>
@@ -85,8 +85,8 @@
 	<string name="start_time">Start Time</string>
 	<string name="end_time">End Time</string>
 	<string name="days">Days</string>
-	<string name="auto_start">Auto Start on Boot</string>
-	<string name="auto_start_description">Automatically start the flip detector service when the device reboots</string>
+	<string name="auto_start">Auto Start</string>
+	<string name="auto_start_description">Automatically start the flip detector service when the device reboots or the app being updated.</string>
 	<string name="flashlight">Flashlight</string>
 	<string name="flashlight_enabled">Flashlight Feedback</string>
 	<string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>
@@ -255,12 +255,12 @@
 	<string name="notification_battery_saver_suggested_title">Battery Saver suggested</string>
 	<string name="notification_battery_saver_suggested_text">Tap to enable Battery Saver</string>
 	<string name="notification_monitoring_text">Monitoring phone orientation</string>
-  <string name="address_copied">Address copied to clipboard</string>
-  <string name="error_notification_permission_required">Notification permission is required for app functionality</string>
-  <string name="error_grant_all_permissions">Please grant all permissions for full functionality</string>
-  <string name="unknown">Unknown</string>
-  <string name="orientation_face_up">Face up</string>
-  <string name="orientation_face_down">Face down</string>
+    <string name="address_copied">Address copied to clipboard</string>
+    <string name="error_notification_permission_required">Notification permission is required for app functionality</string>
+    <string name="error_grant_all_permissions">Please grant all permissions for full functionality</string>
+    <string name="unknown">Unknown</string>
+    <string name="orientation_face_up">Face up</string>
+    <string name="orientation_face_down">Face down</string>
 	<string name="whats_new">What\'s New</string>
 	<string name="continue_button">Continue</string>
 	<string name="permission_required_title">Permissions Required</string>

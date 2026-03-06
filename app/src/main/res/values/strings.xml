@@ -86,7 +86,7 @@
 	<string name="end_time">End Time</string>
 	<string name="days">Days</string>
 	<string name="auto_start">Auto Start</string>
-	<string name="auto_start_description">Automatically start the flip detector service when the device reboots or the app being updated</string>
+	<string name="auto_start_description">Automatically start the flip detector service when the device reboots or the app being updated.</string>
 	<string name="flashlight">Flashlight</string>
 	<string name="flashlight_enabled">Flashlight Feedback</string>
 	<string name="flashlight_enabled_description">Enable flashlight feedback for DND</string>

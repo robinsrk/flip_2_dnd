@@ -156,15 +156,8 @@ class SensorService(
     // Adjust thresholds based on sensitivity
     val sensorManagerPro = dev.robin.flip_2_dnd.core.ServiceLocator.getSensorManagerPro(context)
 
-    val isHighSensitivityEnabled = sensorManagerPro.isHighSensitivityEnabled(
-      highSensitivityMode,
-      highSensitivityScheduleEnabled,
-      highSensitivityScheduleStartTime,
-      highSensitivityScheduleEndTime,
-      highSensitivityScheduleDays
-    )
-
-    val thresholds = sensorManagerPro.getOrientationThresholds(sensitivity, isHighSensitivityEnabled)
+    // High sensitivity is always ON now; thresholds use high sensitivity values directly
+    val thresholds = sensorManagerPro.getOrientationThresholds(sensitivity)
 
     // Check if the phone is relatively stable (not in motion)
     val isStable = abs(lastGyroReading[0]) < thresholds.gyro &&
@@ -180,18 +173,12 @@ class SensorService(
         // Only check stability for face down
         if (isStable) PhoneOrientation.FACE_DOWN else _orientation.value
       }
-
-      // When high sensitivity mode is enabled, any orientation that's not face down is considered face up
-      isHighSensitivityEnabled -> {
-        PhoneOrientation.FACE_UP
-      }
-
       abs(z) >= thresholds.accel && z > 0 -> {
         PhoneOrientation.FACE_UP
       }
-
       else -> {
-        _orientation.value
+        // High sensitivity is always on by default; any other orientation defaults to FACE_UP
+        PhoneOrientation.FACE_UP
       }
     }
 

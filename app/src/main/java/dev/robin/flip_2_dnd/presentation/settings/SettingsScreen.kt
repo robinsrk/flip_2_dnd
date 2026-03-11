@@ -1742,45 +1742,7 @@ fun SettingsContent(
                     isPro = true,
                 )
 
-                val highSensitivityModeEnabled by viewModel.highSensitivityModeEnabled.collectAsState()
-                SettingsSwitchItem(
-                    title = stringResource(id = R.string.high_sensitivity_mode),
-                    description = stringResource(id = R.string.high_sensitivity_mode_description),
-                    checked = highSensitivityModeEnabled,
-                    onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
-                                .advancedSensitivityEnabled()
-                        ) {
-                            viewModel.setHighSensitivityModeEnabled(it)
-                        } else {
-                            showUpgradeDialog = true
-                        }
-                    },
-                    alpha =
-                        if (ServiceLocator.getFeatureManager(context)
-                                .advancedSensitivityEnabled()
-                        ) {
-                            1f
-                        } else {
-                            0.5f
-                        },
-                    isPro = true,
-                )
-
-                AnimatedVisibility(visible = highSensitivityModeEnabled) {
-                    ScheduleSection(
-                        title = null,
-                        description = stringResource(id = R.string.high_sensitivity_schedule_description),
-                        enabled = highSensitivityScheduleEnabled,
-                        onEnabledChange = { viewModel.setHighSensitivityScheduleEnabled(it) },
-                        startTime = highSensitivityScheduleStartTime,
-                        onStartTimeChange = { viewModel.setHighSensitivityScheduleStartTime(it) },
-                        endTime = highSensitivityScheduleEndTime,
-                        onEndTimeChange = { viewModel.setHighSensitivityScheduleEndTime(it) },
-                        selectedDays = highSensitivityScheduleDays,
-                        onDaysChange = { viewModel.setHighSensitivityScheduleDays(it) },
-                    )
-                }
+                // High sensitivity feature removed from display. Always-on by default.
 
                 SettingsClickableItem(
                     title = stringResource(id = R.string.language),

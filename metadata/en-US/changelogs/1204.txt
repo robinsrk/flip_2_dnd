@@ -1,0 +1,3 @@
+• Pro feature high sensitivity made free
+• Fix flashlight patterns
+• Flip detection optimization

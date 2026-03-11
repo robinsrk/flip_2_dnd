@@ -1,3 +1,8 @@
+[v12.0.4]
+• Pro feature high sensitivity made free
+• Fix flashlight patterns
+• Flip detection optimization
+
 [v12.0.3]
 • Fix update checker for pro variant
 • Upgrade strings

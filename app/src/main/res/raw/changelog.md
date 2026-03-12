@@ -1,0 +1,104 @@
+## v12.0.4
+- Pro feature high sensitivity made free
+- Fix flashlight patterns
+- Flip detection optimization
+
+## v12.0.3
+- Fix update checker for pro variant
+- Upgrade strings
+- Fix audio playing attributes (by robert)
+
+## v12.0.2
+- Fix high sensitivity mode
+- Fix translations for spanish (by robert)
+- Fix pro badge in settings for premium users
+
+## v12.0.1
+- Added credits section for patreon members
+- UI Optimizations
+- Battery optimizations
+
+## v11.1.2
+- Fix home screen cards width
+- Optimized UI
+- Added missing translations
+
+## v11.1.1
+- Improve home screen animations
+- Fix home screen icon layout
+- Fix battery saver command dialog popup
+
+## v11.1.0
+- Add sliding animations in home page
+- UI optimizations
+
+## v11.0.3
+- Add flashlight intensity controller in settings
+- Add flashlight feedback for slider
+- Fix flashlight not blinking respecting the settings
+
+## v11.0.2
+- Changed flashlight intensity to lowest for flashlight feedback.
+
+## v11.0.1
+- Optimized background battery usage and sensor polling.
+- Smart sensor management to save battery when screen is ON.
+- Ramadan celebration popup for free users.
+- Exclusive 40% discount for Pro upgrade (Coupon: RAMADANKARIM).
+- Fixed various minor bugs and stability issues.
+
+## v11.0.0
+- Redesigned Home Screen with a modern, single-page layout.
+- Integrated Settings into a sleek Bottom Sheet.
+- Added a "Pro" upgrade button to the top bar for easy access to premium features.
+- Simplified navigation system for a faster and more intuitive experience.
+- Refined UI with improved spacing, icons, and contrast.
+- Resolved various layout and scrolling issues.
+
+## v10.1.8
+- Added "Feedback even if Flashlight is ON" setting in Flashlight Feedback
+- Fixed flashlight state not restoring correctly after feedback
+- Improved flashlight detection logic
+
+## v10.1.7
+- Refactored settings UI headers with explicit toggles
+- Added "Support Developer" popup with Patreon and Crypto options
+- Reconfigure gradlew
+
+## v10.1.6
+- Added schedule support for High Sensitivity Mode (Start Time, End Time, and Days)
+- Added smooth animations when toggling settings sections
+- Improved UI layout consistency and resolved tile overlapping issues
+
+## v10.1.5
+- Improved flip detection precision using a low-pass filter and higher sampling rate
+- Mandatory permissions (DND, Battery Optimization) are now checked on every app startup
+- Notification permission is no longer mandatory to use the app
+
+## v10.1.4
+- Restored fully reproducible builds for Free flavor
+- Removed all environment-dependent build constants
+- Optimized build process for F-Droid and IzzyOnDroid
+
+## v10.1.3
+- Added schedule support for flashlight feedback (Start Time, End Time, and Days)
+- Improved feedback logic consistency across sound, vibration, and flashlight
+- UI improvements in the flashlight settings section
+
+## v10.1.2
+- Added DND history to track activations and deactivations
+- Added proximity sensor detection for more reliable activation
+- Migrated to KSP for better performance and Kotlin compatibility
+- Added "What's New" changelog dialog
+- UI improvements and theme consistency updates
+- Fixed various minor bugs
+
+## v10.1.1
+- Added about app section
+- Fixed battery permission command dialog
+- Improved donation screen layout and navigation UI
+- Added dynamic changelog support
+- Refined top bar animations and font weight handling
+- Enhanced custom sound URI validation
+- Improved MediaPlayer error handling
+- Added new vibration patterns (Heartbeat, Tick Tock)

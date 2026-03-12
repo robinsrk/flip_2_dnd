@@ -37,11 +37,11 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -87,19 +87,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import dev.robin.flip_2_dnd.core.ServiceLocator
 import dev.robin.flip_2_dnd.R
 import dev.robin.flip_2_dnd.core.ActivationMode
 import dev.robin.flip_2_dnd.core.DndMode
-import dev.robin.flip_2_dnd.core.RingerMode
-import dev.robin.flip_2_dnd.core.Sound
 import dev.robin.flip_2_dnd.core.FlashlightPattern
+import dev.robin.flip_2_dnd.core.RingerMode
+import dev.robin.flip_2_dnd.core.ServiceLocator
+import dev.robin.flip_2_dnd.core.Sound
+import dev.robin.flip_2_dnd.core.UpdateState
 import dev.robin.flip_2_dnd.core.VibrationPattern
+import dev.robin.flip_2_dnd.presentation.changelog.ChangelogAccordion
+import dev.robin.flip_2_dnd.presentation.changelog.changelogEntries
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 import kotlinx.coroutines.launch
-
-import androidx.compose.material3.CircularProgressIndicator
-import dev.robin.flip_2_dnd.core.UpdateState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,33 +143,12 @@ fun SettingsContent(
     val isBeta =
         versionName.contains("pre", ignoreCase = true) ||
             versionName.contains("beta", ignoreCase = true)
-
-    val changelogText =
-        remember(versionName) {
-            try {
-                val rawContent =
-                    context.resources
-                        .openRawResource(R.raw.changelog)
-                        .bufferedReader()
-                        .use { it.readText() }
-                val sections = rawContent.split("\n\n").filter { it.isNotBlank() }
-			
-                sections
-                    .filter { section ->
-                        val firstLine = section.lines().firstOrNull() ?: ""
-                        val isSectionBeta = firstLine.contains("(BETA)", ignoreCase = true)
-				
-                        if (isSectionBeta) {
-                            isBeta // Only include beta sections if current app is beta
-                        } else {
-                            true // Always include stable sections
-                        }
-                    }.joinToString("\n\n")
-            } catch (e: Exception) {
-                context.getString(R.string.unable_to_load_changelog)
-            }
-        }
+    // Changelog is now powered by Kotlin data (ChangelogModel.kt). No raw MD rendering here.
+    // Kept for compatibility: references to changelog from MD have been removed.
     val scope = rememberCoroutineScope()
+    // Import Kotlin-based changelog data source
+    // (ChangelogAccordion and changelogEntries are defined in the changelog package)
+    // (Imports will be resolved by the compiler; added below in patch)
     val soundEnabled by viewModel.soundEnabled.collectAsState()
     val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
     val screenOffOnly by viewModel.screenOffOnly.collectAsState()
@@ -226,11 +205,11 @@ fun SettingsContent(
     var showChangelogSheet by remember { mutableStateOf(false) }
     var showCreditsDialog by remember { mutableStateOf(false) }
     val changelogSheetState = rememberModalBottomSheetState()
-    
+
     val updateState by viewModel.updateState.collectAsState()
     var showUpdateSheet by remember { mutableStateOf(false) }
     val updateSheetState = rememberModalBottomSheetState()
-    
+
     // Track if the check was initiated manually from this screen
     var isManualCheck by remember { mutableStateOf(false) }
 
@@ -241,25 +220,28 @@ fun SettingsContent(
                     showUpdateSheet = true
                 }
             }
+
             is UpdateState.Available -> {
                 // Always show if update is available, regardless of manual/auto
                 showUpdateSheet = true
             }
+
             is UpdateState.None, is UpdateState.Error -> {
                 if (isManualCheck) {
                     showUpdateSheet = true
                 }
             }
+
             else -> {
                 // Idle state, do nothing
             }
         }
     }
-    
+
     if (showUpdateSheet) {
         ModalBottomSheet(
-            onDismissRequest = { 
-                showUpdateSheet = false 
+            onDismissRequest = {
+                showUpdateSheet = false
                 isManualCheck = false
             },
             sheetState = updateSheetState,
@@ -267,37 +249,39 @@ fun SettingsContent(
             tonalElevation = 8.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .padding(bottom = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 when (val state = updateState) {
                     is UpdateState.Checking -> {
                         CircularProgressIndicator(
                             modifier = Modifier.size(48.dp),
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Checking for updates...",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
+
                     is UpdateState.Available -> {
                         Text(
                             text = "New Version Available",
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Version: ${state.update.versionName}\n\nA new version of Flip 2 DND Pro is available.",
                             style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
@@ -311,42 +295,45 @@ fun SettingsContent(
                             Text("Download & Install")
                         }
                     }
+
                     is UpdateState.None -> {
                         Text(
                             text = "No Updates Available",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "You are using the latest version.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+
                     is UpdateState.Error -> {
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier.size(48.dp),
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Error Checking for Updates",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.error
+                            color = MaterialTheme.colorScheme.error,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = state.message,
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+
                     else -> {}
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -378,11 +365,8 @@ fun SettingsContent(
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = changelogText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    lineHeight = 24.sp,
-                )
+                // Render Kotlin-based changelog using the accordion UI
+                ChangelogAccordion(entries = changelogEntries)
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -395,24 +379,25 @@ fun SettingsContent(
             tonalElevation = 8.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .padding(bottom = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = stringResource(R.string.support_dialog_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
                 Text(
                     text = stringResource(R.string.support_dialog_message),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = 24.dp),
                 )
                 Button(
                     onClick = {
@@ -457,70 +442,71 @@ fun SettingsContent(
             tonalElevation = 8.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .padding(bottom = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .padding(bottom = 24.dp),
             ) {
                 Text(
                     text = stringResource(R.string.adb_permission_dialog_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
                 Text(
                     text = stringResource(R.string.adb_permission_dialog_message),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(R.string.adb_permission_code),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = adbCommand,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 Text(
                     text = "For Root Users:",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
-                
+
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = "Root Command",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = rootCommand,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
@@ -532,7 +518,7 @@ fun SettingsContent(
                             },
                             modifier = Modifier.fillMaxWidth().height(48.dp),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         ) {
                             Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
@@ -540,7 +526,7 @@ fun SettingsContent(
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
@@ -578,24 +564,25 @@ fun SettingsContent(
             tonalElevation = 8.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .padding(bottom = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = stringResource(R.string.update_check_dialog_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(bottom = 16.dp),
                 )
                 Text(
                     text = stringResource(R.string.update_check_dialog_message),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = 24.dp),
                 )
                 Button(
                     onClick = {
@@ -638,20 +625,22 @@ fun SettingsContent(
             tonalElevation = 8.dp,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 8.dp, bottom = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 8.dp, bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Heart Icon
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = null,
                     tint = Color(0xFFFF4081), // Premium pink/heart color
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(bottom = 16.dp)
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .padding(bottom = 16.dp),
                 )
 
                 Text(
@@ -659,7 +648,7 @@ fun SettingsContent(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
 
                 Text(
@@ -667,7 +656,7 @@ fun SettingsContent(
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = 24.dp),
                 )
 
                 if (true) { // Always show since we have names
@@ -676,13 +665,13 @@ fun SettingsContent(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                        modifier = Modifier.padding(bottom = 12.dp),
                     )
 
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
                             text = "Martin Buckley\nMichael W Erdely",
@@ -690,7 +679,7 @@ fun SettingsContent(
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(20.dp),
-                            lineHeight = 32.sp
+                            lineHeight = 32.sp,
                         )
                     }
                 }
@@ -700,13 +689,13 @@ fun SettingsContent(
                 Button(
                     onClick = { showCreditsDialog = false },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Text(
                         text = "Close",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 4.dp)
+                        modifier = Modifier.padding(vertical = 4.dp),
                     )
                 }
             }
@@ -870,7 +859,8 @@ fun SettingsContent(
                             Slider(
                                 value = sliderPosition,
                                 onValueChange = {
-                                    if (ServiceLocator.getFeatureManager(context)
+                                    if (ServiceLocator
+                                            .getFeatureManager(context)
                                             .delayCustomizationEnabled()
                                     ) {
                                         sliderPosition = it
@@ -879,7 +869,8 @@ fun SettingsContent(
                                     }
                                 },
                                 onValueChangeFinished = {
-                                    if (ServiceLocator.getFeatureManager(context)
+                                    if (ServiceLocator
+                                            .getFeatureManager(context)
                                             .delayCustomizationEnabled()
                                     ) {
                                         viewModel.setActivationDelay(sliderPosition.toInt())
@@ -889,7 +880,8 @@ fun SettingsContent(
                                 steps = 9,
                                 modifier = Modifier.width(200.dp),
                                 enabled =
-                                    ServiceLocator.getFeatureManager(context)
+                                    ServiceLocator
+                                        .getFeatureManager(context)
                                         .delayCustomizationEnabled(),
                             )
                             Text(
@@ -900,7 +892,8 @@ fun SettingsContent(
                                     Modifier
                                         .padding(start = 8.dp)
                                         .alpha(
-                                            if (ServiceLocator.getFeatureManager(context)
+                                            if (ServiceLocator
+                                                    .getFeatureManager(context)
                                                     .delayCustomizationEnabled()
                                             ) {
                                                 1f
@@ -945,7 +938,8 @@ fun SettingsContent(
                     title = stringResource(id = R.string.dnd_activation_schedule),
                     enabled = dndScheduleEnabled,
                     onEnabledChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .scheduleEnabled()
                         ) {
                             viewModel.setDndScheduleEnabled(it)
@@ -961,7 +955,8 @@ fun SettingsContent(
                     selectedDays = dndScheduleDays,
                     onDaysChange = { viewModel.setDndScheduleDays(it) },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .scheduleEnabled()
                         ) {
                             1f
@@ -1055,10 +1050,12 @@ fun SettingsContent(
                                             },
                                             onClick = {
                                                 if (sound == Sound.CUSTOM) {
-                                                    if (ServiceLocator.getFeatureManager(context)
+                                                    if (ServiceLocator
+                                                            .getFeatureManager(context)
                                                             .customSoundEnabled()
                                                     ) {
-                                                        ServiceLocator.getSoundPicker(context)
+                                                        ServiceLocator
+                                                            .getSoundPicker(context)
                                                             .launchPicker(context, true)
                                                     } else {
                                                         showUpgradeDialog = true
@@ -1126,10 +1123,12 @@ fun SettingsContent(
                                             },
                                             onClick = {
                                                 if (sound == Sound.CUSTOM) {
-                                                    if (ServiceLocator.getFeatureManager(context)
+                                                    if (ServiceLocator
+                                                            .getFeatureManager(context)
                                                             .customSoundEnabled()
                                                     ) {
-                                                        ServiceLocator.getSoundPicker(context)
+                                                        ServiceLocator
+                                                            .getSoundPicker(context)
                                                             .launchPicker(context, false)
                                                     } else {
                                                         showUpgradeDialog = true
@@ -1185,7 +1184,8 @@ fun SettingsContent(
                             title = null,
                             enabled = soundScheduleEnabled,
                             onEnabledChange = {
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     viewModel.setSoundScheduleEnabled(it)
@@ -1201,7 +1201,8 @@ fun SettingsContent(
                             selectedDays = soundScheduleDays,
                             onDaysChange = { viewModel.setSoundScheduleDays(it) },
                             alpha =
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     1f
@@ -1363,7 +1364,8 @@ fun SettingsContent(
                             title = null,
                             enabled = vibrationScheduleEnabled,
                             onEnabledChange = {
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     viewModel.setVibrationScheduleEnabled(it)
@@ -1379,7 +1381,8 @@ fun SettingsContent(
                             selectedDays = vibrationScheduleDays,
                             onDaysChange = { viewModel.setVibrationScheduleDays(it) },
                             alpha =
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     1f
@@ -1395,7 +1398,8 @@ fun SettingsContent(
                     title = stringResource(id = R.string.flashlight_feedback),
                     expanded = flashlightFeedbackEnabled,
                     onExpandedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .flashlightFeedbackEnabled()
                         ) {
                             viewModel.setFlashlightFeedbackEnabled(it)
@@ -1538,7 +1542,8 @@ fun SettingsContent(
                             title = null,
                             enabled = flashlightScheduleEnabled,
                             onEnabledChange = {
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     viewModel.setFlashlightScheduleEnabled(it)
@@ -1554,7 +1559,8 @@ fun SettingsContent(
                             selectedDays = flashlightScheduleDays,
                             onDaysChange = { viewModel.setFlashlightScheduleDays(it) },
                             alpha =
-                                if (ServiceLocator.getFeatureManager(context)
+                                if (ServiceLocator
+                                        .getFeatureManager(context)
                                         .scheduleEnabled()
                                 ) {
                                     1f
@@ -1583,7 +1589,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.flashlight_detection_description),
                     checked = flashlightDetectionEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             viewModel.setFlashlightDetectionEnabled(it)
@@ -1592,7 +1599,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             1f
@@ -1608,7 +1616,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.media_playback_detection_description),
                     checked = mediaPlaybackDetectionEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             viewModel.setMediaPlaybackDetectionEnabled(it)
@@ -1617,7 +1626,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             1f
@@ -1633,7 +1643,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.headphone_detection_description),
                     checked = headphoneDetectionEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             viewModel.setHeadphoneDetectionEnabled(it)
@@ -1642,7 +1653,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             1f
@@ -1657,7 +1669,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.proximity_detection_description),
                     checked = proximityDetectionEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             viewModel.setProximityDetectionEnabled(it)
@@ -1666,7 +1679,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .detectionFiltersEnabled()
                         ) {
                             1f
@@ -1694,7 +1708,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.auto_start_description),
                     checked = autoStartEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
                             viewModel.setAutoStartEnabled(it)
@@ -1703,7 +1718,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
                             1f
@@ -1719,7 +1735,8 @@ fun SettingsContent(
                     description = stringResource(id = R.string.battery_saver_description),
                     checked = batterySaverOnFlipEnabled,
                     onCheckedChange = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .batterySaverSyncEnabled()
                         ) {
                             if (hasSecureSettingsPermission) {
@@ -1732,7 +1749,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .batterySaverSyncEnabled() && hasSecureSettingsPermission
                         ) {
                             1f
@@ -1792,7 +1810,8 @@ fun SettingsContent(
                         )
                     },
                     onClick = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .telegramSupportEnabled()
                         ) {
                             val telegramUrl = "https://t.me/robins_dev_hub"
@@ -1807,7 +1826,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .telegramSupportEnabled()
                         ) {
                             1f
@@ -1854,7 +1874,8 @@ fun SettingsContent(
                         )
                     },
                     onClick = {
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
                             isManualCheck = true
@@ -1864,7 +1885,8 @@ fun SettingsContent(
                         }
                     },
                     alpha =
-                        if (ServiceLocator.getFeatureManager(context)
+                        if (ServiceLocator
+                                .getFeatureManager(context)
                                 .autoStartEnabled()
                         ) {
                             1f
@@ -1875,7 +1897,7 @@ fun SettingsContent(
                 )
             }
         }
-            
+
         // Credits
         item {
             SettingsClickableItem(
@@ -1885,10 +1907,10 @@ fun SettingsContent(
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = null,
-                        tint = Color(0xFFFF4081)
+                        tint = Color(0xFFFF4081),
                     )
                 },
-                onClick = { showCreditsDialog = true }
+                onClick = { showCreditsDialog = true },
             )
         }
     }
@@ -1925,7 +1947,7 @@ fun ScheduleSection(
                     text = title,
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                     modifier = Modifier.weight(1f, fill = false),
+                    modifier = Modifier.weight(1f, fill = false),
                 )
                 if (isPro && !featureManager.isPro()) {
                     ProBadge(modifier = Modifier.padding(start = 8.dp))
@@ -2103,20 +2125,20 @@ fun SettingsSwitchItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column(
-                 modifier = Modifier.weight(1f),
-             ) {
-                 Row(verticalAlignment = Alignment.CenterVertically) {
-                     Text(
-                         text = title,
-                         style = MaterialTheme.typography.titleLarge,
-                         fontWeight = FontWeight.Bold,
-                         modifier = Modifier.weight(1f, fill = false),
-                     )
-                     if (isPro && !featureManager.isPro()) {
-                         ProBadge(modifier = Modifier.padding(start = 8.dp))
-                     }
-                 }
-                 if (description.isNotEmpty()) {
+                modifier = Modifier.weight(1f),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (isPro && !featureManager.isPro()) {
+                        ProBadge(modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+                if (description.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = description,

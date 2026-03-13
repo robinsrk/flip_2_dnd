@@ -509,24 +509,24 @@ fun SettingsContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                showAdbDialog = false
-                                val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                clipboardManager.setPrimaryClip(ClipData.newPlainText("Root Command", rootCommand))
-                                Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxWidth().height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        ) {
-                            Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text("Copy Root Command", style = MaterialTheme.typography.bodyMedium)
-                        }
                     }
                 }
 
+                Button(
+                    onClick = {
+                        showAdbDialog = false
+                        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipboardManager.setPrimaryClip(ClipData.newPlainText("Root Command", rootCommand))
+                        Toast.makeText(context, context.getString(R.string.command_copied), Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                ) {
+                    Icon(Icons.Default.ContentCopy, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Copy Root Command", style = MaterialTheme.typography.titleMedium)
+                }
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {

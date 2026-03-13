@@ -22,64 +22,66 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ChangelogAccordion(entries: List<ChangelogEntry>) {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 0.dp),
-    ) {
-        items(entries) { entry ->
-            ChangelogCard(entry)
-        }
+  LazyColumn(
+    modifier = Modifier.fillMaxWidth(),
+    contentPadding = PaddingValues(vertical = 4.dp, horizontal = 0.dp),
+  ) {
+    items(entries) { entry ->
+      ChangelogCard(entry)
     }
+  }
 }
 
 @Composable
 fun ChangelogCard(entry: ChangelogEntry) {
-    var expanded by remember { mutableStateOf(true) }
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
+  var expanded by remember { mutableStateOf(true) }
+  Card(
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    modifier =
+      Modifier
+        .fillMaxWidth()
+        .padding(vertical = 6.dp),
+  ) {
+    Column(
+      modifier =
+        Modifier
+          .clickable { expanded = !expanded }
+          .fillMaxWidth()
+          .padding(12.dp),
     ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+      ) {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { expanded = !expanded },
-            ) {
-                Text(
-                    text = "${entry.version} ${entry.emoji}",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(
-                    text = if (expanded) "▴" else "▾",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 4.dp),
-                )
-            }
-            if (expanded) {
-                Spacer(modifier = Modifier.height(8.dp))
-                for (change in entry.changes) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(text = "• ", fontSize = 14.sp, modifier = Modifier.padding(end = 6.dp))
-                        Text(text = change, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-                }
-            }
+          Text(
+            text = "${entry.version} ${entry.emoji}",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f),
+          )
+          Text(
+            text = if (expanded) "▴" else "▾",
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(start = 4.dp),
+          )
         }
+        if (expanded) {
+          Spacer(modifier = Modifier.height(8.dp))
+          for (change in entry.changes) {
+            Row(
+              verticalAlignment = Alignment.CenterVertically,
+              modifier = Modifier.fillMaxWidth(),
+            ) {
+              Text(text = "• ", fontSize = 14.sp, modifier = Modifier.padding(end = 6.dp))
+              Text(text = change, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+          }
+        }
+      }
     }
+  }
 }

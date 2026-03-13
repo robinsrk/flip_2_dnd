@@ -1,0 +1,2 @@
+* Update changelog ui
+* Update command button positions

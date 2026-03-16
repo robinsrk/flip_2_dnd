@@ -133,6 +133,10 @@
 	<string name="history_empty">No history events recorded yet</string>
 	<string name="dnd_activated_at">DND Activated</string>
 	<string name="dnd_deactivated_at">DND Deactivated</string>
+	<string name="dnd_ongoing">DND Active</string>
+	<string name="dnd_session_ended">DND Session</string>
+	<string name="session_duration">Duration</string>
+	<string name="session_ongoing">Ongoing</string>
 	<string name="history_icon">History Icon</string>
 
 	<!-- DND Modes -->

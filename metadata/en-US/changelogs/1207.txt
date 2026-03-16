@@ -1,0 +1,4 @@
+* Redesigned history page to show DND sessions
+* Display activation duration for each session
+* Show start and end times with dates
+* Indicate ongoing sessions with live duration

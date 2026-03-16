@@ -10,6 +10,17 @@ data class ChangelogEntry(
 val changelogEntries =
   listOf(
     ChangelogEntry(
+      version = "v12.0.7",
+      emoji = "📊",
+      changes =
+        listOf(
+          "📝 Redesigned history page to show DND sessions",
+          "⏱️ Display activation duration for each session",
+          "🕐 Show start and end times with dates",
+          "🔔 Indicate ongoing sessions with live duration",
+        ),
+    ),
+    ChangelogEntry(
       version = "v12.0.5",
       emoji = "💄",
       changes =

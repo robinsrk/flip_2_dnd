@@ -43,6 +43,9 @@ class SettingsViewModel @Inject constructor(
     private val _screenOffOnly = MutableStateFlow(false)
 	val screenOffOnly = _screenOffOnly.asStateFlow()
 
+	private val _turnScreenOff = MutableStateFlow(false)
+	val turnScreenOff = _turnScreenOff.asStateFlow()
+
 	private val _soundEnabled = MutableStateFlow(true)
 	val soundEnabled = _soundEnabled.asStateFlow()
 
@@ -207,6 +210,11 @@ class SettingsViewModel @Inject constructor(
 		viewModelScope.launch {
 			settingsRepository.getScreenOffOnlyEnabled().collect { enabled ->
 				_screenOffOnly.value = enabled
+			}
+		}
+		viewModelScope.launch {
+			settingsRepository.getTurnScreenOffEnabled().collect { enabled ->
+				_turnScreenOff.value = enabled
 			}
 		}
 		viewModelScope.launch {
@@ -469,6 +477,12 @@ class SettingsViewModel @Inject constructor(
 	fun setScreenOffOnly(enabled: Boolean) {
 		viewModelScope.launch {
 			settingsRepository.setScreenOffOnlyEnabled(enabled)
+		}
+	}
+
+	fun setTurnScreenOff(enabled: Boolean) {
+		viewModelScope.launch {
+			settingsRepository.setTurnScreenOffEnabled(enabled)
 		}
 	}
 

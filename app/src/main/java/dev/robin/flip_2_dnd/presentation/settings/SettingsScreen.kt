@@ -1,5 +1,6 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.ClipData
@@ -10,6 +11,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -98,6 +101,8 @@ import dev.robin.flip_2_dnd.core.UpdateState
 import dev.robin.flip_2_dnd.core.VibrationPattern
 import dev.robin.flip_2_dnd.presentation.changelog.ChangelogAccordion
 import dev.robin.flip_2_dnd.presentation.changelog.changelogEntries
+import dev.robin.flip_2_dnd.services.TurnScreenOffService
+import dev.robin.flip_2_dnd.services.TurnScreenOffService.Companion.isAccessibilityPermissionGranted
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 import kotlinx.coroutines.launch
 
@@ -152,6 +157,7 @@ fun SettingsContent(
     val soundEnabled by viewModel.soundEnabled.collectAsState()
     val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
     val screenOffOnly by viewModel.screenOffOnly.collectAsState()
+    val turnScreenOff by viewModel.turnScreenOff.collectAsState()
     val priorityDndEnabled by viewModel.priorityDndEnabled.collectAsState()
     val dndOnSound by viewModel.dndOnSound.collectAsState()
     val dndOffSound by viewModel.dndOffSound.collectAsState()
@@ -212,6 +218,14 @@ fun SettingsContent(
 
     // Track if the check was initiated manually from this screen
     var isManualCheck by remember { mutableStateOf(false) }
+
+    val accessibilityPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (isAccessibilityPermissionGranted(context)) {
+            viewModel.setTurnScreenOff(true)
+        }
+    }
 
     LaunchedEffect(updateState) {
         when (updateState) {
@@ -844,6 +858,24 @@ fun SettingsContent(
                     checked = screenOffOnly,
                     onCheckedChange = { viewModel.setScreenOffOnly(it) },
                 )
+
+                if (TurnScreenOffService.isTurnScreenOffSupported()) {
+                    SettingsSwitchItem(
+                        title = stringResource(id = R.string.turn_screen_off),
+                        description = stringResource(id = R.string.turn_screen_off_description),
+                        checked = turnScreenOff,
+                        enabled = !screenOffOnly,
+                        onCheckedChange = {
+                            if (isAccessibilityPermissionGranted(context)) {
+                                viewModel.setTurnScreenOff(it)
+                            }
+                            else {
+                                val intent = TurnScreenOffService.getRequestAccessibilityPermissionIntent()
+                                accessibilityPermissionLauncher.launch(intent)
+                            }
+                        },
+                    )
+                }
 
                 SettingsSliderItem(
                     title = stringResource(id = R.string.activation_delay),

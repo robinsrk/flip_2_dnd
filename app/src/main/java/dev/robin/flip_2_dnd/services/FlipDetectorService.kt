@@ -49,6 +49,7 @@ class FlipDetectorService : Service() {
     private val _isProximityCovered = MutableStateFlow(false)
     private val isProximityCovered = _isProximityCovered.asStateFlow()
     private var onlyWhenScreenOff = false
+    private var turnScreenOff = false
     private var activationDelaySeconds = 0
     private var orientationJob: Job? = null
 
@@ -216,6 +217,13 @@ class FlipDetectorService : Service() {
             }
 
             serviceScope.launch {
+                settingsRepository.getTurnScreenOffEnabled().collect { enabled ->
+                    turnScreenOff = enabled
+                    Log.d(TAG, "Settings updated - Turn screen off: $enabled")
+                }
+            }
+
+            serviceScope.launch {
                 settingsRepository.getActivationDelay().collect { delay ->
                     activationDelaySeconds = delay
                     Log.d(TAG, "Settings updated - Activation delay: $delay seconds")
@@ -273,7 +281,7 @@ class FlipDetectorService : Service() {
                     Log.d(TAG, "Settings updated - DND Schedule days: $days")
                 }
             }
-            
+
             // Observe orientation changes
             serviceScope.launch {
                 combine(
@@ -363,6 +371,9 @@ class FlipDetectorService : Service() {
                                 Log.d(TAG, "$activationDelaySeconds-second delay completed, phone still face down - Enabling DND")
                                 dndService.toggleDnd()
                                 showDndStateNotification(true)
+                                if (!isScreenOff.value && turnScreenOff) {
+                                    TurnScreenOffService.turnScreenOff(this@FlipDetectorService)
+                                }
 
                                 // Handle Battery Saver
                                 try {

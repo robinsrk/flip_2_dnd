@@ -21,6 +21,8 @@ enum class RingerMode(val value: Int) {
 interface SettingsRepository {
     fun getScreenOffOnlyEnabled(): Flow<Boolean>
     suspend fun setScreenOffOnlyEnabled(enabled: Boolean)
+    fun getTurnScreenOffEnabled(): Flow<Boolean>
+    suspend fun setTurnScreenOffEnabled(enabled: Boolean)
     fun getVibrationEnabled(): Flow<Boolean>
     suspend fun setVibrationEnabled(enabled: Boolean)
     fun getSoundEnabled(): Flow<Boolean>

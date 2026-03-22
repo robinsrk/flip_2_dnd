@@ -281,8 +281,7 @@
     <string name="high_sensitivity_schedule_description">Activar alta sensibilidad solo en estos horarios.</string>
     <string name="whats_new">Novedades</string>
     <string name="ramadan_kareem">¡Ramadán Kareem!</string>
-    <string name="ramadan_message">¡Te deseamos un mes pacífico y bendecido! En el espíritu del Ramadán, ofrecemos un descuento especial del 40%% en Flip 2 DND Pro. Personaliza tu enfoque y apoya al desarrollador a un precio especial.</string>
-    <string name="ramadan_coupon_code">Usa el cupón para 40%% de descuento: %1$s</string>
+
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">Detección con sensor de proximidad</string>
     <string name="proximity_detection">Detección de proximidad</string>

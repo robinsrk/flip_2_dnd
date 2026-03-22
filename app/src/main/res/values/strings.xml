@@ -287,8 +287,7 @@
 	<string name="feedback_with_flashlight_on">Feedback even if Flashlight is ON</string>
 	<string name="gumroad">Gumroad</string>
 	<string name="ramadan_kareem">Ramadan Kareem!</string>
-	<string name="ramadan_message">Wishing you a peaceful and blessed month! In the spirit of Ramadan, we\'re offering a special 40%% discount on Flip 2 DND Pro. Personalize your focus and support the developer at a special price.</string>
-	<string name="ramadan_coupon_code">Use coupon for 40%% OFF: %1$s</string>
+
 	<string name="ramadan_coupon">RAMADANKARIM</string>
 	<string name="cancel">Cancel</string>
 </resources>

@@ -280,8 +280,7 @@
     <string name="high_sensitivity_schedule_description">この時間帯のみ高感度を有効化します。</string>
     <string name="whats_new">新着情報</string>
     <string name="ramadan_kareem">ラマダーン・カリーム！</string>
-    <string name="ramadan_message">平和で祝福された月になりますように！ラマダーンの精神で、Flip 2 DND Pro を特別価格で 40%% 割引します。集中をパーソナライズし、開発者を応援しましょう。</string>
-    <string name="ramadan_coupon_code">40%% 割引クーポンを使用：%1$s</string>
+
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">近接センサー検出</string>
     <string name="proximity_detection">近接検出</string>

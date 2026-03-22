@@ -119,17 +119,10 @@ class MainActivity : ComponentActivity() {
     val lastSeenVersion = prefs.getLong(LAST_SEEN_VERSION, 0L)
 
     setContent {
-      var showOnboardingState by remember { mutableStateOf(showOnboarding) }
-      var showChangelog by remember {
-        mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion)
-      }
-      var showRamadanPopup by remember { mutableStateOf(false) }
-
-      LaunchedEffect(Unit) {
-        if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this@MainActivity).isPro() && !showOnboarding) {
-          showRamadanPopup = true
+        var showOnboardingState by remember { mutableStateOf(showOnboarding) }
+        var showChangelog by remember {
+            mutableStateOf(!showOnboarding && currentVersionCode > lastSeenVersion)
         }
-      }
 
       Flip_2_DNDTheme {
         val isDarkTheme = isSystemInDarkTheme()
@@ -161,10 +154,6 @@ class MainActivity : ComponentActivity() {
               // so changelog doesn't show immediately after onboarding
               prefs.edit().putLong(LAST_SEEN_VERSION, currentVersionCode).apply()
 
-              if (!dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this@MainActivity).isPro()) {
-                showRamadanPopup = true
-              }
-
               checkAndStartService()
             }
           )
@@ -180,11 +169,7 @@ class MainActivity : ComponentActivity() {
             )
           }
 
-          if (showRamadanPopup) {
-            RamadanPopup(
-              onDismiss = { showRamadanPopup = false }
-            )
-          }
+
         }
 
         if (!showOnboardingState && isPermissionMissing) {
@@ -309,74 +294,5 @@ class MainActivity : ComponentActivity() {
     Intent(this, FlipDetectorService::class.java).also { intent -> startForegroundService(intent) }
   }
 
-  @OptIn(ExperimentalMaterial3Api::class)
-  @Composable
-  private fun RamadanPopup(onDismiss: () -> Unit) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val clipboard = LocalClipboard.current
-    val scope = androidx.compose.runtime.rememberCoroutineScope()
-    val patreonUrl = "https://www.patreon.com/posts/flip-2-dnd-150924870"
 
-    ModalBottomSheet(
-      onDismissRequest = onDismiss,
-      containerColor = MaterialTheme.colorScheme.surface,
-      tonalElevation = 8.dp,
-    ) {
-      Column(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(24.dp)
-          .padding(bottom = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Icon(
-          imageVector = Icons.Default.Star,
-          contentDescription = null,
-          modifier = Modifier
-            .size(48.dp)
-            .padding(bottom = 16.dp),
-          tint = MaterialTheme.colorScheme.primary
-        )
-        Text(
-          text = stringResource(id = R.string.ramadan_kareem),
-          style = MaterialTheme.typography.headlineSmall,
-          fontWeight = FontWeight.Bold,
-          textAlign = TextAlign.Center,
-          color = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.padding(bottom = 16.dp)
-        )
-        Text(
-          text = stringResource(id = R.string.ramadan_message),
-          style = MaterialTheme.typography.bodyLarge,
-          textAlign = TextAlign.Center,
-          modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-          modifier = Modifier.fillMaxWidth(),
-          verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-          Button(
-            onClick = {
-              val intent = Intent(Intent.ACTION_VIEW, Uri.parse(patreonUrl))
-              context.startActivity(intent)
-              onDismiss()
-            },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-          ) {
-            Text(stringResource(id = R.string.get_pro), style = MaterialTheme.typography.titleMedium)
-          }
-          TextButton(
-            onClick = onDismiss,
-            modifier = Modifier.fillMaxWidth().height(56.dp)
-          ) {
-            Text(stringResource(id = R.string.maybe_later), style = MaterialTheme.typography.titleMedium)
-          }
-        }
-      }
-    }
-  }
 }

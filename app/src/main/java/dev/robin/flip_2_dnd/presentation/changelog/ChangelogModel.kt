@@ -116,18 +116,17 @@ val changelogEntries =
           "⚡ Changed flashlight intensity to lowest for flashlight feedback",
         ),
     ),
-    ChangelogEntry(
-      version = "v11.0.1",
-      emoji = "🛡",
-      changes =
-        listOf(
-          "🧭 Optimized background battery usage and sensor polling",
-          "🎯 Smart sensor management to save battery when screen is ON",
-          "🎉 Ramadan celebration popup for free users",
-          "💎 Exclusive 40% discount for Pro upgrade (Coupon: RAMADANKARIM)",
-          "🐞 Fixed various minor bugs and stability issues",
+        ChangelogEntry(
+          version = "v11.0.1",
+          emoji = "🛡",
+          changes =
+            listOf(
+              "🧭 Optimized background battery usage and sensor polling",
+              "🎯 Smart sensor management to save battery when screen is ON",
+              "🎉 Ramadan celebration popup for free users",
+              "🐞 Fixed various minor bugs and stability issues",
+            ),
         ),
-    ),
     ChangelogEntry(
       version = "v11.0.0",
       emoji = "🚀",

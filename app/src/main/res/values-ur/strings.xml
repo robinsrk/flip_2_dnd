@@ -254,8 +254,7 @@
     <string name="high_sensitivity_schedule_description">صرف ان اوقات میں اعلی حساسیت فعال کریں۔</string>
     <string name="whats_new">نیا کیا ہے</string>
     <string name="ramadan_kareem">رمضان کریم!</string>
-    <string name="ramadan_message">آپ کو پرامن اور بابرکت مہینے کی مبارک! رمضان کے موقع پر، ہم Flip 2 DND Pro پر خصوصی 40%% رعایت پیش کر رہے ہیں۔ اپنی توجہ ذاتی بنائیں اور خصوصی قیمت پر ڈیولپر کی مدد کریں۔</string>
-    <string name="ramadan_coupon_code">40%% رعایت کے لیے کپون استعمال کریں: %1$s</string>
+
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">قربت سینسر کی تشخیص</string>
     <string name="proximity_detection">قربت کی تشخیص</string>

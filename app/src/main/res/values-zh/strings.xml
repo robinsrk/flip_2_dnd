@@ -254,8 +254,7 @@
     <string name="high_sensitivity_schedule_description">仅在这些时间段启用高灵敏度。</string>
     <string name="whats_new">新功能</string>
     <string name="ramadan_kareem">斋月快乐！</string>
-    <string name="ramadan_message">祝您度过一个平和而被祝福的月份！在斋月期间，我们为 Flip 2 DND Pro 提供特别 40%% 折扣。个性化专注并以特价支持开发者。</string>
-    <string name="ramadan_coupon_code">使用优惠码享受 40%% 折扣：%1$s</string>
+
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">距离传感器检测</string>
     <string name="proximity_detection">距离检测</string>

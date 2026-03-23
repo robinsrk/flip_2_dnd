@@ -46,7 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.filled.Accessibility
 import dev.robin.flip_2_dnd.R
+import dev.robin.flip_2_dnd.services.TurnScreenOffService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -72,12 +74,14 @@ fun OnboardingScreen(
     // Hoist state here to ensure button updates
     var dndGranted by remember { mutableStateOf(isNotificationPolicyAccessGranted(context)) }
     var batteryGranted by remember { mutableStateOf(isBatteryOptimizationDisabled(context)) }
+    var accessibilityGranted by remember { mutableStateOf(TurnScreenOffService.isAccessibilityPermissionGranted(context)) }
 
     // Poll for updates (e.g. when user comes back from settings)
     LaunchedEffect(Unit) {
         while(true) {
             dndGranted = isNotificationPolicyAccessGranted(context)
             batteryGranted = isBatteryOptimizationDisabled(context)
+            accessibilityGranted = TurnScreenOffService.isAccessibilityPermissionGranted(context)
             delay(500)
         }
     }
@@ -91,6 +95,12 @@ fun OnboardingScreen(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
+        // State updates via polling
+    }
+
+    val accessibilityPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
         // State updates via polling
     }
 
@@ -131,8 +141,10 @@ fun OnboardingScreen(
                     2 -> UnifiedPermissionsPage(
                         dndPermissionLauncher = dndPermissionLauncher,
                         notificationPermissionLauncher = notificationPermissionLauncher,
+                        accessibilityPermissionLauncher = accessibilityPermissionLauncher,
                         dndGranted = dndGranted,
-                        batteryGranted = batteryGranted
+                        batteryGranted = batteryGranted,
+                        accessibilityGranted = accessibilityGranted
                     )
                     3 -> OnboardingContentPage(
                         title = stringResource(id = R.string.onboarding_all_set_title),
@@ -305,8 +317,10 @@ fun OnboardingContentPage(
 fun UnifiedPermissionsPage(
     dndPermissionLauncher: ActivityResultLauncher<Intent>,
     notificationPermissionLauncher: ActivityResultLauncher<String>,
+    accessibilityPermissionLauncher: ActivityResultLauncher<Intent>,
     dndGranted: Boolean,
-    batteryGranted: Boolean
+    batteryGranted: Boolean,
+    accessibilityGranted: Boolean,
 ) {
     val context = LocalContext.current
     
@@ -368,6 +382,23 @@ fun UnifiedPermissionsPage(
                     }
                 }
             )
+
+            if (TurnScreenOffService.isTurnScreenOffSupported()) {
+                PermissionItem(
+                    title = stringResource(id = R.string.accessibility_service_title),
+                    description = stringResource(id = R.string.accessibility_service_description),
+                    icon = Icons.Default.Accessibility,
+                    isGranted = accessibilityGranted,
+                    isRequired = false,
+                    onClick = {
+                        if (!accessibilityGranted) {
+                            val intent =
+                                TurnScreenOffService.getRequestAccessibilityPermissionIntent()
+                            context.startActivity(intent)
+                        }
+                    }
+                )
+            }
 
             PermissionItem(
                 title = stringResource(id = R.string.permission_notifications_title),

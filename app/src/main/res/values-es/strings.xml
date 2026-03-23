@@ -287,4 +287,8 @@
     <string name="proximity_detection">Detección de proximidad</string>
     <string name="proximity_detection_description">Activar DND solo si el sensor de proximidad también está cubierto (requiere Pro)</string>
     <string name="cancel">Cancelar</string>
+    <string name="turn_screen_off">Apagar la pantalla</string>
+    <string name="turn_screen_off_description">Apagar la pantalla al voltear el dispositivo</string>
+    <string name="accessibility_service_title">Servicio de accesibilidad</string>
+    <string name="accessibility_service_description">El servicio de accesibilidad es obligatorio para que la app pueda apagar la pantalla en Android PIE (API 28) y siguientes.</string>
 </resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="none">Ninguno</string>
+    <string name="sound_slush">Slush</string>
+    <string name="sound_hiss">Hiss</string>
+    <string name="sound_shh">Shh</string>
+    <string name="sound_whistle">Whistle</string>
+    <string name="custom_sound">Sonido personalizado</string>
+    <string name="vibration_single_pulse">Pulso único</string>
+    <string name="vibration_double_pulse">Pulso doble</string>
+    <string name="vibration_triple_pulse">Pulso triple</string>
+    <string name="vibration_long_pulse">Pulso largo</string>
+    <string name="vibration_rapid_pulse">Pulso rápido</string>
+    <string name="vibration_heartbeat">Latido</string>
+    <string name="vibration_tick_tock">Tick Tock</string>
+    <string name="flashlight_single_blink">Parpadeo único</string>
+    <string name="flashlight_double_blink">Parpadeo doble</string>
+    <string name="flashlight_triple_blink">Parpadeo triple</string>
+    <string name="flashlight_long_blink">Parpadeo largo</string>
+    <string name="flashlight_rapid_blink">Parpadeo rápido</string>
+    <string name="seconds">%1$d segundos</string>
+    <string name="error_opening_sound_picker">No se puede abrir el selector de sonidos</string>
+    <string name="error_sound_not_accessible">No se puede acceder al sonido seleccionado</string>
+    <string name="error_permission">Error de permisos: %1$s</string>
+    <string name="error_could_not_get_permission">No se ha obtenido permiso de acceso al archivo de sonido</string>
+    <string name="error_failed_to_get_permission">Error obteniendo permiso de acceso al sonido seleccionado</string>
+    <string name="error_processing_sound">Error procesando el sonido seleccionado: %1$s</string>
+    <string name="error_no_sound_selected">No se ha seleccionado ningún sonido</string>
+    <string name="dnd_on_sound_saved">Sonido de activación de DND guardado</string>
+    <string name="dnd_off_sound_saved">Sonido de desactivación de DND guardado</string>
+    <string name="error_saving_sound">Error guardando el sonido seleccionado</string>
+    <string name="unknown">Desconocido</string>
+    <string name="orientation_face_up">Cara arriba</string>
+    <string name="orientation_face_down">Cara abajo</string>
+    <string name="system_default">Notification por defecto</string>
+</resources>

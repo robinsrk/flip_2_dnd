@@ -57,11 +57,21 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.clickable
 import android.content.ClipData
 import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.text.font.FontVariation
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.robin.flip_2_dnd.core.SettingsRepository
 
 import dev.robin.flip_2_dnd.presentation.navigation.AppNavigation
 import dev.robin.flip_2_dnd.presentation.onboarding.OnboardingScreen
 import dev.robin.flip_2_dnd.services.FlipDetectorService
+import dev.robin.flip_2_dnd.services.TurnScreenOffService
 import dev.robin.flip_2_dnd.ui.theme.Flip_2_DNDTheme
+import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -74,11 +84,20 @@ class MainActivity : ComponentActivity() {
   private var isPermissionMissing by mutableStateOf(false)
   private val missingPermissions = mutableStateListOf<String>()
 
+  @Inject
+  lateinit var settingsRepository: SettingsRepository
+
+  private var turnScreenOff = false
+
   private val dndPermissionLauncher =
     registerForActivityResult(
       ActivityResultContracts.StartActivityForResult(),
     ) { checkAndStartService() }
 
+  private val accessibilityPermissionLauncher =
+    registerForActivityResult(
+      ActivityResultContracts.StartActivityForResult(),
+    ) {}
   private val notificationPermissionLauncher =
     registerForActivityResult(
       ActivityResultContracts.RequestPermission(),
@@ -100,6 +119,10 @@ class MainActivity : ComponentActivity() {
 
     // Check for updates (Pro version only)
     dev.robin.flip_2_dnd.core.ServiceLocator.getFeatureManager(this).checkForUpdate(false)
+
+    lifecycleScope.launch {
+      turnScreenOff = settingsRepository.getTurnScreenOffEnabled().first()
+    }
 
     // Load onboarding state from SharedPreferences
     val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
@@ -179,6 +202,7 @@ class MainActivity : ComponentActivity() {
               when (permission) {
                 "DND" -> requestNotificationPolicyAccess()
                 "Battery" -> requestDisableBatteryOptimization()
+                "Accessibility" -> requestAccessibilityPermission()
                 "Notification" -> {
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -255,6 +279,9 @@ class MainActivity : ComponentActivity() {
     missingPermissions.clear()
     if (!notificationPolicyGranted) missingPermissions.add("DND")
     if (!batteryOptimizationDisabled) missingPermissions.add("Battery")
+    if (
+      TurnScreenOffService.isTurnScreenOffSupported() &&
+      turnScreenOff && !isAccessibilityPermissionGranted()) missingPermissions.add("Accessibility")
 
     isPermissionMissing = missingPermissions.isNotEmpty()
 
@@ -274,6 +301,15 @@ class MainActivity : ComponentActivity() {
   private fun requestNotificationPolicyAccess() {
     val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
     dndPermissionLauncher.launch(intent)
+  }
+
+  private fun isAccessibilityPermissionGranted() : Boolean {
+    return TurnScreenOffService.isAccessibilityPermissionGranted(this)
+  }
+
+  private fun requestAccessibilityPermission() {
+    val intent = TurnScreenOffService.getRequestAccessibilityPermissionIntent()
+    accessibilityPermissionLauncher.launch(intent)
   }
 
   private fun isBatteryOptimizationDisabled(): Boolean {

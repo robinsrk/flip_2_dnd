@@ -287,4 +287,9 @@
     <string name="proximity_detection">근접 감지</string>
     <string name="proximity_detection_description">근접 센서가 가려진 경우에만 DND 활성화 (Pro 필요)</string>
     <string name="cancel">취소</string>
+    <string name="turn_screen_off">화면 끄기</string>
+    <string name="turn_screen_off_description">Flip 감지 시 자동으로 화면 끄기</string>
+    <string name="turn_screen_off_description_disabled">화면 끄기만 활성화되면 화면 끄기 기능이 비활성화됩니다</string>
+    <string name="accessibility_service_title">접근성 서비스</string>
+    <string name="accessibility_service_description">Android Pie (API 28) 이상에서 화면을 끌 수 있도록 접근성 서비스가 필수입니다.</string>
 </resources>

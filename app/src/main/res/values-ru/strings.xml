@@ -286,4 +286,9 @@
     <string name="proximity_detection">Обнаружение приближения</string>
     <string name="proximity_detection_description">Включать DND только если датчик приближения также закрыт (требуется Pro)</string>
     <string name="cancel">Отмена</string>
+    <string name="turn_screen_off">Выключить экран</string>
+    <string name="turn_screen_off_description">Автоматически выключать экран при обнаружении переворота</string>
+    <string name="turn_screen_off_description_disabled">Выключение экрана отключено, когда включен режим «Только экран выключен»</string>
+    <string name="accessibility_service_title">Служба специальных возможностей</string>
+    <string name="accessibility_service_description">Служба специальных возможностей обязательна, чтобы приложение могло выключать экран на Android Pie (API 28) и выше.</string>
 </resources>

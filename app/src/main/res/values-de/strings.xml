@@ -288,4 +288,9 @@
     <string name="dnd_activated_at">DND aktiviert</string>
     <string name="dnd_deactivated_at">DND deaktiviert</string>
     <string name="history_icon">Verlaufssymbol</string>
+    <string name="turn_screen_off">Bildschirm ausschalten</string>
+    <string name="turn_screen_off_description">Bildschirm automatisch beim Umdrehen ausschalten</string>
+    <string name="turn_screen_off_description_disabled">Bildschirm ausschalten deaktiviert, wenn Nur Bildschirm aus ist aktiviert ist</string>
+    <string name="accessibility_service_title">Barrierefreiheitsdienst</string>
+    <string name="accessibility_service_description">Barrierefreiheitsdienst ist obligatorisch, damit die App den Bildschirm auf Android Pie (API 28) und höher ausschalten kann.</string>
 </resources>

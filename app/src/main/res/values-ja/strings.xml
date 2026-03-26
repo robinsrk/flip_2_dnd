@@ -286,4 +286,9 @@
     <string name="proximity_detection">近接検出</string>
     <string name="proximity_detection_description">近接センサーが覆われている場合のみ DND を有効化（Pro が必要）</string>
     <string name="cancel">キャンセル</string>
+    <string name="turn_screen_off">画面を消す</string>
+    <string name="turn_screen_off_description">Flip を検出すると自動的に画面を消します</string>
+    <string name="turn_screen_off_description_disabled">画面オフのみが有効な場合、画面を消す機能は無効です</string>
+    <string name="accessibility_service_title">ユーザー補助サービス</string>
+    <string name="accessibility_service_description">Android Pie (API 28) 以降で画面を消すためにユーザー補助サービスが必要です。</string>
 </resources>

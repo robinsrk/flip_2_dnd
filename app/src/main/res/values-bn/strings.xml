@@ -286,4 +286,9 @@
     <string name="cancel">বাতিল</string>
 	<string name="orientation_face_up">ফেস আপ</string>
 	<string name="orientation_face_down">ফেস ডাউন</string>
+	<string name="turn_screen_off">স্ক্রিন বন্ধ করুন</string>
+	<string name="turn_screen_off_description">ফ্লিপ সনাক্ত হলে স্বয়ংক্রিয়ভাবে স্ক্রিন বন্ধ করুন</string>
+	<string name="turn_screen_off_description_disabled">স্ক্রিন অফ মাত্র চালু থাকলে স্ক্রিন বন্ধ করা নিষ্ক্রিয়</string>
+	<string name="accessibility_service_title">অ্যাক্সেসিবিলিটি সার্ভিস</string>
+	<string name="accessibility_service_description">Android Pie (API 28) এবং তার পরে অ্যাপটিকে স্ক্রিন বন্ধ করতে দিতে অ্যাক্সেসিবিলিটি সার্ভিস বাধ্যতামূলক।</string>
 </resources>

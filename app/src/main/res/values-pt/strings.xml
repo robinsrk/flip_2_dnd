@@ -287,4 +287,9 @@
     <string name="proximity_detection">Detecção de proximidade</string>
     <string name="proximity_detection_description">Ativar DND apenas se o sensor de proximidade também estiver coberto (requer Pro)</string>
     <string name="cancel">Cancelar</string>
+    <string name="turn_screen_off">Desligar a tela</string>
+    <string name="turn_screen_off_description">Desliga automaticamente a tela quando o Flip é detectado</string>
+    <string name="turn_screen_off_description_disabled">Desligar a tela está desativado quando Tela desligada apenas está ativado</string>
+    <string name="accessibility_service_title">Serviço de acessibilidade</string>
+    <string name="accessibility_service_description">O serviço de acessibilidade é obrigatório para permitir que o aplicativo desligue a tela no Android Pie (API 28) e superiores.</string>
 </resources>

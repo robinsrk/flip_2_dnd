@@ -287,4 +287,9 @@
     <string name="dnd_activated_at">勿扰已启用</string>
     <string name="dnd_deactivated_at">勿扰已停用</string>
     <string name="history_icon">历史图标</string>
+    <string name="turn_screen_off">关闭屏幕</string>
+    <string name="turn_screen_off_description">Flip 检测到时自动关闭屏幕</string>
+    <string name="turn_screen_off_description_disabled">仅屏幕关闭启用时，关闭屏幕功能被禁用</string>
+    <string name="accessibility_service_title">无障碍服务</string>
+    <string name="accessibility_service_description">无障碍服务是必需的，以便应用在 Android Pie（API 28）及更高版本上关闭屏幕。</string>
 </resources>

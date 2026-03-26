@@ -292,6 +292,7 @@
 	<string name="cancel">Cancel</string>
 	<string name="turn_screen_off">Turn Screen Off</string>
 	<string name="turn_screen_off_description">Turn Screen Off automatically when Flip detected</string>
+	<string name="turn_screen_off_description_disabled">Turn Screen Off is disabled when Screen Off Only is enabled</string>
 	<string name="accessibility_service_title">Accessibility service</string>
 	<string name="accessibility_service_description">Accessibility service is mandatory to allow the app to turn screen off on Android Pie (API 28) and higher.</string>
 </resources>

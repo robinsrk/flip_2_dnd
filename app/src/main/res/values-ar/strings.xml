@@ -289,4 +289,9 @@
     <string name="dnd_activated_at">تم تفعيل وضع عدم الإزعاج</string>
     <string name="dnd_deactivated_at">تم إلغاء وضع عدم الإزعاج</string>
     <string name="history_icon">أيقونة السجل</string>
+    <string name="turn_screen_off">إيقاف الشاشة</string>
+    <string name="turn_screen_off_description">إيقاف الشاشة تلقائيًا عند اكتشاف الوجه</string>
+    <string name="turn_screen_off_description_disabled">إيقاف الشاشة معطل عندما يكون وضع الشاشة فقط مفعّلًا</string>
+    <string name="accessibility_service_title">خدمة إمكانية الوصول</string>
+    <string name="accessibility_service_description">خدمة إمكانية الوصول إلزامية للسماح للتطبيق بإيقاف الشاشة على Android Pie (API 28) وما بعدها.</string>
 </resources>

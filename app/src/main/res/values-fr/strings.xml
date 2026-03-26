@@ -286,4 +286,9 @@
     <string name="ramadan_coupon_code">Utilisez le coupon pour 40%% de réduction : %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="cancel">Annuler</string>
+    <string name="turn_screen_off">Éteindre l\'écran</string>
+    <string name="turn_screen_off_description">Éteindre automatiquement l\'écran lors de la détection du retournement</string>
+    <string name="turn_screen_off_description_disabled">Éteindre l\'écran désactivé lorsque l\'option Écran verrouillé uniquement est activée</string>
+    <string name="accessibility_service_title">Service d\'accessibilité</string>
+    <string name="accessibility_service_description">Le service d\'accessibilité est obligatoire pour permettre à l\'application d\'éteindre l\'écran sur Android Pie (API 28) et versions ultérieures.</string>
 </resources>

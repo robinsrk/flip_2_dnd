@@ -286,4 +286,9 @@
     <string name="proximity_detection">निकटता पहचान</string>
     <string name="proximity_detection_description">केवल तब DND सक्षम करें जब निकटता सेंसर भी ढका हो (Pro आवश्यक)</string>
     <string name="cancel">रद्द करें</string>
+    <string name="turn_screen_off">स्क्रीन बंद करें</string>
+    <string name="turn_screen_off_description">फ्लिप का पता चलने पर स्वचालित रूप से स्क्रीन बंद करें</string>
+    <string name="turn_screen_off_description_disabled">स्क्रीन ऑफ़ मात्र सक्षम होने पर स्क्रीन बंद करना अक्षम है</string>
+    <string name="accessibility_service_title">एक्सेसिबिलिटी सेवा</string>
+    <string name="accessibility_service_description">Android Pie (API 28) और उच्चतर पर ऐप को स्क्रीन बंद करने की अनुमति देने के लिए एक्सेसिबिलिटी सेवा अनिवार्य है।</string>
 </resources>

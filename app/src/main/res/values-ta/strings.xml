@@ -285,4 +285,9 @@
     <string name="proximity_detection">அருகாமை கண்டறிதல்</string>
     <string name="proximity_detection_description">அருகாமை சென்சார் மூடப்பட்டால் மட்டும் DND இயக்கு (Pro தேவை)</string>
     <string name="cancel">ரத்து</string>
+    <string name="turn_screen_off">திரை அணைக்கவும்</string>
+    <string name="turn_screen_off_description">Flip கண்டறிந்தவுடன் திரையைத் தானாக அணைக்கவும்</string>
+    <string name="turn_screen_off_description_disabled">திரை அணைக்கவும் முடக்கப்படுகிறது திரை அணைக்க மட்டுமே இயக்கும்போது</string>
+    <string name="accessibility_service_title">அணுகல் சேவை</string>
+    <string name="accessibility_service_description">Android Pie (API 28) மற்றும் அதற்கு மேல் திரையை அணைக்க அணுகல் சேவை கட்டாயமாகத் தேவை.</string>
 </resources>

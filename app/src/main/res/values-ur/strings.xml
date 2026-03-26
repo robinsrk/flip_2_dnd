@@ -287,4 +287,9 @@
     <string name="dnd_activated_at">DND فعال</string>
     <string name="dnd_deactivated_at">DND غیر فعال</string>
     <string name="history_icon">ہسٹری آئیکن</string>
+    <string name="turn_screen_off">اسکرین بند کریں</string>
+    <string name="turn_screen_off_description">Flip کا پتہ لگنے پر اسکرین کو خودکار طور پر بند کریں</string>
+    <string name="turn_screen_off_description_disabled">اسکرین بند کریں غیر فعال ہے جب صرف اسکرین بند فعال ہے</string>
+    <string name="accessibility_service_title">رسائی کی خدمات</string>
+    <string name="accessibility_service_description">Android Pie (API 28) اور اس کے اوپر پر اسکرین کو بند کرنے کی اجازت دینے کے لیے رسائی کی خدمات لازمی ہے۔</string>
 </resources>

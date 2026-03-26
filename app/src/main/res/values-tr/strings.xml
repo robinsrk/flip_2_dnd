@@ -285,4 +285,9 @@
     <string name="proximity_detection">Yakınlık algılama</string>
     <string name="proximity_detection_description">Yakınlık sensörü de kapalıysa yalnızca DND yi etkinleştir (Pro gerekir)</string>
     <string name="cancel">İptal</string>
+    <string name="turn_screen_off">Ekranı kapat</string>
+    <string name="turn_screen_off_description">Flip algılandığında ekranı otomatik olarak kapat</string>
+    <string name="turn_screen_off_description_disabled">Yalnızca ekran kapalı etkinleştirildiğinde ekranı kapat devre dışıdır</string>
+    <string name="accessibility_service_title">Erişilebilirlik hizmeti</string>
+    <string name="accessibility_service_description">Uygulamanın Android Pie (API 28) ve üzeri ekranı kapatmasına izin vermek için erişilebilirlik hizmeti zorunludur.</string>
 </resources>

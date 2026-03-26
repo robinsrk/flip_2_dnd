@@ -289,6 +289,7 @@
     <string name="cancel">Cancelar</string>
     <string name="turn_screen_off">Apagar la pantalla</string>
     <string name="turn_screen_off_description">Apagar la pantalla al voltear el dispositivo</string>
+    <string name="turn_screen_off_description_disabled">Apagar la pantalla está desactivado cuando solo pantalla apagada está habilitado</string>
     <string name="accessibility_service_title">Servicio de accesibilidad</string>
     <string name="accessibility_service_description">El servicio de accesibilidad es obligatorio para que la app pueda apagar la pantalla en Android PIE (API 28) y siguientes.</string>
 </resources>

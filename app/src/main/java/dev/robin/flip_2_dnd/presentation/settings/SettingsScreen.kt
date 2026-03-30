@@ -1,6 +1,5 @@
 package dev.robin.flip_2_dnd.presentation.settings
 
-import android.app.Activity
 import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.ClipData
@@ -862,7 +861,10 @@ fun SettingsContent(
                 if (TurnScreenOffService.isTurnScreenOffSupported()) {
                     SettingsSwitchItem(
                         title = stringResource(id = R.string.turn_screen_off),
-                        description = stringResource(id = R.string.turn_screen_off_description),
+                        description = stringResource(
+                            id = if (screenOffOnly) R.string.turn_screen_off_description_disabled
+                            else R.string.turn_screen_off_description
+                        ),
                         checked = turnScreenOff,
                         enabled = !screenOffOnly,
                         onCheckedChange = {
@@ -1771,6 +1773,7 @@ fun SettingsContent(
                                 .getFeatureManager(context)
                                 .batterySaverSyncEnabled()
                         ) {
+                            viewModel.checkSecureSettingsPermission()
                             if (hasSecureSettingsPermission) {
                                 viewModel.setBatterySaverOnFlipEnabled(it)
                             } else {

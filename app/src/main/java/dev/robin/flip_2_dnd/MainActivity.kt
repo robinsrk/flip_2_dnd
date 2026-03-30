@@ -57,12 +57,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.clickable
 import android.content.ClipData
 import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.text.font.FontVariation
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.robin.flip_2_dnd.core.SettingsRepository
 
 import dev.robin.flip_2_dnd.presentation.navigation.AppNavigation

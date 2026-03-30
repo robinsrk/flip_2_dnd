@@ -70,7 +70,7 @@ public class TurnScreenOffService : AccessibilityService() {
         }
 
         fun isTurnScreenOffSupported() : Boolean {
-            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
         }
     }
 }

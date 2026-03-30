@@ -140,6 +140,9 @@ We are extremely grateful to our supporters on Patreon who help keep this projec
 - **Martin Buckley**
 - **Michael W Erdely**
 
+### 🤝 Contributors
+- **[ryosoftware](https://github.com/ryosoftware)**
+
 Support the development of Flip 2 DND by [becoming a Patron](https://www.patreon.com/AbulKalamRobin369).
 
 ---

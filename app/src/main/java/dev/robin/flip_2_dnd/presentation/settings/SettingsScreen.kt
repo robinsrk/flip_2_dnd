@@ -218,13 +218,14 @@ fun SettingsContent(
     // Track if the check was initiated manually from this screen
     var isManualCheck by remember { mutableStateOf(false) }
 
-    val accessibilityPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (isAccessibilityPermissionGranted(context)) {
-            viewModel.setTurnScreenOff(true)
+    val accessibilityPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            if (isAccessibilityPermissionGranted(context)) {
+                viewModel.setTurnScreenOff(true)
+            }
         }
-    }
 
     LaunchedEffect(updateState) {
         when (updateState) {
@@ -697,6 +698,46 @@ fun SettingsContent(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Contributors",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ryosoftware"))
+                                    context.startActivity(intent)
+                                }.padding(20.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_github),
+                            contentDescription = "GitHub",
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "ryosoftware",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
@@ -861,17 +902,21 @@ fun SettingsContent(
                 if (TurnScreenOffService.isTurnScreenOffSupported()) {
                     SettingsSwitchItem(
                         title = stringResource(id = R.string.turn_screen_off),
-                        description = stringResource(
-                            id = if (screenOffOnly) R.string.turn_screen_off_description_disabled
-                            else R.string.turn_screen_off_description
-                        ),
+                        description =
+                            stringResource(
+                                id =
+                                    if (screenOffOnly) {
+                                        R.string.turn_screen_off_description_disabled
+                                    } else {
+                                        R.string.turn_screen_off_description
+                                    },
+                            ),
                         checked = turnScreenOff,
                         enabled = !screenOffOnly,
                         onCheckedChange = {
                             if (isAccessibilityPermissionGranted(context)) {
                                 viewModel.setTurnScreenOff(it)
-                            }
-                            else {
+                            } else {
                                 val intent = TurnScreenOffService.getRequestAccessibilityPermissionIntent()
                                 accessibilityPermissionLauncher.launch(intent)
                             }

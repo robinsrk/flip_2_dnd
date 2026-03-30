@@ -10,6 +10,17 @@ data class ChangelogEntry(
 val changelogEntries =
   listOf(
     ChangelogEntry(
+      version = "v12.0.8",
+      emoji = "⚡",
+      changes =
+        listOf(
+          "📱 Added ability to turn off screen",
+          "🌐 Updated translations",
+          "🛒 Removed discount promotion",
+          "👥 Added contributors section",
+        ),
+    ),
+    ChangelogEntry(
       version = "v12.0.7",
       emoji = "📊",
       changes =
@@ -116,17 +127,17 @@ val changelogEntries =
           "⚡ Changed flashlight intensity to lowest for flashlight feedback",
         ),
     ),
-        ChangelogEntry(
-          version = "v11.0.1",
-          emoji = "🛡",
-          changes =
-            listOf(
-              "🧭 Optimized background battery usage and sensor polling",
-              "🎯 Smart sensor management to save battery when screen is ON",
-              "🎉 Ramadan celebration popup for free users",
-              "🐞 Fixed various minor bugs and stability issues",
-            ),
+    ChangelogEntry(
+      version = "v11.0.1",
+      emoji = "🛡",
+      changes =
+        listOf(
+          "🧭 Optimized background battery usage and sensor polling",
+          "🎯 Smart sensor management to save battery when screen is ON",
+          "🎉 Ramadan celebration popup for free users",
+          "🐞 Fixed various minor bugs and stability issues",
         ),
+    ),
     ChangelogEntry(
       version = "v11.0.0",
       emoji = "🚀",

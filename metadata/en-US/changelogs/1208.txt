@@ -1,0 +1,4 @@
+* Added ability to turn off screen
+* Updated translations
+* Removed discount promotion
+* Added contributors section

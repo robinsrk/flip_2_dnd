@@ -12,12 +12,13 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -110,7 +111,7 @@ import dev.robin.flip_2_dnd.services.TurnScreenOffService.Companion.isAccessibil
 import dev.robin.flip_2_dnd.utils.getFileNameFromUri
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun SettingsContent(
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -819,90 +820,92 @@ fun SettingsContent(
                     },
                 )
 
-                AnimatedVisibility(
-                    visible = activationMode == ActivationMode.DND,
-                    enter = fadeIn(animationSpec = tween(250)) + scaleIn(initialScale = 0.92f, animationSpec = tween(250)),
-                    exit = fadeOut(animationSpec = tween(250)) + scaleOut(targetScale = 0.92f, animationSpec = tween(250)),
-                ) {
-                    SettingsSliderItem(
-                        title = stringResource(id = R.string.dnd_sub_mode),
-                        sliderContent = {
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                val modes =
-                                    listOf(
-                                        DndMode.PRIORITY to R.string.dnd_mode_priority,
-                                        DndMode.TOTAL_SILENCE to R.string.dnd_mode_total_silence,
-                                        DndMode.ALARMS_ONLY to R.string.dnd_mode_alarms_only,
-                                    )
-									
-                                modes.forEach { (mode, labelRes) ->
-                                    val isSelected = dndModeSetting == mode
-                                    Surface(
-                                        modifier =
-                                            Modifier
-                                                .weight(1f)
-                                                .padding(2.dp)
-                                                .clickable { viewModel.setDndMode(mode) },
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                                        shape = RoundedCornerShape(8.dp),
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = labelRes),
-                                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                    )
-                }
+                AnimatedContent(
+                    targetState = activationMode,
+                    transitionSpec = {
+                        fadeIn(animationSpec = tween(500)) with fadeOut(animationSpec = tween(500))
+                    },
+                    label = "mode_transition",
+                ) { mode ->
+                    when (mode) {
+                        ActivationMode.DND -> {
+                            SettingsSliderItem(
+                                title = stringResource(id = R.string.dnd_sub_mode),
+                                sliderContent = {
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        val modes =
+                                            listOf(
+                                                DndMode.PRIORITY to R.string.dnd_mode_priority,
+                                                DndMode.TOTAL_SILENCE to R.string.dnd_mode_total_silence,
+                                                DndMode.ALARMS_ONLY to R.string.dnd_mode_alarms_only,
+                                            )
 
-                AnimatedVisibility(
-                    visible = activationMode == ActivationMode.RINGER,
-                    enter = fadeIn(animationSpec = tween(250)) + scaleIn(initialScale = 0.92f, animationSpec = tween(250)),
-                    exit = fadeOut(animationSpec = tween(250)) + scaleOut(targetScale = 0.92f, animationSpec = tween(250)),
-                ) {
-                    SettingsSliderItem(
-                        title = stringResource(id = R.string.ringer_sub_mode),
-                        sliderContent = {
-                            Row(modifier = Modifier.fillMaxWidth()) {
-                                val modes =
-                                    listOf(
-                                        RingerMode.SILENT to R.string.ringer_silent,
-                                        RingerMode.VIBRATE to R.string.ringer_vibrate,
-                                        RingerMode.NORMAL to R.string.ringer_normal,
-                                    )
-									
-                                modes.forEach { (mode, labelRes) ->
-                                    val isSelected = ringerModeSetting == mode
-                                    Surface(
-                                        modifier =
-                                            Modifier
-                                                .weight(1f)
-                                                .padding(2.dp)
-                                                .clickable { viewModel.setRingerMode(mode) },
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                                        shape = RoundedCornerShape(8.dp),
-                                    ) {
-                                        Text(
-                                            text = stringResource(id = labelRes),
-                                            modifier = Modifier.padding(8.dp),
-                                            textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
+                                        modes.forEach { (mode, labelRes) ->
+                                            val isSelected = dndModeSetting == mode
+                                            Surface(
+                                                modifier =
+                                                    Modifier
+                                                        .weight(1f)
+                                                        .padding(2.dp)
+                                                        .clickable { viewModel.setDndMode(mode) },
+                                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                                                shape = RoundedCornerShape(8.dp),
+                                            ) {
+                                                Text(
+                                                    text = stringResource(id = labelRes),
+                                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
+                                                    textAlign = TextAlign.Center,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                )
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        },
-                    )
+                                },
+                            )
+                        }
+
+                        ActivationMode.RINGER -> {
+                            SettingsSliderItem(
+                                title = stringResource(id = R.string.ringer_sub_mode),
+                                sliderContent = {
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        val modes =
+                                            listOf(
+                                                RingerMode.SILENT to R.string.ringer_silent,
+                                                RingerMode.VIBRATE to R.string.ringer_vibrate,
+                                                RingerMode.NORMAL to R.string.ringer_normal,
+                                            )
+
+                                        modes.forEach { (mode, labelRes) ->
+                                            val isSelected = ringerModeSetting == mode
+                                            Surface(
+                                                modifier =
+                                                    Modifier
+                                                        .weight(1f)
+                                                        .padding(2.dp)
+                                                        .clickable { viewModel.setRingerMode(mode) },
+                                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                                                shape = RoundedCornerShape(8.dp),
+                                            ) {
+                                                Text(
+                                                    text = stringResource(id = labelRes),
+                                                    modifier = Modifier.padding(8.dp),
+                                                    textAlign = TextAlign.Center,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                    }
                 }
 
                 SettingsSwitchItem(

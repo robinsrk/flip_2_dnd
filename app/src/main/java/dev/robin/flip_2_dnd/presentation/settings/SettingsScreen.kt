@@ -13,6 +13,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -795,7 +800,7 @@ fun SettingsContent(
                                                 .weight(1f)
                                                 .padding(4.dp)
                                                 .clickable { viewModel.setActivationMode(mode) },
-                                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                                         shape = RoundedCornerShape(8.dp),
                                     ) {
                                         Text(
@@ -805,7 +810,7 @@ fun SettingsContent(
                                             style = MaterialTheme.typography.bodySmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
                                 }
@@ -814,7 +819,11 @@ fun SettingsContent(
                     },
                 )
 
-                AnimatedVisibility(visible = activationMode == ActivationMode.DND) {
+                AnimatedVisibility(
+                    visible = activationMode == ActivationMode.DND,
+                    enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
+                ) {
                     SettingsSliderItem(
                         title = stringResource(id = R.string.dnd_sub_mode),
                         sliderContent = {
@@ -834,7 +843,7 @@ fun SettingsContent(
                                                 .weight(1f)
                                                 .padding(2.dp)
                                                 .clickable { viewModel.setDndMode(mode) },
-                                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                                         shape = RoundedCornerShape(8.dp),
                                     ) {
                                         Text(
@@ -844,7 +853,7 @@ fun SettingsContent(
                                             style = MaterialTheme.typography.labelSmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
                                 }
@@ -853,7 +862,11 @@ fun SettingsContent(
                     )
                 }
 
-                AnimatedVisibility(visible = activationMode == ActivationMode.RINGER) {
+                AnimatedVisibility(
+                    visible = activationMode == ActivationMode.RINGER,
+                    enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
+                ) {
                     SettingsSliderItem(
                         title = stringResource(id = R.string.ringer_sub_mode),
                         sliderContent = {
@@ -873,7 +886,7 @@ fun SettingsContent(
                                                 .weight(1f)
                                                 .padding(2.dp)
                                                 .clickable { viewModel.setRingerMode(mode) },
-                                        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                                         shape = RoundedCornerShape(8.dp),
                                     ) {
                                         Text(
@@ -883,7 +896,7 @@ fun SettingsContent(
                                             style = MaterialTheme.typography.labelSmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
                                 }

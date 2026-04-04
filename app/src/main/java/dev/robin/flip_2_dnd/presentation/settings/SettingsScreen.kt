@@ -701,6 +701,46 @@ fun SettingsContent(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
+                    text = "Author",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/robinsrk"))
+                                    context.startActivity(intent)
+                                }.padding(20.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_github),
+                            contentDescription = "GitHub",
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Robin",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
                     text = "Contributors",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,

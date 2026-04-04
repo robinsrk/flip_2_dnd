@@ -14,10 +14,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -821,8 +821,8 @@ fun SettingsContent(
 
                 AnimatedVisibility(
                     visible = activationMode == ActivationMode.DND,
-                    enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
+                    enter = fadeIn(animationSpec = tween(250)) + scaleIn(initialScale = 0.92f, animationSpec = tween(250)),
+                    exit = fadeOut(animationSpec = tween(250)) + scaleOut(targetScale = 0.92f, animationSpec = tween(250)),
                 ) {
                     SettingsSliderItem(
                         title = stringResource(id = R.string.dnd_sub_mode),
@@ -864,8 +864,8 @@ fun SettingsContent(
 
                 AnimatedVisibility(
                     visible = activationMode == ActivationMode.RINGER,
-                    enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
+                    enter = fadeIn(animationSpec = tween(250)) + scaleIn(initialScale = 0.92f, animationSpec = tween(250)),
+                    exit = fadeOut(animationSpec = tween(250)) + scaleOut(targetScale = 0.92f, animationSpec = tween(250)),
                 ) {
                     SettingsSliderItem(
                         title = stringResource(id = R.string.ringer_sub_mode),

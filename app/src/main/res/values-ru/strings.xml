@@ -278,9 +278,6 @@
     <string name="high_sensitivity_schedule">Расписание высокой чувствительности</string>
     <string name="high_sensitivity_schedule_description">Включать высокую чувствительность только в указанные промежутки.</string>
     <string name="whats_new">Что нового</string>
-    <string name="ramadan_kareem">Рамадан Карим!</string>
-    <string name="ramadan_message">Желаем вам мирного и благословенного месяца! В духе Рамадана предлагаем специальную скидку 40%% на Flip 2 DND Pro. Персонализируйте фокус и поддержите разработчика по специальной цене.</string>
-    <string name="ramadan_coupon_code">Используйте купон для скидки 40%%: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">Обнаружение датчиком приближения</string>
     <string name="proximity_detection">Обнаружение приближения</string>

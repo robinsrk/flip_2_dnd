@@ -281,9 +281,6 @@
     <string name="high_sensitivity_schedule">Calendrier haute sensibilité</string>
     <string name="high_sensitivity_schedule_description">N activer la haute sensibilite qu a ces horaires.</string>
     <string name="whats_new">Nouveautés</string>
-    <string name="ramadan_kareem">Ramadan Kareem !</string>
-    <string name="ramadan_message">Nous vous souhaitons un mois paisible et beni ! Dans l esprit du Ramadan, nous proposons une remise speciale de 40%% sur Flip 2 DND Pro. Personnalisez votre concentration et soutenez le developpeur a un prix special.</string>
-    <string name="ramadan_coupon_code">Utilisez le coupon pour 40%% de réduction : %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="cancel">Annuler</string>
     <string name="turn_screen_off">Éteindre l\'écran</string>

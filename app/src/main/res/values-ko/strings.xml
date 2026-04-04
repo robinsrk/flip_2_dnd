@@ -279,9 +279,6 @@
     <string name="high_sensitivity_schedule">고감도 일정</string>
     <string name="high_sensitivity_schedule_description">이 시간에만 고감도를 활성화합니다.</string>
     <string name="whats_new">새로운 소식</string>
-    <string name="ramadan_kareem">라마단 카림!</string>
-    <string name="ramadan_message">평화롭고 축복받은 한 달이 되길 바랍니다! 라마단을 맞아 Flip 2 DND Pro를 40%% 특별 할인합니다. 집중을 개인화하고 개발자를 특별가로 지원하세요.</string>
-    <string name="ramadan_coupon_code">40%% 할인 쿠폰 사용: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">근접 센서 감지</string>
     <string name="proximity_detection">근접 감지</string>

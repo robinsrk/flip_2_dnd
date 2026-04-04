@@ -278,8 +278,6 @@
     <string name="high_sensitivity_schedule">உயர் சென்சிடிவிட்டி அட்டவணை</string>
     <string name="high_sensitivity_schedule_description">இந்த நேரங்களில் மட்டும் உயர் சென்சிடிவிட்டி இயக்கு.</string>
     <string name="whats_new">புதியது என்ன</string>
-    <string name="ramadan_kareem">ரமதான் கரீம்!</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">அருகாமை சென்சார் கண்டறிதல்</string>
     <string name="proximity_detection">அருகாமை கண்டறிதல்</string>

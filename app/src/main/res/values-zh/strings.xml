@@ -253,8 +253,6 @@
     <string name="high_sensitivity_schedule">高灵敏度计划</string>
     <string name="high_sensitivity_schedule_description">仅在这些时间段启用高灵敏度。</string>
     <string name="whats_new">新功能</string>
-    <string name="ramadan_kareem">斋月快乐！</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">距离传感器检测</string>
     <string name="proximity_detection">距离检测</string>

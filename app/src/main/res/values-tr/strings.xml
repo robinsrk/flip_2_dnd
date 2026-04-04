@@ -278,8 +278,6 @@
     <string name="high_sensitivity_schedule">Yüksek hassasiyet programı</string>
     <string name="high_sensitivity_schedule_description">Yüksek hassasiyeti sadece bu saatlerde etkinleştir.</string>
     <string name="whats_new">Yenilikler</string>
-    <string name="ramadan_kareem">Ramazan Mübarek!</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">Yakınlık sensörü algılama</string>
     <string name="proximity_detection">Yakınlık algılama</string>

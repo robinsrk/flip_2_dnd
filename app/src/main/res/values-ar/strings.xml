@@ -254,9 +254,6 @@
     <string name="high_sensitivity_schedule">جدول الحساسية العالية</string>
     <string name="high_sensitivity_schedule_description">تفعيل الحساسية العالية فقط خلال هذه الأوقات.</string>
     <string name="whats_new">ما الجديد</string>
-    <string name="ramadan_kareem">رمضان كريم!</string>
-    <string name="ramadan_message">نتمنى لكم شهراً هادئاً ومباركاً! بروح رمضان، نقدم خصماً خاصاً بنسبة 40%% على Flip 2 DND Pro. خصص تركيزك وادعم المطور بسعر خاص.</string>
-    <string name="ramadan_coupon_code">استخدم القسيمة للحصول على خصم 40%%: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">اكتشاف مستشعر القرب</string>
     <string name="proximity_detection">اكتشاف القرب</string>

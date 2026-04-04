@@ -256,9 +256,6 @@
     <string name="high_sensitivity_schedule">Zeitplan hohe Empfindlichkeit</string>
     <string name="high_sensitivity_schedule_description">Hohe Empfindlichkeit nur zu diesen Zeiten aktivieren.</string>
     <string name="whats_new">Neuheiten</string>
-    <string name="ramadan_kareem">Ramadan Kareem!</string>
-    <string name="ramadan_message">Wir wünschen Ihnen einen friedlichen und gesegneten Monat! Im Geist des Ramadan bieten wir einen speziellen 40%%-Rabatt auf Flip 2 DND Pro an. Personalisieren Sie Ihren Fokus und unterstützen Sie den Entwickler zu einem Sonderpreis.</string>
-    <string name="ramadan_coupon_code">Gutschein für 40%% RABATT verwenden: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="cancel">Abbrechen</string>
     <!-- Activation Modes -->

@@ -280,8 +280,6 @@
     <string name="high_sensitivity_schedule">Programación de alta sensibilidad</string>
     <string name="high_sensitivity_schedule_description">Activar alta sensibilidad solo en estos horarios.</string>
     <string name="whats_new">Novedades</string>
-    <string name="ramadan_kareem">¡Ramadán Kareem!</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">Detección con sensor de proximidad</string>
     <string name="proximity_detection">Detección de proximidad</string>

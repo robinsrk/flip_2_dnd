@@ -278,9 +278,6 @@
     <string name="high_sensitivity_schedule">उच्च संवेदनशीलता समय-सारिणी</string>
     <string name="high_sensitivity_schedule_description">केवल इन समयों में उच्च संवेदनशीलता सक्षम करें।</string>
     <string name="whats_new">क्या नया है</string>
-    <string name="ramadan_kareem">रमज़ान करीम!</string>
-    <string name="ramadan_message">आपको शांतिपूर्ण और धन्य महीने की शुभकामनाएँ! रमज़ान के दौरान हम Flip 2 DND Pro पर विशेष 40%% छूट दे रहे हैं। अपनी फोकस को व्यक्तिगत बनाएं और विशेष कीमत पर डेवलपर का समर्थन करें।</string>
-    <string name="ramadan_coupon_code">40%% छूट के लिए कूपन का उपयोग करें: %1$s</string>
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">निकटता सेंसर पहचान</string>
     <string name="proximity_detection">निकटता पहचान</string>

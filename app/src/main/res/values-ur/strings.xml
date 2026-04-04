@@ -253,8 +253,6 @@
     <string name="high_sensitivity_schedule">اعلی حساسیت شیڈول</string>
     <string name="high_sensitivity_schedule_description">صرف ان اوقات میں اعلی حساسیت فعال کریں۔</string>
     <string name="whats_new">نیا کیا ہے</string>
-    <string name="ramadan_kareem">رمضان کریم!</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">قربت سینسر کی تشخیص</string>
     <string name="proximity_detection">قربت کی تشخیص</string>

@@ -279,8 +279,6 @@
     <string name="high_sensitivity_schedule">高感度のスケジュール</string>
     <string name="high_sensitivity_schedule_description">この時間帯のみ高感度を有効化します。</string>
     <string name="whats_new">新着情報</string>
-    <string name="ramadan_kareem">ラマダーン・カリーム！</string>
-
     <string name="ramadan_coupon">RAMADANKARIM</string>
     <string name="feature_proximity">近接センサー検出</string>
     <string name="proximity_detection">近接検出</string>

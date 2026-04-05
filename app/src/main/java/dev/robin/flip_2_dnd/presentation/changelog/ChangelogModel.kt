@@ -10,6 +10,16 @@ data class ChangelogEntry(
 val changelogEntries =
   listOf(
     ChangelogEntry(
+      version = "v12.0.9",
+      emoji = "🎨",
+      changes =
+        listOf(
+          "✨ Updated UI with Material You colors",
+          "🔄 Improved mode selection animations",
+          "👤 Added author and contributors credits",
+        ),
+    ),
+    ChangelogEntry(
       version = "v12.0.8",
       emoji = "⚡",
       changes =

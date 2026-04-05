@@ -1,0 +1,3 @@
+* Updated UI with Material You colors
+* Improved mode selection animations
+* Added author and contributors credits

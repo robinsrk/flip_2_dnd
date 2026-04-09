@@ -64,6 +64,9 @@
 	<string name="general">General</string>
 	<string name="language">Language</string>
 	<string name="language_description">Change the app language</string>
+	<string name="dnd_settings">DND Settings</string>
+	<string name="dnd_settings_description">Manage Do Not Disturb exceptions and filters</string>
+	<string name="error_opening_dnd_settings">Could not open DND settings</string>
 	<string name="error_opening_language_settings">Could not open language settings</string>
 	<string name="qs_tile_label">Flip DND service</string>
 	<string name="detection">Detection</string>

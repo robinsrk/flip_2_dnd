@@ -990,52 +990,41 @@ fun SettingsContent(
                         LaunchedEffect(activationDelay) {
                             sliderPosition = activationDelay.toFloat()
                         }
+                        val isPro = ServiceLocator.getFeatureManager(context).isPro()
+                        val delayCustomizationEnabled =
+                            ServiceLocator.getFeatureManager(context).delayCustomizationEnabled()
                         Column {
                             Slider(
                                 value = sliderPosition,
-                                onValueChange = {
-                                    if (ServiceLocator
-                                            .getFeatureManager(context)
-                                            .delayCustomizationEnabled()
-                                    ) {
-                                        sliderPosition = it
+                                onValueChange = { newValue ->
+                                    val snappedValue =
+                                        kotlin.math
+                                            .round(newValue)
+                                            .toInt()
+                                            .coerceIn(0, 10)
+                                    if (delayCustomizationEnabled) {
+                                        sliderPosition = snappedValue.toFloat()
                                     } else {
                                         showUpgradeDialog = true
                                     }
                                 },
                                 onValueChangeFinished = {
-                                    if (ServiceLocator
-                                            .getFeatureManager(context)
-                                            .delayCustomizationEnabled()
-                                    ) {
+                                    if (delayCustomizationEnabled) {
                                         viewModel.setActivationDelay(sliderPosition.toInt())
                                     }
                                 },
                                 valueRange = 0f..10f,
                                 steps = 9,
                                 modifier = Modifier.width(200.dp),
-                                enabled =
-                                    ServiceLocator
-                                        .getFeatureManager(context)
-                                        .delayCustomizationEnabled(),
                             )
                             Text(
                                 text = stringResource(id = R.string.seconds, sliderPosition.toInt()),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier =
-                                    Modifier
-                                        .padding(start = 8.dp)
-                                        .alpha(
-                                            if (ServiceLocator
-                                                    .getFeatureManager(context)
-                                                    .delayCustomizationEnabled()
-                                            ) {
-                                                1f
-                                            } else {
-                                                0.5f
-                                            },
-                                        ),
+                                color =
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                        alpha = if (delayCustomizationEnabled) 1f else 0.5f,
+                                    ),
+                                modifier = Modifier.padding(start = 8.dp),
                             )
                         }
                     },
@@ -2301,6 +2290,12 @@ fun SettingsSliderItem(
 ) {
     val context = LocalContext.current
     val featureManager = ServiceLocator.getFeatureManager(context)
+    var showUpgradeDialog by remember { mutableStateOf(false) }
+
+    if (showUpgradeDialog) {
+        UpgradeDialog(onDismiss = { showUpgradeDialog = false })
+    }
+
     Card(
         shape = RoundedCornerShape(28.dp),
         colors =
@@ -2315,7 +2310,14 @@ fun SettingsSliderItem(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .clip(RoundedCornerShape(28.dp)),
+                .clip(RoundedCornerShape(28.dp))
+                .then(
+                    if (isPro && !featureManager.isPro()) {
+                        Modifier.clickable { showUpgradeDialog = true }
+                    } else {
+                        Modifier
+                    },
+                ),
     ) {
         Column(
             modifier =

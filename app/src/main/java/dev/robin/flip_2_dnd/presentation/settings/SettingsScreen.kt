@@ -1921,6 +1921,24 @@ fun SettingsContent(
                         }
                     },
                 )
+
+                SettingsClickableItem(
+                    title = stringResource(id = R.string.dnd_settings),
+                    description = stringResource(id = R.string.dnd_settings_description),
+                    onClick = {
+                        try {
+                            val intent = Intent("android.settings.ZEN_MODE_AUTOMATION_SETTINGS")
+                            context.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast
+                                .makeText(
+                                    context,
+                                    R.string.error_opening_dnd_settings,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                        }
+                    },
+                )
             }
         }
 

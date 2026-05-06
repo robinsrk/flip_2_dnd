@@ -108,24 +108,20 @@ class SensorService(
       return
     }
 
-    var success = true
-
-    success = success && sensorManager.registerListener(
+    if (! sensorManager.registerListener(
       sensorListener,
       accelerometer,
       SensorManager.SENSOR_DELAY_UI
-    )
-    if (!success) {
+    )) {
       Log.e(TAG, "Failed to register accelerometer")
       return
     }
 
-    success = success && sensorManager.registerListener(
+    if (! sensorManager.registerListener(
       sensorListener,
       gyroscope,
       SensorManager.SENSOR_DELAY_UI
-    )
-    if (!success) {
+    )) {
       Log.e(TAG, "Failed to register gyroscope")
       sensorManager.unregisterListener(sensorListener)
       return
